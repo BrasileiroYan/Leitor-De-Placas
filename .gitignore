@@ -1,10 +1,14 @@
 HELP.md
+
+# Java / Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# IDEs
+
+## Spring Tool Suite
 .apt_generated
 .classpath
 .factorypath
@@ -13,13 +17,13 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+## IntelliJ IDEA
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+## NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,8 +33,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+## VS Code
 .vscode/
 
-###Arquivo de configuração do Spring Boot com senhas e dados sensíveis###
-src/main/resources/application.properties
+# Spring Boot sensitive config (protege seu application.properties)
+**/application.properties
+**/application-test.properties
