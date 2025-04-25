@@ -3,12 +3,18 @@ package com.example.LeitorDePlacas.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@AllArgsConstructor @NoArgsConstructor
-public class User {
+import java.io.Serializable;
 
-    @Id @GeneratedValue
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(of = {"login", "senha"})
+public class AppUser implements Serializable {
+
+    @Id
+    @GeneratedValue
     @Getter private Long id;
     @Getter @Setter private String login;
     @Getter @Setter private String senha;
+
 }

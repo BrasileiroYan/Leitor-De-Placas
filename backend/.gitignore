@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+###Arquivo de configuração do Spring Boot com senhas e dados sensíveis###
+src/main/resources/application.properties
