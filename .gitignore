@@ -35,7 +35,3 @@ build/
 
 ## VS Code
 .vscode/
-
-# Spring Boot sensitive config (protege seu application.properties)
-**/application.properties
-**/application-test.properties
