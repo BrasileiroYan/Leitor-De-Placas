@@ -13,6 +13,7 @@ import org.joda.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "plate")
 public class PersonRecord implements Serializable {
 
     @Id
