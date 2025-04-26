@@ -1,6 +1,6 @@
-package com.example.LeitorDePlacas.repository;
+package com.example.plateReader.repository;
 
-import com.example.LeitorDePlacas.model.Crime;
+import com.example.plateReader.model.Crime;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
