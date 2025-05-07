@@ -17,3 +17,21 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+    - assets/images/
+
+  
+  fonts:
+    - family: Italiana
+      fonts:
+        - asset: assets/fonts/Italiana-Regular.ttf
+    
+    - family: GL Nummernschild
+      fonts:
+        - asset: assets/fonts/GL-Nummernschild-Eng.ttf
+
+
+        
+        
+  
