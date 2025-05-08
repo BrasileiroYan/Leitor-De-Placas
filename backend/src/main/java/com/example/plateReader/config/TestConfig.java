@@ -43,19 +43,24 @@ public class TestConfig implements CommandLineRunner {
         Crime c1 = new Crime("Furto", LocalDateTime.parse("2023-01-10T10:30:00"), "Furto de veículo");
         Crime c2 = new Crime("Assalto", LocalDateTime.parse("2023-05-12T15:00:00"), "Assalto à mão armada");
         Crime c3 = new Crime("Fraude", LocalDateTime.parse("2022-08-25T09:00:00"), "Fraude bancária");
+        Crime c4 = new Crime("Fraude", LocalDateTime.parse("2019-10-21T07:30:00"), "Fraude bancária");
+
 
         crimeRepository.save(c1);
         crimeRepository.save(c2);
         crimeRepository.save(c3);
+        crimeRepository.save(c4);
 
         CriminalRecord cr1 = new CriminalRecord(p1);
         cr1.addCrime(c1);
+        cr1.addCrime(c4);
 
         CriminalRecord cr2 = new CriminalRecord(p2);
         cr2.addCrime(c2);
 
         CriminalRecord cr3 = new CriminalRecord(p3);
         cr3.addCrime(c3);
+
 
         criminalRecordRepository.save(cr1);
         criminalRecordRepository.save(cr2);

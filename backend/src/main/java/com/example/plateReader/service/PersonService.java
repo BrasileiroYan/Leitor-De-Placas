@@ -8,20 +8,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PersonRecordService {
+public class PersonService {
 
-    private final PersonRepository personRecordRepository;
+    private final PersonRepository personRepository;
 
-    public PersonRecordService(PersonRepository personRecordRepository) {
-        this.personRecordRepository = personRecordRepository;
+    public PersonService(PersonRepository personRecordRepository) {
+        this.personRepository = personRecordRepository;
     }
 
     public List<Person> findAll() {
-        return personRecordRepository.findAll();
+        return personRepository.findAll();
     }
 
     public Person findByPlate(String plate) {
-        Optional<Person> optionalPersonRecord = personRecordRepository.findByPlate(plate);
+        Optional<Person> optionalPersonRecord = personRepository.findByPlate(plate);
         return optionalPersonRecord.get();
     }
 }
