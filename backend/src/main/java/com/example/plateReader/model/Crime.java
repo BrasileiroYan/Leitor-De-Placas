@@ -20,7 +20,7 @@ public class Crime implements Serializable {
     @Setter private LocalDateTime crimeDateTime;
     @Setter private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "criminal_record_id")
     private CriminalRecord criminalRecord;
 

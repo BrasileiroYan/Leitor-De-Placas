@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class TestConfig implements CommandLineRunner {
     private CriminalRecordRepository criminalRecordRepository;
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
 
         Person p1 = new Person("ABC1234", "João Silva", "12345678", "123.456.789-00", LocalDate.parse("1990-01-15"));
@@ -41,10 +43,10 @@ public class TestConfig implements CommandLineRunner {
         Crime c1 = new Crime("Furto", LocalDateTime.parse("2023-01-10T10:30:00"), "Furto de veículo");
         Crime c2 = new Crime("Assalto", LocalDateTime.parse("2023-05-12T15:00:00"), "Assalto à mão armada");
         Crime c3 = new Crime("Fraude", LocalDateTime.parse("2022-08-25T09:00:00"), "Fraude bancária");
+
         crimeRepository.save(c1);
         crimeRepository.save(c2);
         crimeRepository.save(c3);
-
 
         CriminalRecord cr1 = new CriminalRecord(p1);
         cr1.addCrime(c1);
