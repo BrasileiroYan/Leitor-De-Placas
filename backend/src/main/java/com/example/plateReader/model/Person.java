@@ -8,8 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Person implements Serializable {
 
@@ -28,11 +26,42 @@ public class Person implements Serializable {
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     @Setter private CriminalRecord criminalRecord;
 
+    public Person() {
+    }
+
     public Person(String plate, String fullName, String rg, String cpf, LocalDate birthDate) {
         this.plate = plate;
         this.fullName = fullName;
         this.rg = rg;
         this.cpf = cpf;
         this.birthDate = birthDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getPlate() {
+        return plate;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public CriminalRecord getCriminalRecord() {
+        return criminalRecord;
     }
 }

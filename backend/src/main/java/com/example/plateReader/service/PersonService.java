@@ -1,11 +1,11 @@
 package com.example.plateReader.service;
 
+import com.example.plateReader.service.exception.PersonNotFoundException;
 import com.example.plateReader.model.Person;
 import com.example.plateReader.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -21,7 +21,6 @@ public class PersonService {
     }
 
     public Person findByPlate(String plate) {
-        Optional<Person> optionalPersonRecord = personRepository.findByPlate(plate);
-        return optionalPersonRecord.get();
+        return personRepository.findByPlate(plate).orElseThrow(() -> new PersonNotFoundException(plate));
     }
 }

@@ -1,5 +1,6 @@
 package com.example.plateReader.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class CriminalRecord implements Serializable {
 
@@ -17,6 +16,7 @@ public class CriminalRecord implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "person_id", unique = true)
     @Setter private Person person;
@@ -24,8 +24,23 @@ public class CriminalRecord implements Serializable {
     @OneToMany(mappedBy = "criminalRecord", cascade = CascadeType.ALL)
     private List<Crime> crimeList = new ArrayList<>();
 
+    public CriminalRecord() {
+    }
+
     public CriminalRecord(Person person) {
         this.person = person;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public List<Crime> getCrimeList() {
+        return crimeList;
     }
 
     public void addCrime(Crime crime) {

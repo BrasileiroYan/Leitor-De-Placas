@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 @Entity
-@Getter
-@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Crime implements Serializable {
 
@@ -20,14 +18,38 @@ public class Crime implements Serializable {
     @Setter private LocalDateTime crimeDateTime;
     @Setter private String description;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "criminal_record_id")
     private CriminalRecord criminalRecord;
+
+    public Crime() {
+    }
 
     public Crime(String crimeType, LocalDateTime crimeDateTime, String description) {
         this.crimeType = crimeType;
         this.crimeDateTime = crimeDateTime;
         this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCrimeType() {
+        return crimeType;
+    }
+
+    public LocalDateTime getCrimeDateTime() {
+        return crimeDateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public CriminalRecord getCriminalRecord() {
+        return criminalRecord;
     }
 
     public void setCriminalRecord(CriminalRecord criminalRecord) {
