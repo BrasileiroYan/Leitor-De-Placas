@@ -1,5 +1,6 @@
 package com.example.plateReader.controller.exception;
 
+import com.example.plateReader.service.exception.CrimePlateNotFoundException;
 import com.example.plateReader.service.exception.PersonNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,21 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 status.value(),
                 "Person not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(CrimePlateNotFoundException.class)
+    public ResponseEntity<StandardError> crimePlateNotFound(CrimePlateNotFoundException e, WebRequest request){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Crime not found",
                 e.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );
