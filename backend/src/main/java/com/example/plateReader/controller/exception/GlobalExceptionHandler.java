@@ -1,6 +1,7 @@
 package com.example.plateReader.controller.exception;
 
-import com.example.plateReader.service.exception.CrimePlateNotFoundException;
+import com.example.plateReader.service.exception.CrimeNotFoundException;
+import com.example.plateReader.service.exception.CriminalRecordNotFoundException;
 import com.example.plateReader.service.exception.PersonNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +29,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(CrimePlateNotFoundException.class)
-    public ResponseEntity<StandardError> crimePlateNotFound(CrimePlateNotFoundException e, WebRequest request){
+    @ExceptionHandler(CriminalRecordNotFoundException.class)
+    public ResponseEntity<StandardError> criminalRecordNotFound(CriminalRecordNotFoundException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Criminal Record not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(CrimeNotFoundException.class)
+    public ResponseEntity<StandardError> crimeNotFound(CrimeNotFoundException e, WebRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         StandardError error = new StandardError(
@@ -42,4 +58,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(error);
     }
+
+
 }
