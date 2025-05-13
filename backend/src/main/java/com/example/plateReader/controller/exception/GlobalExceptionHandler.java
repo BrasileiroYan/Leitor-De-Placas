@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.Instant;
 
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CrimeNotFoundException.class)
-    public ResponseEntity<StandardError> crimeNotFound(CrimeNotFoundException e, WebRequest request){
+    public ResponseEntity<StandardError> crimeNotFound(CrimeNotFoundException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         StandardError error = new StandardError(
@@ -59,5 +60,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<StandardError> handleNoHandlerFound(NoHandlerFoundException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
 
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Resource not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
 }

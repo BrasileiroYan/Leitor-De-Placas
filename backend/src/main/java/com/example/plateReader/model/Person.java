@@ -19,6 +19,7 @@ public class Person implements Serializable {
     @Setter private String plate;
 
     @Setter private String fullName;
+    @Setter private String genero;
     @Setter private String rg;
     @Setter private String cpf;
     @Setter private LocalDate birthDate;
@@ -29,9 +30,10 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String plate, String fullName, String rg, String cpf, LocalDate birthDate) {
+    public Person(String plate, String fullName, String genero, String rg, String cpf, LocalDate birthDate) {
         this.plate = plate;
         this.fullName = fullName;
+        this.genero = genero;
         this.rg = rg;
         this.cpf = cpf;
         this.birthDate = birthDate;
@@ -47,6 +49,10 @@ public class Person implements Serializable {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public String getGenero() {
+        return genero;
     }
 
     public String getRg() {
