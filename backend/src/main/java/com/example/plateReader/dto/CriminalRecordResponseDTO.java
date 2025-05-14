@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
 @NoArgsConstructor
 public class CriminalRecordResponseDTO {
 
-    @Setter private Long id;
-    @Setter private PersonResponseDTO person;
+    private Long id;
+    private PersonResponseDTO person;
 
     private List<CrimeResponseDTO> crimesList = new ArrayList<>();
 
@@ -23,6 +22,18 @@ public class CriminalRecordResponseDTO {
         this.person = new PersonResponseDTO(criminalRecord.getPerson());
 
         setCrimesListFromCriminalRecord(criminalRecord);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public PersonResponseDTO getPerson() {
+        return person;
+    }
+
+    public List<CrimeResponseDTO> getCrimesList() {
+        return crimesList;
     }
 
     private void setCrimesListFromCriminalRecord(CriminalRecord criminalRecord) {

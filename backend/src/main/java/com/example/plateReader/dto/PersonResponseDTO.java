@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.time.format.DateTimeFormatter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 public class PersonResponseDTO {
 
@@ -31,5 +29,33 @@ public class PersonResponseDTO {
         this.rg = person.getRg();
         this.cpf = person.getCpf();
         this.birthDate = person.getBirthDate().format(formatter);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getPlate() {
+        return plate;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
     }
 }

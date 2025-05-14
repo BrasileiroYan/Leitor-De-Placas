@@ -1,5 +1,8 @@
 package com.example.plateReader.controller;
 
+import com.example.plateReader.dto.CrimeResponseDTO;
+import com.example.plateReader.dto.CriminalRecordResponseDTO;
+import com.example.plateReader.dto.PersonResponseDTO;
 import com.example.plateReader.model.Crime;
 import com.example.plateReader.model.CriminalRecord;
 import com.example.plateReader.model.Person;
@@ -23,32 +26,32 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> findAll() {
-        List<Person> people = personService.findAll();
-        return ResponseEntity.ok().body(people);
+    public ResponseEntity<List<PersonResponseDTO>> findAll() {
+        List<PersonResponseDTO> peopleDTO = personService.findAll();
+        return ResponseEntity.ok().body(peopleDTO);
     }
 
     @GetMapping(path = "/{plate}")
-    public ResponseEntity<Person> findByPlate(@PathVariable String plate) {
-        Person person = personService.findByPlate(plate);
-        return ResponseEntity.ok().body(person);
+    public ResponseEntity<PersonResponseDTO> findByPlate(@PathVariable String plate) {
+        PersonResponseDTO personDTO  = personService.findByPlate(plate);
+        return ResponseEntity.ok().body(personDTO);
     }
 
     @GetMapping(path = "/{plate}/criminal-records")
-    public ResponseEntity<CriminalRecord> findCriminalRecordByPlate(@PathVariable String plate) {
-        CriminalRecord criminalRecord = personService.findCriminalRecordByPlate(plate);
-        return ResponseEntity.ok().body(criminalRecord);
+    public ResponseEntity<CriminalRecordResponseDTO> findCriminalRecordByPlate(@PathVariable String plate) {
+        CriminalRecordResponseDTO criminalRecordDTO = personService.findCriminalRecordByPlate(plate);
+        return ResponseEntity.ok().body(criminalRecordDTO);
     }
 
     @GetMapping(path = "/{plate}/criminal-records/crimes")
-    public ResponseEntity<List<Crime>> findAllCrimesByPlate(@PathVariable String plate) {
-        List<Crime> crimeList = personService.findAllCrimesByPlate(plate);
-        return ResponseEntity.ok().body(crimeList);
+    public ResponseEntity<List<CrimeResponseDTO>> findAllCrimesByPlate(@PathVariable String plate) {
+        List<CrimeResponseDTO> crimesDTO = personService.findAllCrimesByPlate(plate);
+        return ResponseEntity.ok().body(crimesDTO);
     }
 
     @GetMapping(path = "/{plate}/criminal-records/crimes/{id}")
-    public ResponseEntity<Crime> findCrimeByPlateAndId(@PathVariable String plate, @PathVariable Long id) {
-        Crime crime = personService.findCrimeByPlateAndId(plate, id);
-        return ResponseEntity.ok().body(crime);
+    public ResponseEntity<CrimeResponseDTO> findCrimeByPlateAndId(@PathVariable String plate, @PathVariable Long id) {
+        CrimeResponseDTO crimeDTO = personService.findCrimeByPlateAndId(plate, id);
+        return ResponseEntity.ok().body(crimeDTO);
     }
 }

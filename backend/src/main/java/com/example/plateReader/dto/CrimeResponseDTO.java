@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.time.format.DateTimeFormatter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 public class CrimeResponseDTO {
 
@@ -27,5 +25,25 @@ public class CrimeResponseDTO {
         this.crimeDateTime = crime.getCrimeDateTime().format(formatter);
         this.description = crime.getDescription();
         this.crimeStatus = crime.getCrimeStatus();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCrimeType() {
+        return crimeType;
+    }
+
+    public String getCrimeDateTime() {
+        return crimeDateTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public CrimeStatus getCrimeStatus() {
+        return crimeStatus;
     }
 }

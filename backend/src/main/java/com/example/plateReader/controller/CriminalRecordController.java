@@ -1,5 +1,6 @@
 package com.example.plateReader.controller;
 
+import com.example.plateReader.dto.CriminalRecordResponseDTO;
 import com.example.plateReader.model.CriminalRecord;
 import com.example.plateReader.service.CriminalRecordService;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class CriminalRecordController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CriminalRecord>> findAll() {
-        List<CriminalRecord> criminalRecordList = criminalRecordService.findAll();
-        return ResponseEntity.ok().body(criminalRecordList);
+    public ResponseEntity<List<CriminalRecordResponseDTO>> findAll() {
+        List<CriminalRecordResponseDTO> criminalRecordListDTO = criminalRecordService.findAll();
+        return ResponseEntity.ok().body(criminalRecordListDTO);
     }
 }
