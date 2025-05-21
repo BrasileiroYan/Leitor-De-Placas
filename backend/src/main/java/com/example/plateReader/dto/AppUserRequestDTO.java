@@ -1,21 +1,21 @@
 package com.example.plateReader.dto;
 
 import com.example.plateReader.model.AppUser;
+import com.example.plateReader.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
 public class AppUserRequestDTO {
 
-    public AppUserRequestDTO() {
-    }
-
     private String username;
     private String password;
-    private AppUser.Role role;
+    private Role role;
+
+    public AppUserRequestDTO() {
+    }
 
     public AppUserRequestDTO(AppUser appuser){
         this.username = appuser.getUsername();
@@ -31,7 +31,7 @@ public class AppUserRequestDTO {
         return this.password;
     }
 
-    public AppUser.Role getRole() {
+    public Role getRole() {
         return this.role;
     }
 }

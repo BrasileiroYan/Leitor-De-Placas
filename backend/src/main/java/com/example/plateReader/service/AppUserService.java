@@ -39,15 +39,17 @@ public class AppUserService {
 
     public AppUserResponseDTO findById(Long id){
         AppUser appUser = appUserRepository.findById(id).orElseThrow(() -> new AppUserNotFoundException(id));
+
         return new AppUserResponseDTO(appUser);
     }
 
     public AppUserResponseDTO findByUsername(String username){
         AppUser appUser = appUserRepository.findByUsername(username).orElseThrow(() -> new AppUserNotFoundException(username));
+
         return new AppUserResponseDTO(appUser);
     }
 
-    public AppUserResponseDTO updateUser(Long id, AppUserRequestDTO request) {
+    public AppUserResponseDTO updateById(Long id, AppUserRequestDTO request) {
         AppUser user = appUserRepository.findById(id).orElseThrow(() -> new AppUserNotFoundException(id));
 
         if(request.getUsername() != null) {
@@ -66,7 +68,7 @@ public class AppUserService {
         return new AppUserResponseDTO(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteById(Long id) {
         appUserRepository.deleteById(id);
     }
 }

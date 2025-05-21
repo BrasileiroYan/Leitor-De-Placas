@@ -1,6 +1,7 @@
 package com.example.plateReader.model;
 
 import com.example.plateReader.Utils.AppUserUtil;
+import com.example.plateReader.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +22,6 @@ public class AppUser implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public enum Role {
-        STANDARD, ADMIN
-    }
 
     public Long getId() {
         return this.id;
@@ -54,4 +51,3 @@ public class AppUser implements Serializable {
         this.role = role;
     }
 }
-

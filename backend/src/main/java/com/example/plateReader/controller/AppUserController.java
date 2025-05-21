@@ -23,16 +23,6 @@ public class AppUserController {
         return appUserService.createUser(request);
     }
 
-    @PutMapping("/{id}")
-    public AppUserResponseDTO update(@PathVariable Long id, @RequestBody AppUserRequestDTO Request) {
-        return appUserService.updateUser(id, Request);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        appUserService.deleteUser(id);
-    }
-
     @GetMapping
     public ResponseEntity<List<AppUserResponseDTO>> findAll(){
         List<AppUserResponseDTO> appUserDTO = appUserService.findAll();
@@ -40,15 +30,25 @@ public class AppUserController {
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/id/{id}")
-    public ResponseEntity<AppUserResponseDTO> findByID(@PathVariable Long id){
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<AppUserResponseDTO> findById(@PathVariable Long id){
         AppUserResponseDTO appUserDTO = appUserService.findById(id);
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/username/{username}")
+    @GetMapping(path = "/{username}")
     public ResponseEntity<AppUserResponseDTO> findByUsername(@PathVariable String username){
         AppUserResponseDTO appUserDTO = appUserService.findByUsername(username);
         return ResponseEntity.ok().body(appUserDTO);
+    }
+
+    @PutMapping("/{id}")
+    public AppUserResponseDTO updateById(@PathVariable Long id, @RequestBody AppUserRequestDTO Request) {
+        return appUserService.updateById(id, Request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable Long id) {
+        appUserService.deleteById(id);
     }
 }

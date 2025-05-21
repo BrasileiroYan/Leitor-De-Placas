@@ -20,19 +20,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**").permitAll()
-
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**").permitAll()
                         .requestMatchers("/admin/**", "/users/**", "/crimes/**", "/criminals/**", "/criminal-records/**").hasRole("ADMIN")
-
                         .requestMatchers("/app/**").hasAnyRole("ADMIN", "STANDARD")
-
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {

@@ -1,6 +1,7 @@
 package com.example.plateReader.config;
 
 import com.example.plateReader.model.AppUser;
+import com.example.plateReader.model.enums.Role;
 import com.example.plateReader.repository.AppUserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,7 @@ public class DataInitializer implements CommandLineRunner {
             AppUser admin = new AppUser();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin123")); //
-            admin.setRole(AppUser.Role.ADMIN);
+            admin.setRole(Role.ADMIN);
             userRepository.save(admin);
         }
 
@@ -32,7 +33,7 @@ public class DataInitializer implements CommandLineRunner {
             AppUser user = new AppUser();
             user.setUsername("user");
             user.setPassword(passwordEncoder.encode("user123"));
-            user.setRole(AppUser.Role.STANDARD);
+            user.setRole(Role.STANDARD);
             userRepository.save(user);
         }
     }
