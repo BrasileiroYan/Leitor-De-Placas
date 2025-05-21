@@ -46,7 +46,7 @@ public class TestConfig implements CommandLineRunner {
         Crime c1 = new Crime("Furto", LocalDateTime.parse("2023-01-10T10:30:00"), "Furto de veículo", CrimeStatus.CONDENADO);
         Crime c2 = new Crime("Assalto", LocalDateTime.parse("2023-05-12T15:00:00"), "Assalto à mão armada", CrimeStatus.ABSOLVIDO);
         Crime c3 = new Crime("Fraude", LocalDateTime.parse("2022-08-25T09:00:00"), "Fraude bancária", CrimeStatus.ARQUIVADO);
-        Crime c4 = new Crime("Fraude", LocalDateTime.parse("2019-10-21T07:30:00"), "Fraude bancária", CrimeStatus.INVESTIGACAO);
+        Crime c4 = new Crime("Fraude", LocalDateTime.parse("2019-10-21T07:30:00"), "Fraude bancária", CrimeStatus.SOB_INVESTIGACAO);
         Crime c5 = new Crime("Violência", LocalDateTime.parse("2017-03-11T10:30:00"), "Violência Doméstica", CrimeStatus.SUSPENSO);
 
 

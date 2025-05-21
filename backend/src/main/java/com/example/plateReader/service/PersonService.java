@@ -71,7 +71,7 @@ public class PersonService {
         CriminalRecord criminalRecord = person.getCriminalRecord();
 
         if (criminalRecord == null) {
-            throw new CriminalRecordNotFoundException("Ficha Criminal não encontrada para placa [" + person.getPlate() + "].");
+            throw new CriminalRecordNotFoundException("Ficha Criminal não encontrada para a placa [" + person.getPlate() + "].");
         }
 
         return criminalRecord;
@@ -81,7 +81,7 @@ public class PersonService {
         List<Crime> crimeList = criminalRecord.getCrimeList();
 
         if (crimeList == null || crimeList.isEmpty()) {
-            throw new CrimeNotFoundException("Não há crimes encontrados para placa [" + criminalRecord.getPerson().getPlate() + "].");
+            throw new CrimeNotFoundException("Não há crimes encontrados para a placa [" + criminalRecord.getPerson().getPlate() + "].");
         }
 
         return crimeList;
