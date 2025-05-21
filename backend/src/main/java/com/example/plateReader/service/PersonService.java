@@ -30,60 +30,9 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
-    public PersonResponseDTO findByPlate(String plate) {
-        Person person = getPersonByPlateOrThrow(plate);
+    public PersonResponseDTO findById(Long id) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new PersonNotFoundException(id));
 
         return new PersonResponseDTO(person);
-    }
-
-    public CriminalRecordResponseDTO findCriminalRecordByPlate(String plate) {
-        Person person = getPersonByPlateOrThrow(plate);
-
-        CriminalRecord criminalRecord = getCriminalRecordOrThrow(person);
-
-        return new CriminalRecordResponseDTO(criminalRecord);
-    }
-
-    public List<CrimeResponseDTO> findAllCrimesByPlate(String plate) {
-        Person person = getPersonByPlateOrThrow(plate);
-        CriminalRecord criminalRecord = getCriminalRecordOrThrow(person);
-        List<Crime> crimeList = getCrimeListOrThrow(criminalRecord);
-
-        return crimeList.stream().map(CrimeResponseDTO::new).collect(Collectors.toList());
-    }
-
-    public CrimeResponseDTO findCrimeByPlateAndId(String plate, Long id) {
-        Person person = getPersonByPlateOrThrow(plate);
-        CriminalRecord criminalRecord = getCriminalRecordOrThrow(person);
-        List<Crime> crimeList = getCrimeListOrThrow(criminalRecord);
-
-        Crime crime = crimeList.stream().filter(c -> c.getId().equals(id)).
-                findFirst().orElseThrow(() -> new CrimeNotFoundException(id, plate));
-
-        return new CrimeResponseDTO(crime);
-    }
-
-    private Person getPersonByPlateOrThrow(String plate) {
-        return personRepository.findByPlate(plate).orElseThrow(() -> new PersonNotFoundException(plate));
-    }
-
-    private CriminalRecord getCriminalRecordOrThrow(Person person) {
-        CriminalRecord criminalRecord = person.getCriminalRecord();
-
-        if (criminalRecord == null) {
-            throw new CriminalRecordNotFoundException("Ficha Criminal não encontrada para placa [" + person.getPlate() + "].");
-        }
-
-        return criminalRecord;
-    }
-
-    private List<Crime> getCrimeListOrThrow(CriminalRecord criminalRecord) {
-        List<Crime> crimeList = criminalRecord.getCrimeList();
-
-        if (crimeList == null || crimeList.isEmpty()) {
-            throw new CrimeNotFoundException("Não há crimes encontrados para placa [" + criminalRecord.getPerson().getPlate() + "].");
-        }
-
-        return crimeList;
     }
 }

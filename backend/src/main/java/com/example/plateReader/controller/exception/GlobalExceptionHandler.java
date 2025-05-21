@@ -1,8 +1,6 @@
 package com.example.plateReader.controller.exception;
 
-import com.example.plateReader.service.exception.CrimeNotFoundException;
-import com.example.plateReader.service.exception.CriminalRecordNotFoundException;
-import com.example.plateReader.service.exception.PersonNotFoundException;
+import com.example.plateReader.service.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +12,21 @@ import java.time.Instant;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ResponseEntity<StandardError> vehicleNotFound(VehicleNotFoundException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Vehicle not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
 
     @ExceptionHandler(PersonNotFoundException.class)
     public ResponseEntity<StandardError> personNotFound(PersonNotFoundException e, WebRequest request) {
@@ -57,6 +70,20 @@ public class GlobalExceptionHandler {
                 request.getDescription(false).replace("uri=", "")
         );
 
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<StandardError> handleInvalidData(InvalidDataException e, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Resource not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
         return ResponseEntity.status(status).body(error);
     }
 

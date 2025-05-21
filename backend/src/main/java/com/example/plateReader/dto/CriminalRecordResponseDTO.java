@@ -13,23 +13,15 @@ import java.util.stream.Collectors;
 public class CriminalRecordResponseDTO {
 
     private Long id;
-    private PersonResponseDTO person;
-
     private List<CrimeResponseDTO> crimesList = new ArrayList<>();
 
     public CriminalRecordResponseDTO(CriminalRecord criminalRecord) {
         this.id = criminalRecord.getId();
-        this.person = new PersonResponseDTO(criminalRecord.getPerson());
-
         setCrimesListFromCriminalRecord(criminalRecord);
     }
 
     public Long getId() {
         return id;
-    }
-
-    public PersonResponseDTO getPerson() {
-        return person;
     }
 
     public List<CrimeResponseDTO> getCrimesList() {

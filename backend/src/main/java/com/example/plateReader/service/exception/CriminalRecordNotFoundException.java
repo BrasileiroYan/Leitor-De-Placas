@@ -7,6 +7,6 @@ public class CriminalRecordNotFoundException extends RuntimeException {
     }
 
     public CriminalRecordNotFoundException(Long id) {
-        super("Ficha Criminal não encontrada. ID: " + id);
+        super("Ficha Criminal com Id [" + id + "] não encontrada.");
     }
 }

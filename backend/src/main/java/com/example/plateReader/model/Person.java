@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.example.plateReader.model.enums.LicenseCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,14 +17,18 @@ public class Person implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    @Setter private String plate;
-
     @Setter private String fullName;
     @Setter private String genero;
     @Setter private String rg;
     @Setter private String cpf;
     @Setter private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Setter private LicenseCategory licenseCategory;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Vehicle> vehicles = new ArrayList<>();
 
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     @Setter private CriminalRecord criminalRecord;
@@ -30,21 +36,17 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String plate, String fullName, String genero, String rg, String cpf, LocalDate birthDate) {
-        this.plate = plate;
+    public Person(String fullName, String genero, String rg, String cpf, LocalDate birthDate, LicenseCategory licenseCategory) {
         this.fullName = fullName;
         this.genero = genero;
         this.rg = rg;
         this.cpf = cpf;
         this.birthDate = birthDate;
+        this.licenseCategory = licenseCategory;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public String getPlate() {
-        return plate;
     }
 
     public String getFullName() {
@@ -67,7 +69,23 @@ public class Person implements Serializable {
         return birthDate;
     }
 
+    public LicenseCategory getLicenseCategory() {
+        return licenseCategory;
+    }
+
     public CriminalRecord getCriminalRecord() {
         return criminalRecord;
+    }
+
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void addVehicle(Vehicle vehicle) {
+        vehicles.add(vehicle);
+    }
+
+    public void removeVehicle(Vehicle vehicle) {
+        vehicles.remove(vehicle);
     }
 }

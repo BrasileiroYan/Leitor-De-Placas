@@ -3,10 +3,15 @@ package com.example.plateReader.config;
 import com.example.plateReader.model.Crime;
 import com.example.plateReader.model.CriminalRecord;
 import com.example.plateReader.model.Person;
+import com.example.plateReader.model.Vehicle;
 import com.example.plateReader.model.enums.CrimeStatus;
+import com.example.plateReader.model.enums.IpvaStatus;
+import com.example.plateReader.model.enums.LicenseCategory;
+import com.example.plateReader.model.enums.VehicleType;
 import com.example.plateReader.repository.CrimeRepository;
 import com.example.plateReader.repository.CriminalRecordRepository;
 import com.example.plateReader.repository.PersonRepository;
+import com.example.plateReader.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -29,14 +34,17 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private CriminalRecordRepository criminalRecordRepository;
 
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
 
-        Person p1 = new Person("ABC1234", "João Silva", "Masculino", "12345678", "123.456.789-00", LocalDate.parse("1990-01-15"));
-        Person p2 = new Person("XYZ9876", "Maria Souza", "Feminino", "87654321", "987.654.321-00", LocalDate.parse("1985-06-30"));
-        Person p3 = new Person("LMN4567", "Carlos Pereira", "Masculino", "45678912", "456.789.123-00", LocalDate.parse("2000-11-20"));
-        Person p4 = new Person("PUM5050", "Regina Silva", "Feminino", "45018650", "376.019.188-00", LocalDate.parse("2002-05-14"));
+        Person p1 = new Person("João Silva", "Masculino", "12345678", "123.456.789-00", LocalDate.parse("1990-01-15"), LicenseCategory.AB);
+        Person p2 = new Person("Maria Souza", "Feminino", "87654321", "987.654.321-00", LocalDate.parse("1985-06-30"), LicenseCategory.A);
+        Person p3 = new Person("Carlos Pereira", "Masculino", "45678912", "456.789.123-00", LocalDate.parse("2000-11-20"), LicenseCategory.B);
+        Person p4 = new Person("Regina Silva", "Feminino", "45018650", "376.019.188-00", LocalDate.parse("2002-05-14"), LicenseCategory.AB);
 
         personRepository.save(p1);
         personRepository.save(p2);
@@ -75,6 +83,18 @@ public class TestConfig implements CommandLineRunner {
         criminalRecordRepository.save(cr2);
         criminalRecordRepository.save(cr3);
         criminalRecordRepository.save(cr4);
+
+        Vehicle v1 = new Vehicle("ABC1234", "Honda", "Civic", "Preto", 2018, IpvaStatus.PAGO, VehicleType.CARRO, p1);
+        Vehicle v2 = new Vehicle("XYZ9876", "Toyota", "Corolla", "Branco", 2020, IpvaStatus.PAGO, VehicleType.CARRO, p1);
+        Vehicle v3 = new Vehicle("JKL4567", "Volkswagen", "Gol", "Vermelho", 2015, IpvaStatus.ATRASADO, VehicleType.CARRO, p2);
+        Vehicle v4 = new Vehicle("MNO7890", "Chevrolet", "Onix", "Azul", 2019, IpvaStatus.PAGO, VehicleType.CARRO, p3);
+        Vehicle v5 = new Vehicle("PQR2345", "Ford", "Fiesta", "Cinza", 2017, IpvaStatus.ATRASADO, VehicleType.CARRO, p4);
+
+        vehicleRepository.save(v1);
+        vehicleRepository.save(v2);
+        vehicleRepository.save(v3);
+        vehicleRepository.save(v4);
+        vehicleRepository.save(v5);
 
     }
 }
