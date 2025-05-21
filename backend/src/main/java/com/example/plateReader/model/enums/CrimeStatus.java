@@ -1,9 +1,9 @@
 package com.example.plateReader.model.enums;
 
 public enum CrimeStatus {
-    INVESTIGACAO,
+    SOB_INVESTIGACAO,
     DENUNCIADO,
-    JULGAMENTO,
+    EM_JULGAMENTO,
     CONDENADO,
     CUMPRINDO_PENA,
     PENA_CUMPRIDA,

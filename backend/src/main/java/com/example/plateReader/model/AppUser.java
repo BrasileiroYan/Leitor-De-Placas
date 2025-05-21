@@ -1,5 +1,6 @@
 package com.example.plateReader.model;
 
+import com.example.plateReader.Utils.AppUserUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,13 +19,19 @@ public class AppUser implements Serializable {
     private String username;
     private String password;
 
-    public AppUser(String username, String password) {
-        this.username = username;
-        this.password = password;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public enum Role {
+        STANDARD, ADMIN
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
@@ -32,10 +39,19 @@ public class AppUser implements Serializable {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String rawPassword) {
+        this.password = AppUserUtil.generateHash(rawPassword);
+    }
+
+    public Role getRole() {
+        return this.role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
+
