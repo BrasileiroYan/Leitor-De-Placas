@@ -1,6 +1,7 @@
 package com.example.plateReader.controller.exception;
 
 import com.example.plateReader.service.exception.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,6 +13,36 @@ import java.time.Instant;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<StandardError> usernameAlreadyExists(UsernameAlreadyExistsException e, WebRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Username already exists",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AppUserNotFoundException.class)
+    public ResponseEntity<StandardError> appUserNotFound(AppUserNotFoundException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "User not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
 
     @ExceptionHandler(VehicleNotFoundException.class)
     public ResponseEntity<StandardError> vehicleNotFound(VehicleNotFoundException e, WebRequest request) {

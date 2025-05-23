@@ -6,7 +6,9 @@ import com.example.plateReader.service.AppUserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -19,8 +21,8 @@ public class AppUserController {
     }
 
     @PostMapping
-    public AppUserResponseDTO create(@RequestBody AppUserRequestDTO request) {
-        return appUserService.createUser(request);
+    public ResponseEntity<AppUserResponseDTO> create(@RequestBody AppUserRequestDTO request) {
+        return ResponseEntity.ok().body(appUserService.createUser(request));
     }
 
     @GetMapping
@@ -30,25 +32,27 @@ public class AppUserController {
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/id/{id}")
     public ResponseEntity<AppUserResponseDTO> findById(@PathVariable Long id){
         AppUserResponseDTO appUserDTO = appUserService.findById(id);
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/{username}")
+    @GetMapping(path = "/username/{username}")
     public ResponseEntity<AppUserResponseDTO> findByUsername(@PathVariable String username){
         AppUserResponseDTO appUserDTO = appUserService.findByUsername(username);
         return ResponseEntity.ok().body(appUserDTO);
     }
 
     @PutMapping("/{id}")
-    public AppUserResponseDTO updateById(@PathVariable Long id, @RequestBody AppUserRequestDTO Request) {
-        return appUserService.updateById(id, Request);
+    public ResponseEntity<AppUserResponseDTO> updateById(@PathVariable Long id, @RequestBody AppUserRequestDTO Request) {
+        return ResponseEntity.ok().body(appUserService.updateById(id, Request));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         appUserService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

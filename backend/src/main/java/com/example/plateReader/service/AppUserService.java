@@ -5,6 +5,7 @@ import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.model.AppUser;
 import com.example.plateReader.repository.AppUserRepository;
 import com.example.plateReader.service.exception.AppUserNotFoundException;
+import com.example.plateReader.service.exception.UsernameAlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,18 @@ public class AppUserService {
     }
 
     public AppUserResponseDTO createUser(AppUserRequestDTO request) {
+
+        if (appUserRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(request.getUsername());
+        }
+
         AppUser user = new AppUser();
         user.setUsername(request.getUsername());
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRole(request.getRole());
+
         appUserRepository.save(user);
+
         return new AppUserResponseDTO(user);
     }
 
@@ -69,6 +77,10 @@ public class AppUserService {
     }
 
     public void deleteById(Long id) {
+        if (!appUserRepository.existsById(id)) {
+            throw new AppUserNotFoundException(id);
+        }
+
         appUserRepository.deleteById(id);
     }
 }
