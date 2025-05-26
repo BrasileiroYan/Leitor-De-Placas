@@ -10,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.Instant;
+import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -131,5 +132,12 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(OcrProcessingException.class)
+    public ResponseEntity<Map<String, String>> handleOcrException(NoHandlerFoundException e) {
+        HttpStatus status = HttpStatus.BAD_GATEWAY;
+
+        return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
     }
 }
