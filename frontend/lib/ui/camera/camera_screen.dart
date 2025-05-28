@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/_core/app_colors.dart';
-import 'package:frontend/ui/confirmation/confirmation_screen.dart';
 
 class CameraScreen extends StatelessWidget {
   const CameraScreen({super.key});
@@ -32,12 +31,7 @@ class CameraScreen extends StatelessWidget {
                     SizedBox(height: 32, width: double.infinity),
                     IconButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConfirmationScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, "confirmation");
                       },
                       icon: Icon(Icons.camera),
                     ),

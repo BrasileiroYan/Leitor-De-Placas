@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/_core/widgets/help_widget.dart';
-import 'package:frontend/ui/home/home_screen.dart';
 import 'package:frontend/ui/_core/app_colors.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -36,9 +35,8 @@ class LoginScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   Column(
-                    spacing: 16,
+                    spacing: 4,
                     children: [
                       DecoratedBox(
                         decoration: BoxDecoration(
@@ -59,6 +57,7 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: 12),
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -78,16 +77,28 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, "password_recovery");
+                          },
+                          child: Text(
+                            "Esqueci minha senha  ",
+                            style: TextStyle(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.blue,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
+                      Navigator.pushReplacementNamed(context, "home");
                     },
                     style: ButtonStyle(
                       foregroundColor: WidgetStatePropertyAll(Colors.white),
@@ -106,7 +117,7 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ),
-          HelpWidget(lightMode: true),
+          Positioned(bottom: 16, left: 16, child: HelpWidget(lightMode: true)),
         ],
       ),
     );

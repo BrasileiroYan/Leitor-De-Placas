@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/_core/app_colors.dart';
 import 'package:frontend/ui/_core/widgets/help_widget.dart';
-import 'package:frontend/ui/camera/camera_screen.dart';
-import 'package:frontend/ui/plate_data/plate_data_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -47,12 +45,7 @@ class HomeScreen extends StatelessWidget {
                           width: 128,
                           child: IconButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CameraScreen(),
-                                ),
-                              );
+                              Navigator.pushNamed(context, "camera");
                             },
                             icon: Icon(Icons.image_outlined, size: 96),
                             padding: EdgeInsets.zero,
@@ -135,12 +128,7 @@ class HomeScreen extends StatelessWidget {
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PlateDataScreen(),
-                                      ),
-                                    );
+                                    Navigator.pushNamed(context, "plate_data");
                                   },
                                   icon: Icon(Icons.send),
                                   style: ButtonStyle(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/ui/_core/app_colors.dart';
 import 'package:frontend/ui/_core/widgets/help_widget.dart';
 // import 'package:frontend/ui/_core/widgets/help_widget.dart';
-import 'package:frontend/ui/plate_data/plate_data_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   const ConfirmationScreen({super.key});
@@ -73,12 +72,7 @@ class ConfirmationScreen extends StatelessWidget {
                           width: 192,
                           child: ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PlateDataScreen(),
-                                ),
-                              );
+                              Navigator.pushNamed(context, "plate_data");
                             },
                             style: ButtonStyle(
                               foregroundColor: WidgetStatePropertyAll(
