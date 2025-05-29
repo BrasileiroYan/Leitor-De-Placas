@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/_core/app_colors.dart';
+
+import 'package:frontend/ui/components/_core/app_colors.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
   const PasswordRecoveryScreen({super.key});
