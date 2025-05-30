@@ -1,6 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:frontend/ui/components/widgets/denied_camera_permission_dialog.dart';
 import 'package:frontend/ui/components/widgets/help_widget.dart';
+import 'package:frontend/ui/components/widgets/request_camera_permission_dialog.dart.dart';
+import 'package:frontend/ui/screens/camera_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -45,7 +50,7 @@ class HomeScreen extends StatelessWidget {
                           width: 128,
                           child: IconButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, "camera");
+                              _handleCameraClicked(context);
                             },
                             icon: Icon(Icons.image_outlined, size: 96),
                             padding: EdgeInsets.zero,
@@ -262,5 +267,36 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _handleCameraClicked(BuildContext context) async {
+    List<CameraDescription> listCameras = await availableCameras();
+
+    PermissionStatus cameraPermissionStatus = await Permission.camera.status;
+
+    if (cameraPermissionStatus == PermissionStatus.denied) {
+      if (!context.mounted) return;
+      PermissionStatus? newStatus = await showRequestCameraPermissionDialog(
+        context,
+      );
+
+      if (newStatus != null) {
+        cameraPermissionStatus = newStatus;
+      }
+    }
+
+    if (cameraPermissionStatus != PermissionStatus.denied &&
+        cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
+      if (!context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraScreen(cameraDescription: listCameras[0]),
+        ),
+      );
+    } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
+      if (!context.mounted) return;
+      await showDeniedCameraPermissionDialog(context);
+    }
   }
 }

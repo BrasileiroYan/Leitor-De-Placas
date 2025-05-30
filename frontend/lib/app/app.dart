@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/screens/camera_screen.dart';
 import 'package:frontend/ui/screens/confirmation_screen.dart';
 import 'package:frontend/ui/screens/home_screen.dart';
 import 'package:frontend/ui/screens/login_screen.dart';
@@ -17,7 +16,6 @@ class MainApp extends StatelessWidget {
         "login": (context) => const LoginScreen(),
         "password_recovery": (context) => const PasswordRecoveryScreen(),
         "home": (context) => const HomeScreen(),
-        "camera": (context) => const CameraScreen(),
         "confirmation": (context) => const ConfirmationScreen(),
         "plate_data": (context) => const PlateDataScreen(),
       },
