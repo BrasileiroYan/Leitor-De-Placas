@@ -288,10 +288,18 @@ class HomeScreen extends StatelessWidget {
     if (cameraPermissionStatus != PermissionStatus.denied &&
         cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
       if (!context.mounted) return;
+
+      int indexCameraDescription = listCameras.indexWhere(
+        (e) => e.lensDirection == CameraLensDirection.back,
+      );
+
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CameraScreen(cameraDescription: listCameras[0]),
+          builder:
+              (context) => CameraScreen(
+                cameraDescription: listCameras[indexCameraDescription],
+              ),
         ),
       );
     } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {

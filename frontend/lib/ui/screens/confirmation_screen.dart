@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/help_widget.dart';
 
 class ConfirmationScreen extends StatelessWidget {
-  const ConfirmationScreen({super.key});
+  final Uint8List imageBytes;
+  const ConfirmationScreen(this.imageBytes, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +43,14 @@ class ConfirmationScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Image.asset(
-                          'assets/images/plate_placeholder.png',
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Align(
+                            alignment: Alignment(0, -0.21),
+                            widthFactor: 0.9,
+                            heightFactor: 0.15,
+                            child: Image.memory(imageBytes),
+                          ),
                         ), //Meant to receive the picture taken in CameraScreen
                       ],
                     ),
