@@ -12,6 +12,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "SFA",
       routes: {
         "login": (context) => const LoginScreen(),
         "password_recovery": (context) => const PasswordRecoveryScreen(),
