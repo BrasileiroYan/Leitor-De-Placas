@@ -2,9 +2,7 @@ package com.example.plateReader.dto;
 
 import com.example.plateReader.model.AppUser;
 import com.example.plateReader.model.enums.Role;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 public class AppUserResponseDTO {
@@ -33,7 +31,7 @@ public class AppUserResponseDTO {
         return this.password;
     }
 
-    public Role role() {
+    public Role getRole() {
         return this.role;
     }
 }

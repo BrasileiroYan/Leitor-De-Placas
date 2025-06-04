@@ -40,7 +40,7 @@ public class AppUser implements Serializable {
     }
 
     public void setPassword(String rawPassword) {
-        this.password = AppUserUtil.generateHash(rawPassword);
+        this.password = rawPassword;
     }
 
     public Role getRole() {

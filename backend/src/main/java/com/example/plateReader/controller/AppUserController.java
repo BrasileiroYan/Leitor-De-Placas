@@ -4,24 +4,27 @@ import com.example.plateReader.dto.AppUserRequestDTO;
 import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.service.AppUserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/users")
 public class AppUserController {
 
     private final AppUserService appUserService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AppUserController(AppUserService appUserService){
+    public AppUserController(AppUserService appUserService, PasswordEncoder passwordEncoder){
         this.appUserService = appUserService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
     public ResponseEntity<AppUserResponseDTO> create(@RequestBody AppUserRequestDTO request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        request.setPassword(encodedPassword);
         return ResponseEntity.ok().body(appUserService.createUser(request));
     }
 

@@ -34,5 +34,9 @@ public class AppUserRequestDTO {
     public Role getRole() {
         return this.role;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
 

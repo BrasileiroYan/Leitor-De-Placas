@@ -6,6 +6,9 @@ import com.example.plateReader.model.AppUser;
 import com.example.plateReader.repository.AppUserRepository;
 import com.example.plateReader.service.exception.AppUserNotFoundException;
 import com.example.plateReader.service.exception.UsernameAlreadyExistsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +16,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class AppUserService {
+public class AppUserService implements UserDetailsService {
 
     private final AppUserRepository appUserRepository;
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
 
     public AppUserService(AppUserRepository appUserRepository, PasswordEncoder encoder){
         this.appUserRepository = appUserRepository;
-        this.encoder = encoder;
+        this.passwordEncoder = encoder;
     }
 
     public AppUserResponseDTO createUser(AppUserRequestDTO request) {
@@ -31,7 +34,7 @@ public class AppUserService {
 
         AppUser user = new AppUser();
         user.setUsername(request.getUsername());
-        user.setPassword(encoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
         appUserRepository.save(user);
@@ -57,6 +60,19 @@ public class AppUserService {
         return new AppUserResponseDTO(appUser);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+
+        String roleName = user.getRole().name();
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles(roleName)
+                .build();
+    }
+
     public AppUserResponseDTO updateById(Long id, AppUserRequestDTO request) {
         AppUser user = appUserRepository.findById(id).orElseThrow(() -> new AppUserNotFoundException(id));
 
@@ -64,10 +80,8 @@ public class AppUserService {
             user.setUsername(request.getUsername());
         }
 
-        if(request.getPassword() != null &&
-                !request.getPassword().isBlank() &&
-                !encoder.matches(request.getPassword(), user.getPassword())) {
-            user.setPassword(encoder.encode(request.getPassword()));
+        if(request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(request.getPassword());
         }
 
         user.setRole(request.getRole());
