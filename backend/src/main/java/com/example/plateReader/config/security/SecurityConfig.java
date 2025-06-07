@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -24,13 +25,16 @@ public class SecurityConfig {
 
     private final AuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final CustomSecurityExceptionHandler customSecurityExceptionHandler;
 
     public SecurityConfig(
             AuthenticationFilter jwtAuthFilter,
-            AuthenticationProvider authenticationProvider
+            AuthenticationProvider authenticationProvider,
+            CustomSecurityExceptionHandler customSecurityExceptionHandler
     ) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.authenticationProvider = authenticationProvider;
+        this.customSecurityExceptionHandler = customSecurityExceptionHandler;
     }
 
     @Bean
@@ -38,6 +42,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customSecurityExceptionHandler)
+                        .accessDeniedHandler(customSecurityExceptionHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**").permitAll()
                         .requestMatchers("/admin/**", "/users/**", "/crimes/**", "/criminals/**", "/criminal-records/**", "/vehicles/**", "/ocr/**").hasAuthority("ROLE_ADMIN")

@@ -1,6 +1,5 @@
 package com.example.plateReader.model;
 
-import com.example.plateReader.Utils.AppUserUtil;
 import com.example.plateReader.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
