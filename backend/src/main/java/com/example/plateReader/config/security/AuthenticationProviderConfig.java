@@ -20,5 +20,4 @@ public class AuthenticationProviderConfig {
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
-
 }

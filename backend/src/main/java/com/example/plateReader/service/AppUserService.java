@@ -76,15 +76,21 @@ public class AppUserService implements UserDetailsService {
     public AppUserResponseDTO updateById(Long id, AppUserRequestDTO request) {
         AppUser user = appUserRepository.findById(id).orElseThrow(() -> new AppUserNotFoundException(id));
 
-        if(request.getUsername() != null) {
+        if(request.getUsername() != null && !request.getUsername().equals(user.getUsername())) {
+            if(appUserRepository.findByUsername(request.getUsername()).isPresent()) {
+                throw new UsernameAlreadyExistsException(request.getUsername());
+            }
+
             user.setUsername(request.getUsername());
         }
 
         if(request.getPassword() != null && !request.getPassword().isBlank()) {
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        user.setRole(request.getRole());
+        if(request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
 
         appUserRepository.save(user);
         return new AppUserResponseDTO(user);

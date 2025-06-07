@@ -3,6 +3,7 @@ package com.example.plateReader.controller;
 import com.example.plateReader.dto.AppUserRequestDTO;
 import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.service.AppUserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,8 @@ public class AppUserController {
     }
 
     @PostMapping
-    public ResponseEntity<AppUserResponseDTO> create(@RequestBody AppUserRequestDTO request) {
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
-        request.setPassword(encodedPassword);
+    public ResponseEntity<AppUserResponseDTO> createUser(@Valid @RequestBody AppUserRequestDTO request) {
+
         return ResponseEntity.ok().body(appUserService.createUser(request));
     }
 
@@ -41,7 +41,7 @@ public class AppUserController {
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/username/{username}")
+    @GetMapping(path = "/email/{email}")
     public ResponseEntity<AppUserResponseDTO> findByUsername(@PathVariable String username){
         AppUserResponseDTO appUserDTO = appUserService.findByUsername(username);
         return ResponseEntity.ok().body(appUserDTO);

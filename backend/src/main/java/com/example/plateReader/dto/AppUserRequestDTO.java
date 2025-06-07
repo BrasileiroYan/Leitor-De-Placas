@@ -2,16 +2,20 @@ package com.example.plateReader.dto;
 
 import com.example.plateReader.model.AppUser;
 import com.example.plateReader.model.enums.Role;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.plateReader.validation.user.EmailPRF;
+import com.example.plateReader.validation.user.ValidPassword;
+import jakarta.validation.constraints.NotBlank;
 
-@Setter
 public class AppUserRequestDTO {
 
+    @NotBlank(message = "Username required")
+    @EmailPRF
     private String username;
+
+    @NotBlank(message = "Password required")
+    @ValidPassword
     private String password;
+
     private Role role;
 
     public AppUserRequestDTO() {
@@ -35,8 +39,15 @@ public class AppUserRequestDTO {
         return this.role;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
-}
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
+}
