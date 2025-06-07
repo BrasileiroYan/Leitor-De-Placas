@@ -1,10 +1,12 @@
 package com.example.plateReader.controller.exception;
 
 import com.example.plateReader.service.exception.*;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -15,6 +17,66 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler({InvalidCredentialsException.class, BadCredentialsException.class})
+    public ResponseEntity<StandardError> handleAuthenticationException(RuntimeException e, WebRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Authentication error",
+                "Credenciais inválidas",
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<StandardError> handleAccessDenied(AuthorizationDeniedException e, WebRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Acess denied",
+                "Você não tem permissão para acessar este recurso",
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler({ExpiredJwtTokenException.class, JwtAuthenticationException.class, CustomMalformedJwtException.class})
+    public ResponseEntity<StandardError> handleJwtException(RuntimeException e, WebRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Invalid token",
+                e instanceof ExpiredJwtTokenException ? "Token expirado" : "Token com assinatura inválida",
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<StandardError> handleAuthenticationFailure(AuthenticationException e, WebRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Authentication failure",
+                "As credenciais de autenticação não foram fornecidas ou são inválidas. Acesso não autorizado.",
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public ResponseEntity<StandardError> usernameAlreadyExists(UsernameAlreadyExistsException e, WebRequest request) {

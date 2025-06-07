@@ -8,34 +8,43 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import com.example.plateReader.dto.AuthRequestDTO;
+import com.example.plateReader.dto.AuthResponseDTO;
+import com.example.plateReader.service.exception.InvalidCredentialsException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    @Autowired
     private final AuthenticationManager authenticationManager;
-
-    @Autowired
     private final JwtService jwtService;
 
-    @Autowired
-    private final UserDetailsService userDetailsService;
-
-    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService, UserDetailsService userDetailsService) {
+    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
     }
 
-    public AuthResponseDTO authenticate(AuthRequestDTO request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+    public AuthResponseDTO authenticateUser(AuthRequestDTO authRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUsername(),
+                            authRequest.getPassword()
+                    )
+            );
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtService.generateToken(userDetails);
 
-        String token = jwtService.generateToken(request.getUsername());
+            return new AuthResponseDTO(token);
 
-        return new AuthResponseDTO(token);
+        } catch (AuthenticationException e) {
+            throw new InvalidCredentialsException("Credenciais inválidas");
+        }
     }
 }

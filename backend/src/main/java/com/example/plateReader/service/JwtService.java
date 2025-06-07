@@ -1,7 +1,10 @@
 package com.example.plateReader.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import com.example.plateReader.service.exception.CustomMalformedJwtException;
+import com.example.plateReader.service.exception.ExpiredJwtTokenException;
+import com.example.plateReader.service.exception.JwtAuthenticationException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,36 +34,18 @@ public class JwtService {
     }
 
     public String generateToken(String username) {
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + expirationTime);
+
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSigningKey(), Jwts.SIG.HS256)
+                .subject(username)
+                .issuedAt(now)
+                .expiration(expirationDate)
+                .signWith(getSigningKey())
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
-    }
-
-    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -70,20 +55,39 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = getUsernameFromToken(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (ExpiredJwtException e) {
+        throw new ExpiredJwtTokenException("Token JWT expirado", e);
+        }
+    }
 
-        return extractClaim(token, Claims::getExpiration).before(new Date());
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (SignatureException e) {
+            throw new CustomMalformedJwtException("Assinatura do token JWT é inválida.", e);
+        } catch (MalformedJwtException e) {
+            throw new CustomMalformedJwtException("Token JWT malformado.", e);
+        } catch (ExpiredJwtTokenException e) {
+            throw new ExpiredJwtTokenException("Token JWT expirou.", e);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtAuthenticationException("Token JWT não é suportado.", e);
+        } catch (IllegalArgumentException e) {
+            throw new JwtAuthenticationException("A string do token JWT está vazia ou é nula.", e);
+        }
     }
 }

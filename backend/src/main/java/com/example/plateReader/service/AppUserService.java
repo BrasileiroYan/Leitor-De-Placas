@@ -62,7 +62,7 @@ public class AppUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário com o nome " + username + "não encontrado"));
 
         String roleName = user.getRole().name();
 
