@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VehicleResponseDTO {
 
-    private Long id;
     private String plate;
     private String vehicleType;
     private String brand;
@@ -22,7 +21,6 @@ public class VehicleResponseDTO {
             throw new InvalidDataException("O veículo com placa [" + vehicle.getPlate() + "] não possui proprietário.");
         }
 
-        this.id = vehicle.getId();
         this.plate = vehicle.getPlate();
         this.vehicleType = vehicle.getVehicleType().name();
         this.brand = vehicle.getBrand();
@@ -31,10 +29,6 @@ public class VehicleResponseDTO {
         this.fabricationYear = vehicle.getFabricationYear();
         this.ipvaStatus = vehicle.getIpvaStatus().name();
         this.owner = new PersonResponseDTO(vehicle.getOwner());
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getPlate() {

@@ -14,6 +14,7 @@ import com.example.plateReader.service.exception.CriminalRecordNotFoundException
 import com.example.plateReader.service.exception.PersonNotFoundException;
 import com.example.plateReader.service.exception.VehicleNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,8 +34,10 @@ public class VehicleService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public VehicleResponseDTO findByPlate(String plate) {
-        Vehicle vehicle = getVehicleByPlateOrThrow(plate);
+        Vehicle vehicle = vehicleRepository.findByPlateWithDetails(plate)
+                .orElseThrow(() -> new VehicleNotFoundException(plate));
 
         return new VehicleResponseDTO(vehicle);
     }

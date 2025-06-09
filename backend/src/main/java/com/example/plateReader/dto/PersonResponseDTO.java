@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 public class PersonResponseDTO {
 
-    private Long id;
     private String fullName;
     private String rg;
     private String cpf;
@@ -21,7 +20,6 @@ public class PersonResponseDTO {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public PersonResponseDTO(Person person) {
-        this.id = person.getId();
         this.fullName = person.getFullName();
         this.rg = person.getRg();
         this.cpf = person.getCpf();
@@ -29,10 +27,6 @@ public class PersonResponseDTO {
         this.genero = person.getGenero();
         this.licenseCategory = person.getLicenseCategory().name();
         this.criminalRecord = new CriminalRecordResponseDTO(person.getCriminalRecord());
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFullName() {
@@ -57,5 +51,9 @@ public class PersonResponseDTO {
 
     public String getLicenseCategory() {
         return licenseCategory;
+    }
+
+    public CriminalRecordResponseDTO getCriminalRecord() {
+        return criminalRecord;
     }
 }

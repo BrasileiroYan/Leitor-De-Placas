@@ -12,16 +12,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class CriminalRecordResponseDTO {
 
-    private Long id;
     private List<CrimeResponseDTO> crimesList = new ArrayList<>();
 
     public CriminalRecordResponseDTO(CriminalRecord criminalRecord) {
-        this.id = criminalRecord.getId();
         setCrimesListFromCriminalRecord(criminalRecord);
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public List<CrimeResponseDTO> getCrimesList() {
