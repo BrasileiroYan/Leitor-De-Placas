@@ -37,7 +37,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/set-password")
+    @PostMapping("/activate-account")
     public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordRequestDTO request) {
         authService.activateAccountAndSetPassword(request.getToken(), request.getNewPassword());
         return ResponseEntity.ok("Senha definida com sucesso. Você já pode fazer o login");

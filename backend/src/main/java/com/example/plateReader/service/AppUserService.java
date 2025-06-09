@@ -28,20 +28,20 @@ public class AppUserService implements UserDetailsService {
         this.passwordEncoder = encoder;
     }
 
-    public AppUserResponseDTO createUser(String username, String rawPassword, Role role) {
+    public AppUserResponseDTO createUserByAdmin(String username) {
         if (appUserRepository.findByUsername(username).isPresent()) {
             throw new UsernameAlreadyExistsException(username);
         }
 
         AppUser user = new AppUser();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setRole(role);
+        user.setPassword(null);
+        user.setRole(Role.STANDARD);
         user.setEnabled(false);
+        appUserRepository.save(user);
 
-        return new AppUserResponseDTO(appUserRepository.save(user));
+        return new AppUserResponseDTO(user);
     }
-
 
     public List<AppUserResponseDTO> findAll(){
         return appUserRepository.findAll()

@@ -7,6 +7,7 @@ import com.example.plateReader.model.AppUser;
 import com.example.plateReader.model.enums.Role;
 import com.example.plateReader.repository.ActivationTokenRespository;
 import com.example.plateReader.repository.AppUserRepository;
+import com.example.plateReader.service.exception.AppUserNotFoundException;
 import com.example.plateReader.service.exception.InvalidActivationTokenException;
 import com.example.plateReader.service.exception.UsernameAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -62,15 +63,13 @@ public class AuthService {
 
     @Transactional
     public void initiateUserActivation(String username) {
-        if (appUserRepository.findByUsername(username).isPresent()) {
-            throw new UsernameAlreadyExistsException(username);
+        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new AppUserNotFoundException(username));
+
+        if (user.isEnabled()) {
+            throw new IllegalStateException("Usuário já está ativo");
         }
 
-        AppUser user = new AppUser();
-        user.setUsername(username);
-        user.setPassword(null);
-        user.setRole(Role.STANDARD);
-        appUserRepository.save(user);
+        activationTokenRespository.findByUser(user).ifPresent(activationTokenRespository::delete);
 
         String tokenString = jwtService.generateToken(username);
 
