@@ -1,10 +1,12 @@
 package com.example.plateReader.controller;
 
+import com.example.plateReader.dto.AdminCreateUserRequestDTO;
 import com.example.plateReader.dto.AppUserRequestDTO;
 import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.service.AppUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,13 @@ public class AppUserController {
     public AppUserController(AppUserService appUserService, PasswordEncoder passwordEncoder){
         this.appUserService = appUserService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping(path = "/admin")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<AppUserResponseDTO> createUserByAdmin(@Valid @RequestBody AdminCreateUserRequestDTO request) {
+
+        return ResponseEntity.ok().body(appUserService.createUserByAdmin(request.getUsername()));
     }
 
     @PostMapping
