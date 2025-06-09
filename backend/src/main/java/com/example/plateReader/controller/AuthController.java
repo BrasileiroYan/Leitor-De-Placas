@@ -2,6 +2,7 @@ package com.example.plateReader.controller;
 
 import com.example.plateReader.dto.AuthRequestDTO;
 import com.example.plateReader.dto.AuthResponseDTO;
+import com.example.plateReader.dto.SetPasswordRequestDTO;
 import com.example.plateReader.service.AuthService;
 import com.example.plateReader.service.JwtService;
 import jakarta.validation.Valid;
@@ -31,8 +32,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AuthRequestDTO authRequest) {
+    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody AuthRequestDTO authRequest) {
         AuthResponseDTO response = authService.authenticateUser(authRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/set-password")
+    public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordRequestDTO request) {
+        authService.activateAccountAndSetPassword(request.getToken(), request.getNewPassword());
+        return ResponseEntity.ok("Senha definida com sucesso. Você já pode fazer o login");
     }
 }

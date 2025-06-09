@@ -1,10 +1,7 @@
 package com.example.plateReader.dto;
 
-import lombok.Setter;
-
 public class AuthRequestDTO {
 
-    @Setter
     private String username;
     private String password;
 

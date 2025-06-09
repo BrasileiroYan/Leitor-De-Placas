@@ -1,13 +1,10 @@
 package com.example.plateReader.controller;
 
-import com.example.plateReader.dto.AdminCreateUserRequestDTO;
 import com.example.plateReader.dto.AppUserRequestDTO;
 import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.service.AppUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,24 +14,14 @@ import java.util.List;
 public class AppUserController {
 
     private final AppUserService appUserService;
-    private final PasswordEncoder passwordEncoder;
 
-    public AppUserController(AppUserService appUserService, PasswordEncoder passwordEncoder){
+    public AppUserController(AppUserService appUserService){
         this.appUserService = appUserService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @PostMapping(path = "/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<AppUserResponseDTO> createUserByAdmin(@Valid @RequestBody AdminCreateUserRequestDTO request) {
-
-        return ResponseEntity.ok().body(appUserService.createUserByAdmin(request.getUsername()));
     }
 
     @PostMapping
     public ResponseEntity<AppUserResponseDTO> createUser(@Valid @RequestBody AppUserRequestDTO request) {
-
-        return ResponseEntity.ok().body(appUserService.createUser(request));
+        return ResponseEntity.ok().body(appUserService.createUser(request.getUsername(), request.getPassword(), request.getRole()));
     }
 
     @GetMapping
@@ -50,15 +37,15 @@ public class AppUserController {
         return ResponseEntity.ok().body(appUserDTO);
     }
 
-    @GetMapping(path = "/email/{email}")
+    @GetMapping(path = "/username/{username}")
     public ResponseEntity<AppUserResponseDTO> findByUsername(@PathVariable String username){
         AppUserResponseDTO appUserDTO = appUserService.findByUsername(username);
         return ResponseEntity.ok().body(appUserDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppUserResponseDTO> updateById(@PathVariable Long id, @RequestBody AppUserRequestDTO Request) {
-        return ResponseEntity.ok().body(appUserService.updateById(id, Request));
+    public ResponseEntity<AppUserResponseDTO> updateById(@PathVariable Long id, @Valid @RequestBody AppUserRequestDTO request) {
+        return ResponseEntity.ok().body(appUserService.updateById(id, request));
     }
 
     @DeleteMapping("/{id}")
