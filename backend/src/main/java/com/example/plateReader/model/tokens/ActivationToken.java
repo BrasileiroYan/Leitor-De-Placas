@@ -1,5 +1,6 @@
-package com.example.plateReader.model;
+package com.example.plateReader.model.tokens;
 
+import com.example.plateReader.model.AppUser;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

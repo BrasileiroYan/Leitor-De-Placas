@@ -1,8 +1,6 @@
 package com.example.plateReader.controller;
 
-import com.example.plateReader.dto.AuthRequestDTO;
-import com.example.plateReader.dto.AuthResponseDTO;
-import com.example.plateReader.dto.SetPasswordRequestDTO;
+import com.example.plateReader.dto.*;
 import com.example.plateReader.service.AuthService;
 import com.example.plateReader.service.JwtService;
 import jakarta.validation.Valid;
@@ -41,5 +39,17 @@ public class AuthController {
     public ResponseEntity<String> setPassword(@Valid @RequestBody SetPasswordRequestDTO request) {
         authService.activateAccountAndSetPassword(request.getToken(), request.getNewPassword());
         return ResponseEntity.ok("Senha definida com sucesso. Você já pode fazer o login");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> requestPasswordReset(@Valid @RequestBody ForgotPasswordRequestDTO request) {
+        authService.initiatePasswordReset(request.getUsername());
+        return ResponseEntity.ok("Se uma conta associada a este e-mail for encontrada, um link de redefinição de senha foi enviado.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> completePasswordReset(@Valid @RequestBody ResetPasswordRequestDTO request) {
+        authService.completePasswordReset(request.getResetToken(), request.getNewPassword());
+        return ResponseEntity.ok("Senha redefinida com sucesso. Você já pode fazer o login.");
     }
 }

@@ -1,22 +1,26 @@
 package com.example.plateReader.controller.exception;
 
 import com.example.plateReader.service.exception.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.Instant;
 import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler({InvalidCredentialsException.class, BadCredentialsException.class})
     public ResponseEntity<StandardError> handleAuthenticationException(RuntimeException e, WebRequest request) {
@@ -198,7 +202,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(OcrProcessingException.class)
-    public ResponseEntity<Map<String, String>> handleOcrException(NoHandlerFoundException e) {
+    public ResponseEntity<Map<String, String>> handleOcrException(OcrProcessingException e) {
         HttpStatus status = HttpStatus.BAD_GATEWAY;
 
         return ResponseEntity.status(status).body(Map.of("error", e.getMessage()));
@@ -234,8 +238,73 @@ public class GlobalExceptionHandler {
         StandardError error = new StandardError(
                 Instant.now(),
                 status.value(),
-                "Activation Token error",
+                "Invalid Activation Token",
                 e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(InvalidPasswordResetTokenException.class)
+    public ResponseEntity<StandardError> handleInvalidPasswordResetTokenException(InvalidPasswordResetTokenException e, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Invalid Reset Token",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<StandardError> handleEmailSendingException(EmailSendingException e, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Email Service error",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(SamePasswordException.class)
+    public ResponseEntity<StandardError> handleSamePasswordException(SamePasswordException e, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Same Password error",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+
+    // DEIXE ESSE HANDLER NO FINAL
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<StandardError> handleAllRuntimeExceptions(RuntimeException e, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        logger.error("Erro inesperado no servidor: {}", e.getMessage(), e);
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Internal Server Error",
+                "Ocorreu um erro inesperado no servidor. Por favor, tente novamente mais tarde.",
                 request.getDescription(false).replace("uri=", "")
         );
 
