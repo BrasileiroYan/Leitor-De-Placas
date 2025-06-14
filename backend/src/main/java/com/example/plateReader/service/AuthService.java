@@ -47,6 +47,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    @Transactional(readOnly = true)
     public AuthResponseDTO authenticateUser(AuthRequestDTO authRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -68,7 +69,8 @@ public class AuthService {
 
     @Transactional
     public void initiateUserActivation(String username) {
-        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new AppUserNotFoundException(username));
+        AppUser user = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new AppUserNotFoundException(username));
 
         if (user.isEnabled()) {
             throw new IllegalStateException("Usuário já está ativo");
@@ -169,5 +171,28 @@ public class AuthService {
         passwordResetTokenRepository.delete(passwordResetToken);
 
         logger.info("Senha do usuário [{}] redefinida com sucesso", user.getUsername());
+    }
+
+    @Transactional
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        // Busca usuário por meio de seu Id
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new AppUserNotFoundException(userId));
+
+        // Verifica se senha atual recebida corresponde com senha armazenada no banco
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new InvalidCredentialsException("Senha atual incorreta.");
+        }
+
+        // Verifica se nova senha não é igual a senha atual.
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new SamePasswordException("A nova senha não pode ser igual à senha anterior.");
+        }
+
+        // Modifica e salva nova senha
+        user.setPassword(passwordEncoder.encode(newPassword));
+        appUserRepository.save(user);
+
+        logger.info("Senha do usuário com ID {} alterada com sucesso.", userId);
     }
 }

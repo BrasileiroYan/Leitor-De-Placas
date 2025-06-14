@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,7 +32,7 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 status.value(),
                 "Authentication error",
-                "Credenciais inválidas",
+                e.getMessage(),
                 request.getDescription(false).replace("uri=", "")
         );
 
@@ -213,12 +215,17 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 
         StringBuilder messages = new StringBuilder();
-        e.getBindingResult().getFieldErrors().forEach(error -> {
+
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
             messages.append(error.getField())
                     .append(": ")
                     .append(error.getDefaultMessage())
                     .append("; ");
-        });
+        }
+
+        for (ObjectError error : e.getBindingResult().getGlobalErrors()) {
+            messages.append(error.getDefaultMessage()).append("; ");
+        }
 
         StandardError error = new StandardError(
                 Instant.now(),

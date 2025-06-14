@@ -1,6 +1,5 @@
 package com.example.plateReader.dto;
 
-import com.example.plateReader.validation.user.EmailPRF;
 import jakarta.validation.constraints.NotBlank;
 
 public class AdminCreateUserRequestDTO {

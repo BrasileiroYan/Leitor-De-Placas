@@ -63,15 +63,10 @@ public class AppUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser user = appUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário com o nome " + username + "não encontrado"));
+        AppUser user = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        String roleName = user.getRole().name();
-
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles(roleName)
-                .build();
+        return user;
     }
 
     public AppUserResponseDTO updateById(Long id, AppUserRequestDTO request) {
@@ -104,6 +99,4 @@ public class AppUserService implements UserDetailsService {
 
         appUserRepository.deleteById(id);
     }
-
-
 }

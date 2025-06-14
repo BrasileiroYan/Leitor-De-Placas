@@ -1,9 +1,7 @@
 package com.example.plateReader.dto;
 
-import lombok.Getter;
-
-@Getter
 public class AuthResponseDTO {
+
     private String token;
 
     public AuthResponseDTO() {}

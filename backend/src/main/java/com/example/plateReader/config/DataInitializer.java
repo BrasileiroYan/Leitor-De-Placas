@@ -23,17 +23,19 @@ public class DataInitializer implements CommandLineRunner {
         assert userRepository != null;
         if (userRepository.findByUsername("admin").isEmpty()) {
             AppUser admin = new AppUser();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin123")); //
+            admin.setUsername("admin@prf.gov.br");
+            admin.setPassword(passwordEncoder.encode("@Admin_PRF123")); //
             admin.setRole(Role.ADMIN);
+            admin.setEnabled(true);
             userRepository.save(admin);
         }
 
         if (userRepository.findByUsername("user").isEmpty()) {
             AppUser user = new AppUser();
-            user.setUsername("user");
-            user.setPassword(passwordEncoder.encode("user123"));
+            user.setUsername("user@prf.gov.br");
+            user.setPassword(passwordEncoder.encode("@Usuario123"));
             user.setRole(Role.STANDARD);
+            user.setEnabled(true);
             userRepository.save(user);
         }
     }

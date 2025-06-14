@@ -2,8 +2,8 @@ package com.example.plateReader.dto;
 
 import com.example.plateReader.model.AppUser;
 import com.example.plateReader.model.enums.Role;
-import com.example.plateReader.validation.user.EmailPRF;
-import com.example.plateReader.validation.user.ValidPassword;
+import com.example.plateReader.validation.EmailPRF;
+import com.example.plateReader.validation.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 
 public class AppUserRequestDTO {

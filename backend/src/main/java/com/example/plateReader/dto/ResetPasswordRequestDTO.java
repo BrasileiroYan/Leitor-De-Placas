@@ -1,6 +1,6 @@
 package com.example.plateReader.dto;
 
-import com.example.plateReader.validation.user.ValidPassword;
+import com.example.plateReader.validation.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 
 public class ResetPasswordRequestDTO {

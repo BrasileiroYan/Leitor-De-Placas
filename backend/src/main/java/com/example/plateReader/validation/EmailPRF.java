@@ -1,4 +1,4 @@
-package com.example.plateReader.validation.user;
+package com.example.plateReader.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
