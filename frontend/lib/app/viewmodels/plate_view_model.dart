@@ -2,7 +2,7 @@ import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/app/services/plate_service.dart';
 
 class PlateViewModel {
-  Vehicle _vehicle = Vehicle();
+  Vehicle _vehicle = Vehicle.getExample();
   Future<Vehicle> getVehicleFromImage() async {
     //TODO: Review code for better utilization
     final VehicleService service = ImageVehicleService();

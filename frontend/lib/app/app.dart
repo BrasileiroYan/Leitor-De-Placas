@@ -13,7 +13,7 @@ class MainApp extends StatelessWidget {
       routes: {
         "login": (context) => const LoginScreen(),
         "password_recovery": (context) => const PasswordRecoveryScreen(),
-        "home": (context) => const HomeScreen(),
+        "home": (context) => HomeScreen(),
       },
       initialRoute: "login",
       // home: LoginScreen(),
