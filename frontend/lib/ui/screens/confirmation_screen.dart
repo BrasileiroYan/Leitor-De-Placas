@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/help_widget.dart';
-import 'package:frontend/ui/screens/plate_data_screen.dart';
+import 'package:frontend/ui/screens/vehicle_data_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final Uint8List imageBytes;

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:frontend/app/helpers/date_parser.dart';
 import 'package:frontend/app/models/crime.dart';
 
 class Person {
@@ -12,7 +13,7 @@ class Person {
   DateTime birthDate;
   String genero;
   String licenseCategory;
-  List<Crime?> crimesList;
+  List<Crime> crimesList;
 
   Person({
     required this.fullName,
@@ -31,7 +32,7 @@ class Person {
     DateTime? birthDate,
     String? genero,
     String? licenseCategory,
-    List<Crime?>? crimesList,
+    List<Crime>? crimesList,
   }) {
     return Person(
       fullName: fullName ?? this.fullName,
@@ -49,12 +50,10 @@ class Person {
       'fullName': fullName,
       'rg': rg,
       'cpf': cpf,
-      'birthDate': "${birthDate.day}/${birthDate.month}/${birthDate.year}",
+      'birthDate': birthDate.millisecondsSinceEpoch,
       'genero': genero,
       'licenseCategory': licenseCategory,
-      'criminalRecord': {
-        'crimesList': crimesList.map((x) => x?.toMap()).toList(),
-      },
+      'crimesList': crimesList.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -63,16 +62,13 @@ class Person {
       fullName: map['fullName'] as String,
       rg: map['rg'] as String,
       cpf: map['cpf'] as String,
-      birthDate: DateTime.parse(
-        (map['birthDate'] as String).split('/').reversed.join('-'),
-      ),
+      birthDate: parseDate(map['birthDate']),
       genero: map['genero'] as String,
       licenseCategory: map['licenseCategory'] as String,
-      crimesList: List<Crime?>.from(
-        (map['criminalRecord']['crimesList'] as List<int>).map<Crime?>(
-          (x) => Crime.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      crimesList:
+          (map['criminalRecord']['crimesList'] as List)
+              .map((e) => Crime.fromMap(e))
+              .toList(),
     );
   }
 
@@ -117,8 +113,6 @@ class Person {
     "birthDate": "15/01/1990",
     "genero": "Masculino",
     "licenseCategory": "AB",
-    "criminalRecord": {
-      "crimesList": [Crime.getExample1(), Crime.getExample2()],
-    },
+    "criminalRecord": {"crimesList": <Crime>[]},
   });
 }

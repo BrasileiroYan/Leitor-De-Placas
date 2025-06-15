@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:frontend/app/helpers/date_parser.dart';
+
 class Crime {
   String crimeType;
   DateTime crimeDateTime;
@@ -40,9 +42,7 @@ class Crime {
   factory Crime.fromMap(Map<String, dynamic> map) {
     return Crime(
       crimeType: map['crimeType'] as String,
-      crimeDateTime: DateTime.fromMillisecondsSinceEpoch(
-        map['crimeDateTime'] as int,
-      ),
+      crimeDateTime: parseDateTime(map['crimeDateTime']),
       description: map['description'] as String,
       crimeStatus: map['crimeStatus'] as String,
     );

@@ -5,7 +5,7 @@ import 'package:frontend/ui/components/widgets/denied_camera_permission_dialog.d
 import 'package:frontend/ui/components/widgets/help_widget.dart';
 import 'package:frontend/ui/components/widgets/request_camera_permission_dialog.dart.dart';
 import 'package:frontend/ui/screens/camera_screen.dart';
-import 'package:frontend/ui/screens/plate_data_screen.dart';
+import 'package:frontend/ui/screens/vehicle_data_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatelessWidget {
