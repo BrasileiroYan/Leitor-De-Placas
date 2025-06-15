@@ -3,14 +3,13 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:frontend/app/helpers/date_parser.dart';
 import 'package:frontend/app/models/crime.dart';
 
 class Person {
   String fullName;
   String rg;
   String cpf;
-  DateTime birthDate;
+  String birthDate;
   String genero;
   String licenseCategory;
   List<Crime> crimesList;
@@ -29,7 +28,7 @@ class Person {
     String? fullName,
     String? rg,
     String? cpf,
-    DateTime? birthDate,
+    String? birthDate,
     String? genero,
     String? licenseCategory,
     List<Crime>? crimesList,
@@ -50,7 +49,7 @@ class Person {
       'fullName': fullName,
       'rg': rg,
       'cpf': cpf,
-      'birthDate': birthDate.millisecondsSinceEpoch,
+      'birthDate': birthDate,
       'genero': genero,
       'licenseCategory': licenseCategory,
       'crimesList': crimesList.map((x) => x.toMap()).toList(),
@@ -62,7 +61,7 @@ class Person {
       fullName: map['fullName'] as String,
       rg: map['rg'] as String,
       cpf: map['cpf'] as String,
-      birthDate: parseDate(map['birthDate']),
+      birthDate: map['birthDate'] as String,
       genero: map['genero'] as String,
       licenseCategory: map['licenseCategory'] as String,
       crimesList:

@@ -118,6 +118,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       TextFormField(
+                        textCapitalization: TextCapitalization.characters,
                         controller: textController,
                         decoration: InputDecoration(
                           filled: true,
@@ -156,114 +157,9 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(height: 32),
                     ],
                   ),
-                  SizedBox(height: 32),
-                  Column(
-                    spacing: 8,
-                    children: [
-                      Text(
-                        "Selecione o modelo",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: 32,
-                        children: [
-                          Column(
-                            spacing: 4,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  foregroundColor: WidgetStatePropertyAll(
-                                    Colors.black,
-                                  ),
-                                  backgroundColor: WidgetStateColor.resolveWith(
-                                    (states) {
-                                      if (states.contains(
-                                        WidgetState.disabled,
-                                      )) {
-                                        return Colors.grey;
-                                      }
-                                      return Colors.grey.shade300;
-                                    },
-                                  ),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  "ABC1C34",
-                                  style: TextStyle(
-                                    fontFamily: "GL Nummernschild",
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "MERCOSUL",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            spacing: 4,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  foregroundColor: WidgetStatePropertyAll(
-                                    Colors.black,
-                                  ),
-                                  backgroundColor: WidgetStateColor.resolveWith(
-                                    (states) {
-                                      if (states.contains(
-                                        WidgetState.disabled,
-                                      )) {
-                                        return Colors.grey;
-                                      }
-                                      return Colors.grey.shade300;
-                                    },
-                                  ),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  "ABC-1234",
-                                  style: TextStyle(
-                                    fontFamily: "GL Nummernschild",
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                "UF - CIDADE",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 32),
                 ],
               ),
             ),
@@ -321,6 +217,6 @@ class HomeScreen extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => PlateDataScreen(plate)),
       );
-    }
+    } else {}
   }
 }

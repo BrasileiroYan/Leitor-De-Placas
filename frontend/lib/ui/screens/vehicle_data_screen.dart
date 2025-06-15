@@ -42,7 +42,7 @@ class PlateDataScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Divider(height: 2, color: Colors.black),
+            Divider(thickness: 2, height: 2, color: Colors.black),
             FutureBuilder(
               future: viewModel.getVehicleFromText(plate),
               builder: (context, snapshot) {
