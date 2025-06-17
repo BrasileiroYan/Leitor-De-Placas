@@ -18,7 +18,7 @@ public class Person implements Serializable {
     private Long id;
 
     @Setter private String fullName;
-    @Setter private String genero;
+    @Setter private String gender;
     @Setter private String rg;
     @Setter private String cpf;
     @Setter private LocalDate birthDate;
@@ -36,9 +36,9 @@ public class Person implements Serializable {
     public Person() {
     }
 
-    public Person(String fullName, String genero, String rg, String cpf, LocalDate birthDate, LicenseCategory licenseCategory) {
+    public Person(String fullName, String gender, String rg, String cpf, LocalDate birthDate, LicenseCategory licenseCategory) {
         this.fullName = fullName;
-        this.genero = genero;
+        this.gender = gender;
         this.rg = rg;
         this.cpf = cpf;
         this.birthDate = birthDate;
@@ -53,8 +53,8 @@ public class Person implements Serializable {
         return fullName;
     }
 
-    public String getGenero() {
-        return genero;
+    public String getGender() {
+        return gender;
     }
 
     public String getRg() {

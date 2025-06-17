@@ -13,7 +13,7 @@ public class PersonResponseDTO {
     private String rg;
     private String cpf;
     private String birthDate;
-    private String genero;
+    private String gender;
     private String licenseCategory;
     private CriminalRecordResponseDTO criminalRecord;
 
@@ -24,7 +24,7 @@ public class PersonResponseDTO {
         this.rg = person.getRg();
         this.cpf = person.getCpf();
         this.birthDate = person.getBirthDate().format(formatter);
-        this.genero = person.getGenero();
+        this.gender = person.getGender();
         this.licenseCategory = person.getLicenseCategory().name();
         this.criminalRecord = new CriminalRecordResponseDTO(person.getCriminalRecord());
     }
@@ -33,8 +33,8 @@ public class PersonResponseDTO {
         return fullName;
     }
 
-    public String getGenero() {
-        return genero;
+    public String getGender() {
+        return gender;
     }
 
     public String getRg() {

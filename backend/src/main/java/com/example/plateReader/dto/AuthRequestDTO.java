@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class AuthRequestDTO {
 
     @NotBlank(message = "Username required")
-    @EmailPRF
+    // @EmailPRF
     private String username;
 
     @NotBlank(message = "Password required")
