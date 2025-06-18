@@ -1,11 +1,14 @@
 package com.example.plateReader.service;
 
 import com.example.plateReader.service.exception.CustomMalformedJwtException;
-import com.example.plateReader.service.exception.ExpiredJwtTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
+import com.example.plateReader.service.exception.CustomExpiredJwtTokenException;
 import com.example.plateReader.service.exception.JwtAuthenticationException;
+import com.example.plateReader.Utils.JwtBlacklist;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,13 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long expirationTime;
+
+    @Autowired
+    JwtBlacklist jwtBlacklist;
+
+    public JwtService(JwtBlacklist jwtBlacklist){
+        this.jwtBlacklist = jwtBlacklist;
+    }
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = this.secretKeyString.getBytes(StandardCharsets.UTF_8);
@@ -63,11 +73,11 @@ public class JwtService {
         try {
             return extractExpiration(token).before(new Date());
         } catch (ExpiredJwtException e) {
-        throw new ExpiredJwtTokenException("Token JWT expirado", e);
+        throw new CustomExpiredJwtTokenException("Token JWT expirado", e);
         }
     }
 
-    private Date extractExpiration(String token) {
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
@@ -82,12 +92,18 @@ public class JwtService {
             throw new CustomMalformedJwtException("Assinatura do token JWT é inválida.", e);
         } catch (MalformedJwtException e) {
             throw new CustomMalformedJwtException("Token JWT malformado.", e);
-        } catch (ExpiredJwtTokenException e) {
-            throw new ExpiredJwtTokenException("Token JWT expirou.", e);
+        } catch (ExpiredJwtException e) {
+            throw new CustomExpiredJwtTokenException("Token JWT expirou.", e);
         } catch (UnsupportedJwtException e) {
             throw new JwtAuthenticationException("Token JWT não é suportado.", e);
         } catch (IllegalArgumentException e) {
             throw new JwtAuthenticationException("A string do token JWT está vazia ou é nula.", e);
         }
     }
+
+    public void invalidateToken(String token) {
+        Date expirationDate = this.extractExpiration(token);
+        jwtBlacklist.invalidateToken(token, expirationDate.toInstant());
+    }
+
 }

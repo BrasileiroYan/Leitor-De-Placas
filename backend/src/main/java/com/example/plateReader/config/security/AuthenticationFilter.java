@@ -1,5 +1,6 @@
 package com.example.plateReader.config.security;
 
+import com.example.plateReader.Utils.JwtBlacklist;
 import com.example.plateReader.service.AppUserService;
 import com.example.plateReader.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -9,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier; // <-- Import novo
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver; // <-- Import novo
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -30,16 +31,19 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final AppUserService appUserService;
     private final HandlerExceptionResolver handlerExceptionResolver;
+    private final JwtBlacklist jwtBlacklist;
 
     @Autowired
     public AuthenticationFilter(
             JwtService jwtService,
             @Lazy AppUserService appUserService,
-            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver,
+            JwtBlacklist jwtBlacklist
     ) {
         this.jwtService = jwtService;
         this.appUserService = appUserService;
         this.handlerExceptionResolver = handlerExceptionResolver;
+        this.jwtBlacklist = jwtBlacklist;
     }
 
     @Override
@@ -48,14 +52,21 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
+        final String token;
+        final String username;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String token = authHeader.substring(7);
-        final String username;
+        token = authHeader.substring(7);
+
+        if (jwtBlacklist.isTokenInvalidated(token)) {
+            logger.warn("Tentativa de uso de token na blacklist: {}", token);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             username = jwtService.getUsernameFromToken(token);
@@ -69,17 +80,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                             null,
                             userDetails.getAuthorities()
                     );
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-            filterChain.doFilter(request, response);
 
         } catch (Exception e) {
             logger.error("Falha na autenticação JWT: {}", e.getMessage());
             handlerExceptionResolver.resolveException(request, response, null, e);
+            return;
         }
+
+        filterChain.doFilter(request, response);
     }
 }

@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler({ExpiredJwtTokenException.class, JwtAuthenticationException.class, CustomMalformedJwtException.class})
+    @ExceptionHandler({CustomExpiredJwtTokenException.class, JwtAuthenticationException.class, CustomMalformedJwtException.class})
     public ResponseEntity<StandardError> handleJwtException(RuntimeException e, WebRequest request) {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 status.value(),
                 "Invalid token",
-                e instanceof ExpiredJwtTokenException ? "Token expirado" : "Token com assinatura inválida",
+                e instanceof CustomExpiredJwtTokenException ? "Token expirado" : "Token com assinatura inválida",
                 request.getDescription(false).replace("uri=", "")
         );
 

@@ -8,6 +8,7 @@ import com.example.plateReader.model.tokens.PasswordResetToken;
 import com.example.plateReader.repository.tokens.ActivationTokenRespository;
 import com.example.plateReader.repository.AppUserRepository;
 import com.example.plateReader.repository.tokens.PasswordResetTokenRepository;
+import com.example.plateReader.model.tokens.RefreshToken;
 import com.example.plateReader.service.exception.*;
 import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class AuthService {
 
     private final ActivationTokenRespository activationTokenRespository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final AppUserRepository appUserRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
@@ -42,9 +44,10 @@ public class AuthService {
     private final JwtService jwtService;
     private final EntityManager entityManager;
 
-    public AuthService(ActivationTokenRespository activationTokenRespository, PasswordResetTokenRepository passwordResetTokenRepository, AppUserRepository appUserRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EntityManager entityManager) {
+    public AuthService(ActivationTokenRespository activationTokenRespository, PasswordResetTokenRepository passwordResetTokenRepository, RefreshTokenService refreshTokenService, AppUserRepository appUserRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EntityManager entityManager) {
         this.activationTokenRespository = activationTokenRespository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.refreshTokenService = refreshTokenService;
         this.appUserRepository = appUserRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
@@ -102,7 +105,8 @@ public class AuthService {
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtService.generateToken(userDetails);
-            return new AuthResponseDTO(token);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
+            return new AuthResponseDTO(token, refreshToken.getToken());
 
         } catch (AuthenticationException e) {
             // Lógica para falha de autenticação
@@ -269,4 +273,11 @@ public class AuthService {
 
         logger.info("Senha do usuário com ID {} alterada com sucesso.", userId);
     }
+
+    @Transactional
+    public void logout(String token) {
+        jwtService.invalidateToken(token);
+        logger.info("Token JWT foi adicionado à blacklist.");
+    }
+
 }
