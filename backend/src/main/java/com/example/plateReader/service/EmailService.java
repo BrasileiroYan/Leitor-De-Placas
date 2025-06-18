@@ -47,6 +47,7 @@ public class EmailService {
                 Se você não solicitou essa conta ou acredita que isso foi um erro, entre em contato com o administrador do sistema.
 
                 Atenciosamente,
+                
                 Equipe de Suporte do Sistema de Leitura de Placas PRF
                 
                 """.formatted(frontendBaseUrl + "/activate-account?token=" + token,
@@ -85,8 +86,8 @@ public class EmailService {
                 Por motivos de segurança, não compartilhe este link com ninguém.
                 
                 Atenciosamente,
-                Equipe de Suporte do Sistema de Leitura de Placas PRF
                 
+                Equipe de Suporte do Sistema de Leitura de Placas PRF
                 """.formatted(frontendBaseUrl + "/reset-password?token=" + token);
 
         message.setFrom("suporteleitorprf@gmail.com");
@@ -100,6 +101,45 @@ public class EmailService {
         } catch (MailException e) {
             logger.info("Falha ao enviar email de redefinição de senha para {}: {}", toUsername, e.getMessage());
 
+        }
+    }
+
+    public void sendAccountLockedAlert(String toUsername, Long lockedTime) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String text = """
+                Olá,
+                
+                Detectamos múltiplas tentativas de login falhas em sua conta no Sistema de Leitura de Placas da PRF.
+                
+                Por motivos de segurança, sua conta foi temporariamente bloqueada por %d minutos.
+                
+                O que fazer agora:
+                
+                
+                 - Se foi você: Por favor, aguarde %d minutos e tente fazer login novamente. Se você esqueceu sua senha, utilize a opção "Esqueci Minha Senha" na tela de login para redefini-la.
+                
+                 - Se não foi você: Isso pode indicar que outra pessoa está tentando acessar sua conta. Recomendamos fortemente que, assim que sua conta for desbloqueada, você acesse o sistema e troque sua senha imediatamente para uma nova e forte.
+                
+                
+                A segurança da sua conta é nossa prioridade.
+                
+                Atenciosamente,
+                
+                Equipe de Suporte do Sistema de Leitura de Placas PRF
+                """.formatted(lockedTime, lockedTime);
+
+        message.setFrom("suporteleitorprf@gmail.com");
+        message.setTo(toUsername);
+        message.setSubject("[PRF] Alerta de Segurança - Sua conta foi temporariamente bloqueada");
+        message.setText(text);
+
+        try {
+            mailSender.send(message);
+            logger.info("Email de alerta enviado para: {}", toUsername);
+        } catch (MailException e) {
+            logger.info("Falha ao enviar email de alerta para {}: {}", toUsername, e.getMessage());
+            throw new EmailSendingException("Não foi possível enviar o email de alerta de bloqueio de conta para " + toUsername);
         }
     }
 }

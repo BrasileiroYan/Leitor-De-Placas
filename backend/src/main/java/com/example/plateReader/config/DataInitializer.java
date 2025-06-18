@@ -27,6 +27,10 @@ public class DataInitializer implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("@Admin_PRF123")); //
             admin.setRole(Role.ADMIN);
             admin.setEnabled(true);
+            admin.setFailedLoginAttempts(0);
+            admin.setAccountLocked(false);
+            admin.setLockTime(null);
+            admin.setConsecutiveLockouts(0);
             userRepository.save(admin);
         }
 
@@ -36,6 +40,10 @@ public class DataInitializer implements CommandLineRunner {
             user.setPassword(passwordEncoder.encode("@Usuario123"));
             user.setRole(Role.STANDARD);
             user.setEnabled(true);
+            user.setFailedLoginAttempts(0);
+            user.setAccountLocked(false);
+            user.setLockTime(null);
+            user.setConsecutiveLockouts(0);
             userRepository.save(user);
         }
     }

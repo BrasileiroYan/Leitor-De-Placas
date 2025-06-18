@@ -9,6 +9,7 @@ import com.example.plateReader.repository.tokens.ActivationTokenRespository;
 import com.example.plateReader.repository.AppUserRepository;
 import com.example.plateReader.repository.tokens.PasswordResetTokenRepository;
 import com.example.plateReader.service.exception.*;
+import jakarta.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,9 @@ public class AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+    private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final long[] LOCKOUT_DURATION_MINUTES = {5, 15, 30, 60, 240, 1440}; // em minutos
+
     private final ActivationTokenRespository activationTokenRespository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final AppUserRepository appUserRepository;
@@ -36,8 +40,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EntityManager entityManager;
 
-    public AuthService(ActivationTokenRespository activationTokenRespository, PasswordResetTokenRepository passwordResetTokenRepository, AppUserRepository appUserRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthService(ActivationTokenRespository activationTokenRespository, PasswordResetTokenRepository passwordResetTokenRepository, AppUserRepository appUserRepository, EmailService emailService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, EntityManager entityManager) {
         this.activationTokenRespository = activationTokenRespository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.appUserRepository = appUserRepository;
@@ -45,11 +50,40 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.entityManager = entityManager;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(noRollbackFor = {AuthenticationException.class, InvalidCredentialsException.class, AccountLockedException.class})
     public AuthResponseDTO authenticateUser(AuthRequestDTO authRequest) {
+        AppUser user = null;
+
         try {
+
+            // Lógica de Bloqueio/Desbloqueio -ANTES- de Autenticação
+            user = appUserRepository.findByUsername(authRequest.getUsername())
+                    .orElseThrow(() -> new AppUserNotFoundException(authRequest.getUsername()));
+
+            if (user.isAccountLocked()) {  // Se a conta estiver bloqueada
+                int index = Math.max(0, user.getConsecutiveLockouts() - 1);
+                Long currentLockoutTime = LOCKOUT_DURATION_MINUTES[Math.min(index, LOCKOUT_DURATION_MINUTES.length - 1 )]; // Pega o minuto do vetor de acordo com consecutiveLockout
+
+                Instant unlockTime = user.getLockTime().plus(currentLockoutTime, ChronoUnit.MINUTES);
+
+                if (unlockTime.isAfter(Instant.now())) {  // Se o tempo de desbloqueio ainda não tiver chegado (estiver no futuro)
+                    logger.warn("Tentativa de login para conta bloqueada: {}", user.getUsername());
+                    throw new AccountLockedException("Sua conta está bloqueada por " + currentLockoutTime + " minutos. Tente novamente mais tarde.");
+                } else {  // Tempo de bloqueio acabou, desbloquear conta
+                    logger.info("Conta {} desbloqueada após fim do tempo de bloqueio.", user.getUsername());
+
+                    user.setAccountLocked(false);
+                    user.setFailedLoginAttempts(0);
+                    user.setLockTime(null);
+                    appUserRepository.save(user);
+                }
+            }
+
+            // Lógica de Autenticação de usuário
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
@@ -57,12 +91,44 @@ public class AuthService {
                     )
             );
 
+            // Lógica para sucesso de autenticação
+            user.setAccountLocked(false);
+            user.setFailedLoginAttempts(0);
+            user.setLockTime(null);
+            user.setConsecutiveLockouts(0);
+            appUserRepository.save(user);
+
+            logger.info("Login bem-sucedido para usuário: {}", user.getUsername());
+
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String token = jwtService.generateToken(userDetails);
-
             return new AuthResponseDTO(token);
 
         } catch (AuthenticationException e) {
+            // Lógica para falha de autenticação
+
+
+            user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1); // Incrementa tentativas falhas
+
+            if (user.getFailedLoginAttempts() >= MAX_FAILED_ATTEMPTS) { // Se atingir o max de tentativas
+                user.setConsecutiveLockouts(user.getConsecutiveLockouts() + 1);
+                user.setAccountLocked(true);
+                user.setLockTime(Instant.now());
+
+                int index = Math.max(0, user.getConsecutiveLockouts() - 1);
+                Long actualLockoutTime = LOCKOUT_DURATION_MINUTES[Math.min(index, LOCKOUT_DURATION_MINUTES.length - 1 )]; // Pega o minuto do vetor de acordo com consecutiveLockout
+
+                emailService.sendAccountLockedAlert(user.getUsername(), actualLockoutTime);
+                logger.warn("Conta do usuário {} bloqueada devido a múltiplas tentativas falhas.", user.getUsername());
+
+                appUserRepository.save(user);
+                entityManager.flush();
+
+                throw new AccountLockedException("Sua conta está bloqueada por " + actualLockoutTime + " minutos. Tente novamente mais tarde.");
+            } else {
+                appUserRepository.save(user);
+            }
+
             throw new InvalidCredentialsException("Credenciais inválidas");
         }
     }
@@ -104,6 +170,10 @@ public class AuthService {
         AppUser user = activationToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setEnabled(true);
+        user.setFailedLoginAttempts(0);
+        user.setAccountLocked(false);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
         appUserRepository.save(user);
 
         activationTokenRespository.delete(activationToken);
@@ -166,6 +236,10 @@ public class AuthService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setEnabled(true);
+        user.setFailedLoginAttempts(0);
+        user.setAccountLocked(false);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
         appUserRepository.save(user);
 
         passwordResetTokenRepository.delete(passwordResetToken);

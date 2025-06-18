@@ -38,6 +38,10 @@ public class AppUserService implements UserDetailsService {
         user.setPassword(null);
         user.setRole(Role.STANDARD);
         user.setEnabled(false);
+        user.setFailedLoginAttempts(0);
+        user.setAccountLocked(false);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
         appUserRepository.save(user);
 
         return new AppUserResponseDTO(user);

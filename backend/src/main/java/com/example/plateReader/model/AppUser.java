@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,10 @@ public class AppUser implements UserDetails, Serializable {
     private Role role;
 
     private boolean enabled = false;
+    private boolean accountLocked = false;
+    private int failedLoginAttempts;
+    private int consecutiveLockouts;
+    private Instant lockTime;
 
     @Override
     public String getUsername() {
@@ -61,9 +66,10 @@ public class AppUser implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-
-        // Caso haja lógica para bloqueio de conta, tem q fazer aq
-        return UserDetails.super.isAccountNonLocked();
+        if (!this.accountLocked) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -93,5 +99,37 @@ public class AppUser implements UserDetails, Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public boolean isAccountLocked() {
+        return accountLocked;
+    }
+
+    public void setAccountLocked(boolean accountLocked) {
+        this.accountLocked = accountLocked;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public Instant getLockTime() {
+        return lockTime;
+    }
+
+    public void setLockTime(Instant lockTime) {
+        this.lockTime = lockTime;
+    }
+
+    public int getConsecutiveLockouts() {
+        return consecutiveLockouts;
+    }
+
+    public void setConsecutiveLockouts(int consecutiveLockouts) {
+        this.consecutiveLockouts = consecutiveLockouts;
     }
 }

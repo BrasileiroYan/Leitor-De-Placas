@@ -298,6 +298,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<StandardError> handleAccountLockedException(AccountLockedException e, WebRequest request) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Account Locked",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
 
     // DEIXE ESSE HANDLER NO FINAL
 
