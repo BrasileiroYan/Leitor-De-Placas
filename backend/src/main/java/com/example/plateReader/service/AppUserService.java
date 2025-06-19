@@ -1,13 +1,11 @@
 package com.example.plateReader.service;
 
-import com.example.plateReader.Utils.PasswordGenerator;
 import com.example.plateReader.dto.AppUserRequestDTO;
 import com.example.plateReader.dto.AppUserResponseDTO;
 import com.example.plateReader.model.AppUser;
 import com.example.plateReader.model.enums.Role;
 import com.example.plateReader.repository.AppUserRepository;
-import com.example.plateReader.service.exception.AppUserNotFoundException;
-import com.example.plateReader.service.exception.UsernameAlreadyExistsException;
+import com.example.plateReader.service.exception.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -102,5 +100,52 @@ public class AppUserService implements UserDetailsService {
         }
 
         appUserRepository.deleteById(id);
+    }
+
+    public void enableUser(Long userId) {
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new AppUserNotFoundException(userId));
+
+        if (user.isEnabled()) {
+           throw new AppUserAlreadyEnabledException("Usuário já está habilitado.");
+        }
+
+        user.setEnabled(true);
+        user.setAccountLocked(false);
+        user.setFailedLoginAttempts(0);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
+        appUserRepository.save(user);
+    }
+
+    public void disableUser(Long userId) {
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new AppUserNotFoundException(userId));
+
+        if (!user.isEnabled()) {
+            throw new AppUserAlreadyDisabledException("Usuário já está desabilitado.");
+        }
+
+        user.setEnabled(false);
+        user.setAccountLocked(false);
+        user.setFailedLoginAttempts(0);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
+        appUserRepository.save(user);
+    }
+
+    public void unlockUser(Long userId) {
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new AppUserNotFoundException(userId));
+
+        if (!user.isAccountLocked()) {
+            throw new AccountAlreadyUnlockedException("Usuário não está bloqueado");
+        }
+
+        user.setAccountLocked(false);
+        user.setFailedLoginAttempts(0);
+        user.setLockTime(null);
+        user.setConsecutiveLockouts(0);
+        appUserRepository.save(user);
     }
 }

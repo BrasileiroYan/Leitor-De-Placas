@@ -313,6 +313,51 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(AppUserAlreadyEnabledException.class)
+    public ResponseEntity<StandardError> handleAppUserAlreadyEnabledException(AppUserAlreadyEnabledException e, WebRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "User is already enabled",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AppUserAlreadyDisabledException.class)
+    public ResponseEntity<StandardError> handleAppUserAlreadyDisabledException(AppUserAlreadyDisabledException e, WebRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "User is already disabled",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AccountAlreadyUnlockedException.class)
+    public ResponseEntity<StandardError> handleAccountAlreadyUnlockedException(AccountAlreadyUnlockedException e, WebRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "User is already unlocked",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
     // DEIXE ESSE HANDLER NO FINAL
 
     @ExceptionHandler(RuntimeException.class)
