@@ -68,13 +68,13 @@ public class TestConfig implements CommandLineRunner {
         CriminalRecord cr1 = new CriminalRecord(p1);
         cr1.addCrime(c1);
         cr1.addCrime(c4);
+        cr1.addCrime(c5);
+        cr1.addCrime(c2);
+        cr1.addCrime(c3);
 
         CriminalRecord cr2 = new CriminalRecord(p2);
-        cr2.addCrime(c2);
 
         CriminalRecord cr3 = new CriminalRecord(p3);
-        cr3.addCrime(c3);
-        cr3.addCrime(c5);
 
         CriminalRecord cr4 = new CriminalRecord(p4);
 

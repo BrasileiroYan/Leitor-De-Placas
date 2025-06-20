@@ -31,7 +31,7 @@ public class PdfPageEvents extends PdfPageEventHelper {
         // CABEÇALHO
         if (logo != null) {
             try {
-                logo.scaleToFit(23.5f, 23.5f);
+                logo.scaleToFit(23.45f, 23.45f);
                 logo.setAbsolutePosition(document.left(), document.top() + 5);
                 contentByte.addImage(logo);
             } catch (DocumentException e) {
@@ -67,5 +67,18 @@ public class PdfPageEvents extends PdfPageEventHelper {
         contentByte.moveTo(document.left(), document.top() + 0);
         contentByte.lineTo(document.right(), document.top() + 0);
         contentByte.stroke();
+    }
+
+    @Override
+    public void onStartPage(PdfWriter writer, Document document) {
+        if (writer.getPageNumber() > 1) {
+            try {
+                document.add(new Paragraph(" "));
+                document.add(Chunk.NEWLINE);
+                document.setPageSize(PageSize.A4);
+            } catch (DocumentException e) {
+                logger.error("Erro ao pular linha no início da página: {}", e.getMessage(), e);
+            }
+        }
     }
 }

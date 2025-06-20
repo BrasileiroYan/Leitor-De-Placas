@@ -8,6 +8,8 @@ import com.example.plateReader.service.exception.ReportGenerationException;
 import com.example.plateReader.service.exception.VehicleNotFoundException;
 import com.example.plateReader.service.pdf.PdfPageEvents;
 import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +114,44 @@ public class VehicleReportPdfService {
 
                     int contCrime = 1;
                     for (Crime c : vehicle.getOwner().getCriminalRecord().getCrimeList()) {
-                        document.add(new Paragraph("Crime [" + contCrime + "]: ", subSectionFont));
-                        document.add(new Paragraph("Crime cometido: " + c.getCrimeType(), contentFont));
-                        document.add(new Paragraph("Data do crime: " + c.getCrimeDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss")), contentFont));
-                        document.add(new Paragraph("Descrição do crime: " + c.getDescription(), contentFont));
-                        document.add(new Paragraph("Status do crime: " + c.getCrimeStatus().name(), contentFont));
-                        document.add(Chunk.NEWLINE);
+
+                        float estimatedCrimeBlockHeight = 100;
+
+                        if (document.isOpen() && writer.getVerticalPosition(true) - estimatedCrimeBlockHeight < document.bottom()) {
+                            document.newPage();
+                            logger.debug("Forçando nova página antes do crime {}: espaço insuficiente na página atual.", contCrime);
+
+                        }
+
+                        PdfPTable crimeTable = new PdfPTable(2);
+                        crimeTable.setWidthPercentage(100);
+                        crimeTable.setSpacingBefore(10);
+                        crimeTable.setSpacingAfter(10);
+                        crimeTable.setSplitLate(false);
+
+                        PdfPCell defaultCell = crimeTable.getDefaultCell();
+                        defaultCell.setBorder(Rectangle.NO_BORDER);
+                        defaultCell.setPadding(2);
+                        defaultCell.setVerticalAlignment(Element.ALIGN_TOP);
+
+                        crimeTable.addCell(new Phrase("Crime [" + contCrime + "]", subSectionFont));
+                        crimeTable.addCell("");
+
+                        crimeTable.addCell(new Phrase("Crime cometido:", contentFont));
+                        crimeTable.addCell(new Phrase(c.getCrimeType(), contentFont));
+
+                        crimeTable.addCell(new Phrase("Data e Horário:", contentFont));
+                        crimeTable.addCell(new Phrase(c.getCrimeDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss")), contentFont));
+
+                        crimeTable.addCell(new Phrase("Descrição:", contentFont));
+                        crimeTable.addCell(new Phrase(c.getDescription(), contentFont));
+
+                        crimeTable.addCell(new Phrase("Status:", contentFont));
+                        crimeTable.addCell(new Phrase(c.getCrimeStatus().name(), contentFont));
+
                         contCrime++;
+
+                        document.add(crimeTable);
                     }
                 } else {
                     document.add(new Paragraph("Não há crimes registrados para o proprietário deste veículo.", contentFont));
