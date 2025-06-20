@@ -6,19 +6,25 @@ import com.example.plateReader.repository.VehicleRepository;
 import com.example.plateReader.service.exception.PersonNotFoundException;
 import com.example.plateReader.service.exception.ReportGenerationException;
 import com.example.plateReader.service.exception.VehicleNotFoundException;
+import com.example.plateReader.service.pdf.PdfPageEvents;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 
 @Service
 public class VehicleReportPdfService {
 
-    private final VehicleRepository vehicleRepository;
+    private static final Logger logger = LoggerFactory.getLogger(VehicleReportPdfService.class);
 
+    private final VehicleRepository vehicleRepository;
 
     public VehicleReportPdfService(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
@@ -37,13 +43,32 @@ public class VehicleReportPdfService {
         Document document = new Document(PageSize.A4);
 
         try {
-            PdfWriter.getInstance(document, baos);
+            PdfWriter writer = PdfWriter.getInstance(document, baos);
+
+            // Carregar logo do sistema
+            Image logo = null;
+            try {
+                URL logoUrl = getClass().getClassLoader().getResource("prf_logo.png");
+                if (logoUrl != null) {
+                    logo = Image.getInstance(logoUrl);
+                } else {
+                    logger.warn("Logo 'prf_logo.png' não encontrado em resources.");
+                }
+            } catch (IOException e) {
+                logger.error("Erro ao carregar logo para o PDF: {}", e.getMessage(), e);
+            }
+
+            // Registrar evento de página
+            writer.setPageEvent(new PdfPageEvents("Sistema de Leitura de Placas - PRF", logo));
+
+            //ABRE DOCUMENTO
             document.open();
 
             // Fontes para título, subtítulo e conteúdo
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, Font.BOLD);
-            Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA, 14, Font.BOLD);
-            Font contentFont = FontFactory.getFont(FontFactory.HELVETICA, 12);
+            Font titleFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 24, Font.BOLD);
+            Font sectionFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
+            Font subSectionFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14);
+            Font contentFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);
 
             //Título do Relatório
             Paragraph title = new Paragraph("Relatório de Consulta de Placa", titleFont);
@@ -85,12 +110,15 @@ public class VehicleReportPdfService {
                     document.add(new Paragraph("FICHA CRIMINAL:", sectionFont));
                     document.add(Chunk.NEWLINE);
 
+                    int contCrime = 1;
                     for (Crime c : vehicle.getOwner().getCriminalRecord().getCrimeList()) {
+                        document.add(new Paragraph("Crime [" + contCrime + "]: ", subSectionFont));
                         document.add(new Paragraph("Crime cometido: " + c.getCrimeType(), contentFont));
                         document.add(new Paragraph("Data do crime: " + c.getCrimeDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss")), contentFont));
                         document.add(new Paragraph("Descrição do crime: " + c.getDescription(), contentFont));
                         document.add(new Paragraph("Status do crime: " + c.getCrimeStatus().name(), contentFont));
                         document.add(Chunk.NEWLINE);
+                        contCrime++;
                     }
                 } else {
                     document.add(new Paragraph("Não há crimes registrados para o proprietário deste veículo.", contentFont));
@@ -98,6 +126,7 @@ public class VehicleReportPdfService {
                 document.add(Chunk.NEWLINE);
             }
 
+            //FECHA DOCUMENTO
             document.close();
         } catch (DocumentException e) {
             throw new ReportGenerationException("Falha ao gerar relatório PDF para veículo de placa: " + vehicle.getPlate());
