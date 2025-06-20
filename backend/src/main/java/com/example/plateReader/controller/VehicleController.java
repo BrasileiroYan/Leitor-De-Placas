@@ -4,7 +4,11 @@ import com.example.plateReader.dto.CrimeResponseDTO;
 import com.example.plateReader.dto.CriminalRecordResponseDTO;
 import com.example.plateReader.dto.PersonResponseDTO;
 import com.example.plateReader.dto.VehicleResponseDTO;
+import com.example.plateReader.service.VehicleReportPdfService;
 import com.example.plateReader.service.VehicleService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +22,11 @@ import java.util.List;
 public class VehicleController {
 
     private final VehicleService vehicleService;
+    private final VehicleReportPdfService vehicleReportPdfService;
 
-    public VehicleController(VehicleService vehicleService) {
+    public VehicleController(VehicleService vehicleService, VehicleReportPdfService vehicleReportPdfService) {
         this.vehicleService = vehicleService;
+        this.vehicleReportPdfService = vehicleReportPdfService;
     }
 
     @GetMapping
@@ -35,6 +41,18 @@ public class VehicleController {
         VehicleResponseDTO vehicleDTO = vehicleService.findByPlate(plate);
 
         return ResponseEntity.ok().body(vehicleDTO);
+    }
+
+    @GetMapping(path = "/{plate}/download-pdf")
+    public ResponseEntity<byte[]> generateVehiclePdfReport(@PathVariable String plate) {
+        byte[] pdfBytes = vehicleReportPdfService.generateVehicleReportPDF(plate);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "relatorio_placa_" + plate + ".pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{plate}/owner")

@@ -358,6 +358,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(ReportGenerationException.class)
+    public ResponseEntity<StandardError> handleReportGenerationException(ReportGenerationException e, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Report Generation Error",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
     // DEIXE ESSE HANDLER NO FINAL
 
     @ExceptionHandler(RuntimeException.class)
