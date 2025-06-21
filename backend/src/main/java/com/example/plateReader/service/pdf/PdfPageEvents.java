@@ -8,6 +8,9 @@ import com.lowagie.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class PdfPageEvents extends PdfPageEventHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(PdfPageEvents.class);
@@ -58,6 +61,16 @@ public class PdfPageEvents extends PdfPageEventHelper {
                 Element.ALIGN_CENTER,
                 footerPhrase,
                 (document.left() + document.right()) / 2,
+                footerBox.getBottom() + 5,
+                0
+        );
+
+        Phrase datePhrase = new Phrase("Gerado em: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm")), footerFont);
+        ColumnText.showTextAligned(
+                contentByte,
+                Element.ALIGN_RIGHT,
+                datePhrase,
+                document.right() - 5,
                 footerBox.getBottom() + 5,
                 0
         );
