@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(customSecurityExceptionHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**", "/crimes/**", "/criminals/**", "/criminal-records/**", "/ocr/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/vehicles/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STANDARD")
                         .requestMatchers("/app/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_STANDARD")

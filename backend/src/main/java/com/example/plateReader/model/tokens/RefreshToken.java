@@ -28,15 +28,15 @@ public class RefreshToken {
     private AppUser user;
 
     @Column(nullable = false)
-    private Instant expiryDate;
+    private Instant expirationDate;
 
     public Long getId() { return id; }
     public String getToken() { return token; }
-    public Instant getExpiryDate() { return expiryDate; }
+    public Instant getExpirationDate() { return expirationDate; }
     public AppUser getUser() { return user; }
 
     public void setId(Long id) { this.id = id; }
     public void setToken(String token) { this.token = token; }
-    public void setExpiryDate(Instant expiryDate) { this.expiryDate = expiryDate; }
+    public void setExpirationDate(Instant expirationDate) { this.expirationDate = expirationDate; }
     public void setUser(AppUser user) { this.user = user; }
 }
