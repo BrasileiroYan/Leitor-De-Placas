@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/owners")
-@Tag(name = "Proprietários", description = "Endpoint para listar todos os proprietários presentes no sistema")
+@Tag(name = "Proprietários", description = "Endpoint para listar todos os proprietários dos veículos presentes no sistema")
 public class PersonController {
 
     private final PersonService personService;
