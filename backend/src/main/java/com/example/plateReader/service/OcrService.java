@@ -2,6 +2,7 @@ package com.example.plateReader.service;
 
 import com.example.plateReader.Utils.MultipartInputStreamFileResource;
 import com.example.plateReader.service.exception.OcrProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +22,9 @@ public class OcrService {
 
     private final RestTemplate restTemplate;
 
-    public OcrService(RestTemplateBuilder builder) {
-        this.restTemplate = builder.build();
+    @Autowired
+    public OcrService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public String sendFileToPythonApi(MultipartFile file) {
