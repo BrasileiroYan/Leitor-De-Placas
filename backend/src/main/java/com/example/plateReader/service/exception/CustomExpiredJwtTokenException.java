@@ -1,5 +1,6 @@
 package com.example.plateReader.service.exception;
 
+import com.example.plateReader.service.exception.authentication.JwtAuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

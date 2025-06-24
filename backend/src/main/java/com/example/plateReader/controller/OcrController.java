@@ -2,6 +2,7 @@ package com.example.plateReader.controller;
 
 import com.example.plateReader.controller.exception.StandardError;
 import com.example.plateReader.dto.OcrResponseDTO;
+import com.example.plateReader.model.AppUser;
 import com.example.plateReader.service.OcrService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,9 +40,12 @@ public class OcrController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StandardError.class)))
     })
     @PostMapping(value = "/read")
-    public ResponseEntity<OcrResponseDTO> readPlateFromImage(@RequestParam MultipartFile file) {
-        String plate = ocrService.sendFileToPythonApi(file);
+    public ResponseEntity<OcrResponseDTO> readPlateFromImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("location") String location
+    ) {
+        OcrResponseDTO response = ocrService.processImageAndLogHistory(file, location);
 
-        return ResponseEntity.ok(new OcrResponseDTO(plate));
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.plateReader.controller.exception;
 
 import com.example.plateReader.service.exception.*;
+import com.example.plateReader.service.exception.authentication.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

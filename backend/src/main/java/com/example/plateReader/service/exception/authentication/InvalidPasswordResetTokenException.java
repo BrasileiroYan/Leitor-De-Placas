@@ -1,0 +1,7 @@
+package com.example.plateReader.service.exception.authentication;
+
+public class InvalidPasswordResetTokenException extends RuntimeException {
+    public InvalidPasswordResetTokenException(String message) {
+        super(message);
+    }
+}

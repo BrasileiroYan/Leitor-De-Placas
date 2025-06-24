@@ -1,6 +1,12 @@
 package com.example.plateReader.service;
 
 import com.example.plateReader.Utils.MultipartInputStreamFileResource;
+import com.example.plateReader.dto.OcrResponseDTO;
+import com.example.plateReader.model.AppUser;
+import com.example.plateReader.model.ScanHistory;
+import com.example.plateReader.repository.AppUserRepository;
+import com.example.plateReader.repository.ScanHistoryRepository;
+import com.example.plateReader.service.exception.AppUserNotFoundException;
 import com.example.plateReader.service.exception.OcrProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -8,23 +14,30 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Map;
 
 @Service
 public class OcrService {
 
     private final RestTemplate restTemplate;
+    private final ScanHistoryRepository scanHistoryRepository;
+    private final AppUserRepository appUserRepository;
 
     @Autowired
-    public OcrService(RestTemplate restTemplate) {
+    public OcrService(RestTemplate restTemplate, ScanHistoryRepository scanHistoryRepository, AppUserRepository appUserRepository) {
         this.restTemplate = restTemplate;
+        this.scanHistoryRepository = scanHistoryRepository;
+        this.appUserRepository = appUserRepository;
     }
 
     public String sendFileToPythonApi(MultipartFile file) {
@@ -38,7 +51,7 @@ public class OcrService {
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            String url = "http://localhost:5000/ocr"; // URL da Api Python !!!!!
+            String url = "http://localhost:5000/ocr/read"; // URL da Api Python !!!!!
 
             ResponseEntity<Map> response = restTemplate.postForEntity(url, requestEntity, Map.class);
 
@@ -51,4 +64,27 @@ public class OcrService {
             throw new OcrProcessingException("Erro ao ler o arquivo: " + e.getMessage());
         }
     }
+
+    @Transactional
+    public OcrResponseDTO processImageAndLogHistory(MultipartFile file, String location) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 2. BUSCA a entidade real e gerenciada no banco de dados. ESTA É A CORREÇÃO.
+        AppUser currentUser = appUserRepository.findByUsername(username)
+                .orElseThrow(() -> new AppUserNotFoundException("Usuário do token não encontrado: " + username));
+
+        String plate = this.sendFileToPythonApi(file);
+
+        ScanHistory history = new ScanHistory();
+        history.setScannedPlate(plate);
+        history.setLocation(location);
+        history.setScanTimestamp(Instant.now());
+        history.setUser(currentUser);
+
+        scanHistoryRepository.save(history);
+
+        return new OcrResponseDTO(plate);
+    }
+
 }

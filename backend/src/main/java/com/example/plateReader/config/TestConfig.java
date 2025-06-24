@@ -84,7 +84,7 @@ public class TestConfig implements CommandLineRunner {
         criminalRecordRepository.save(cr3);
         criminalRecordRepository.save(cr4);
 
-        Vehicle v1 = new Vehicle("ABC1234", "Honda", "Civic", "Preto", 2018, IpvaStatus.PAGO, VehicleType.CARRO, p1);
+        Vehicle v1 = new Vehicle("BRA2E19", "Honda", "Civic", "Preto", 2018, IpvaStatus.PAGO, VehicleType.CARRO, p1);
         Vehicle v2 = new Vehicle("XYZ9876", "Toyota", "Corolla", "Branco", 2020, IpvaStatus.PAGO, VehicleType.CARRO, p1);
         Vehicle v3 = new Vehicle("JKL4567", "Volkswagen", "Gol", "Vermelho", 2015, IpvaStatus.ATRASADO, VehicleType.CARRO, p2);
         Vehicle v4 = new Vehicle("MNO7890", "Chevrolet", "Onix", "Azul", 2019, IpvaStatus.PAGO, VehicleType.CARRO, p3);
