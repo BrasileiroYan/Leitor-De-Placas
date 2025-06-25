@@ -30,19 +30,24 @@ public class Person implements Serializable {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Vehicle> vehicles = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", nullable = false)
+    @Setter private Address address;
+
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     @Setter private CriminalRecord criminalRecord;
 
     public Person() {
     }
 
-    public Person(String fullName, String gender, String rg, String cpf, LocalDate birthDate, LicenseCategory licenseCategory) {
+    public Person(String fullName, String gender, String rg, String cpf, LocalDate birthDate, LicenseCategory licenseCategory, Address address) {
         this.fullName = fullName;
         this.gender = gender;
         this.rg = rg;
         this.cpf = cpf;
         this.birthDate = birthDate;
         this.licenseCategory = licenseCategory;
+        this.address = address;
     }
 
     public Long getId() {
@@ -71,6 +76,10 @@ public class Person implements Serializable {
 
     public LicenseCategory getLicenseCategory() {
         return licenseCategory;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     public CriminalRecord getCriminalRecord() {

@@ -83,7 +83,7 @@ public class OcrControllerTest {
         // --- ARRANGE (Preparação) ---
 
         // 1. Define a URL da API Python que esperamos que seja chamada
-        String pythonApiUrl = "http://localhost:5000/ocr";
+        String pythonApiUrl = "http://localhost:5000/ocr/read";
         String expectedPlate = "ABC1234";
 
         // 2. Cria a resposta JSON que a API Python FAKE irá retornar
@@ -131,7 +131,7 @@ public class OcrControllerTest {
     @WithMockUser(username = TEST_USERNAME, roles = "ADMIN")
     void readPlateFromImage_whenApiFails_shouldReturnInternalServerError() throws Exception {
         // --- ARRANGE ---
-        String pythonApiUrl = "http://localhost:5000/ocr";
+        String pythonApiUrl = "http://localhost:5000/ocr/read";
 
         // Configura o servidor mock para retornar um erro 500
         mockServer.expect(requestTo(pythonApiUrl))

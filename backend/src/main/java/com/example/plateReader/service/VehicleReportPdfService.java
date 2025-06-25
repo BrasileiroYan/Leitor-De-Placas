@@ -102,6 +102,10 @@ public class VehicleReportPdfService {
                 document.add(new Paragraph("Data de nascimento: " + vehicle.getOwner().getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/YYYY")), contentFont));
                 document.add(new Paragraph("Gênero: " + vehicle.getOwner().getGender(), contentFont));
                 document.add(new Paragraph("Categoria CNH: " + vehicle.getOwner().getLicenseCategory().name(), contentFont));
+                document.add(new Paragraph("Endereço: "
+                        + vehicle.getOwner().getAddress().getStreet()
+                        + ", " + vehicle.getOwner().getAddress().getNumber()
+                        + ". Complemento: " + vehicle.getOwner().getAddress().getComplement(), contentFont));
                 document.add(Chunk.NEWLINE);
 
                 if (vehicle.getOwner().getCriminalRecord() != null

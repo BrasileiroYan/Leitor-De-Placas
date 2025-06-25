@@ -1,7 +1,7 @@
 package com.example.plateReader.dto;
 
+import com.example.plateReader.model.Address;
 import com.example.plateReader.model.Person;
-import com.example.plateReader.service.exception.CriminalRecordNotFoundException;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
@@ -15,6 +15,7 @@ public class PersonResponseDTO {
     private String birthDate;
     private String gender;
     private String licenseCategory;
+    private AddressResponseDTO address;
     private CriminalRecordResponseDTO criminalRecord;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -26,6 +27,7 @@ public class PersonResponseDTO {
         this.birthDate = person.getBirthDate().format(formatter);
         this.gender = person.getGender();
         this.licenseCategory = person.getLicenseCategory().name();
+        this.address = new AddressResponseDTO(person.getAddress());
         this.criminalRecord = new CriminalRecordResponseDTO(person.getCriminalRecord());
     }
 
@@ -51,6 +53,10 @@ public class PersonResponseDTO {
 
     public String getLicenseCategory() {
         return licenseCategory;
+    }
+
+    public AddressResponseDTO getAddress() {
+        return address;
     }
 
     public CriminalRecordResponseDTO getCriminalRecord() {

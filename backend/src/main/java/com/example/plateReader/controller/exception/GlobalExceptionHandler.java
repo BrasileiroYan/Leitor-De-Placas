@@ -145,6 +145,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<StandardError> addressNotFound(AddressNotFoundException e, WebRequest request) {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        StandardError error = new StandardError(
+                Instant.now(),
+                status.value(),
+                "Address not found",
+                e.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return ResponseEntity.status(status).body(error);
+    }
+
     @ExceptionHandler(CriminalRecordNotFoundException.class)
     public ResponseEntity<StandardError> criminalRecordNotFound(CriminalRecordNotFoundException e, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;

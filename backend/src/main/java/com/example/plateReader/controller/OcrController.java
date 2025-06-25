@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,7 @@ public class OcrController {
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor ou no serviço OCR",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StandardError.class)))
     })
-    @PostMapping(value = "/read")
+    @PostMapping(value = "/read", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<OcrResponseDTO> readPlateFromImage(
             @RequestParam("file") MultipartFile file,
             @RequestParam("location") String location

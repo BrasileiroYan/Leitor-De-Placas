@@ -1,17 +1,11 @@
 package com.example.plateReader.config;
 
-import com.example.plateReader.model.Crime;
-import com.example.plateReader.model.CriminalRecord;
-import com.example.plateReader.model.Person;
-import com.example.plateReader.model.Vehicle;
+import com.example.plateReader.model.*;
 import com.example.plateReader.model.enums.CrimeStatus;
 import com.example.plateReader.model.enums.IpvaStatus;
 import com.example.plateReader.model.enums.LicenseCategory;
 import com.example.plateReader.model.enums.VehicleType;
-import com.example.plateReader.repository.CrimeRepository;
-import com.example.plateReader.repository.CriminalRecordRepository;
-import com.example.plateReader.repository.PersonRepository;
-import com.example.plateReader.repository.VehicleRepository;
+import com.example.plateReader.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -37,19 +31,28 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private VehicleRepository vehicleRepository;
 
+    @Autowired
+    private AddressRepository addressRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
 
-        Person p1 = new Person("João Silva", "Masculino", "12345678", "123.456.789-00", LocalDate.parse("1990-01-15"), LicenseCategory.AB);
-        Person p2 = new Person("Maria Souza", "Feminino", "87654321", "987.654.321-00", LocalDate.parse("1985-06-30"), LicenseCategory.A);
-        Person p3 = new Person("Carlos Pereira", "Masculino", "45678912", "456.789.123-00", LocalDate.parse("2000-11-20"), LicenseCategory.B);
-        Person p4 = new Person("Regina Silva", "Feminino", "45018650", "376.019.188-00", LocalDate.parse("2002-05-14"), LicenseCategory.AB);
+        Address a1 = new Address("Rua Ipê", "205", "AP. 506 Torre 2", "Bairro São Gerardo", "Fortaleza", "Ceará", "60455-305");
+
+        addressRepository.save(a1);
+
+        Person p1 = new Person("João Silva", "Masculino", "12345678", "123.456.789-00", LocalDate.parse("1990-01-15"), LicenseCategory.AB, a1);
+        Person p2 = new Person("Maria Souza", "Feminino", "87654321", "987.654.321-00", LocalDate.parse("1985-06-30"), LicenseCategory.A, a1);
+        Person p3 = new Person("Carlos Pereira", "Masculino", "45678912", "456.789.123-00", LocalDate.parse("2000-11-20"), LicenseCategory.B, a1);
+        Person p4 = new Person("Regina Silva", "Feminino", "45018650", "376.019.188-00", LocalDate.parse("2002-05-14"), LicenseCategory.AB, a1);
+
 
         personRepository.save(p1);
         personRepository.save(p2);
         personRepository.save(p3);
         personRepository.save(p4);
+
 
         Crime c1 = new Crime("Furto", LocalDateTime.parse("2023-01-10T10:30:00"), "Furto de veículo", CrimeStatus.CONDENADO);
         Crime c2 = new Crime("Assalto", LocalDateTime.parse("2023-05-12T15:00:00"), "Assalto à mão armada", CrimeStatus.ABSOLVIDO);
