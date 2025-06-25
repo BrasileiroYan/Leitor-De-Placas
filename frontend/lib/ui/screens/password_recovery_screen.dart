@@ -14,6 +14,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
         centerTitle: true,
       ),
       backgroundColor: AppColors.bgColor,
+      body: Column(),
     );
   }
 }

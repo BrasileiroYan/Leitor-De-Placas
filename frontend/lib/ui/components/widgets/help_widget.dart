@@ -11,7 +11,7 @@ class HelpWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.bottomLeft,
-      margin: EdgeInsets.all(4),
+      margin: EdgeInsets.all(8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

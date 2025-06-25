@@ -11,7 +11,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "SFA",
       routes: {
-        "login": (context) => const LoginScreen(),
+        "login": (context) => LoginScreen(),
         "password_recovery": (context) => const PasswordRecoveryScreen(),
         "home": (context) => HomeScreen(),
       },

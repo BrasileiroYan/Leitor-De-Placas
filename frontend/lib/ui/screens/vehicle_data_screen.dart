@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/viewmodels/vehicle_view_model.dart';
+import 'package:frontend/app/viewmodels/vehicle_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/crimes_list.dart';
 import 'package:frontend/ui/components/widgets/vehicle_info.dart';

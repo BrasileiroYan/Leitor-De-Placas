@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
-import 'package:frontend/ui/components/widgets/image_preview_dialog.dart';
+import 'package:frontend/ui/components/widgets/dialogs/image_preview_dialog.dart';
 
 class CameraScreen extends StatefulWidget {
   final CameraDescription cameraDescription;

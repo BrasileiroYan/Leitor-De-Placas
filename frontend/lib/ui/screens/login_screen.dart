@@ -1,124 +1,125 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/app/helpers/auth_interceptor.dart';
+import 'package:frontend/app/services/auth_service.dart';
+import 'package:frontend/app/services/token_service.dart';
+import 'package:frontend/app/viewmodels/login_viewmodel.dart';
+import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/widgets/help_widget.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:frontend/ui/components/widgets/login_field.dart';
+import 'package:get_it/get_it.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  final Dio dio = Dio();
+  late final AuthService authService;
+
+  LoginScreen({super.key}) {
+    dio.interceptors.add(AuthInterceptor(dio));
+    authService = AuthService(dio);
+  }
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final loginViewModel = LoginViewModel();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
-      body: Stack(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 20,
-                children: [
-                  Image.asset('assets/images/prf_icon.png', width: 76),
-                  Text(
-                    'SFA',
-                    style: TextStyle(
-                      fontFamily: 'Italiana',
-                      fontSize: 80,
-                      color: Colors.white,
+      body: Ink(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.indigo.shade900, AppColors.bgColor],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 20,
+                  children: [
+                    Image.asset('assets/images/prf_icon.png', width: 128),
+                    Text(
+                      'SFA',
+                      style: TextStyle(
+                        fontFamily: 'Italiana',
+                        fontSize: 80,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Entrar",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                    Text(
+                      "Entrar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  Column(
-                    spacing: 4,
-                    children: [
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    Column(
+                      spacing: 4,
+                      children: [
+                        LoginField(
+                          controller: loginViewModel.emailController,
+                          hintText: 'Matrícula',
                         ),
-                        child: TextFormField(
-                          style: TextStyle(decorationColor: Colors.white),
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5.0),
+                        SizedBox(height: 8),
+                        LoginField(
+                          controller: loginViewModel.passwordController,
+                          obscureText: true,
+                          hintText: 'Senha',
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, "password_recovery");
+                            },
+                            child: Text(
+                              "Esqueci minha senha  ",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.blue,
+                                fontSize: 12,
                               ),
                             ),
-                            hintText: 'Matrícula',
-                            fillColor: Colors.white,
                           ),
                         ),
-                      ),
-                      SizedBox(height: 12),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        child: TextFormField(
-                          style: TextStyle(decorationColor: Colors.white),
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5.0),
-                              ),
-                            ),
-                            hintText: 'Senha',
-                            fillColor: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, "password_recovery");
-                          },
-                          child: Text(
-                            "Esqueci minha senha  ",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.blue,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, "home");
-                    },
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStatePropertyAll(Colors.white),
-                      backgroundColor: WidgetStateColor.resolveWith((states) {
-                        if (states.contains(WidgetState.disabled)) {
-                          return Colors.grey;
-                        } else if (states.contains(WidgetState.pressed)) {
-                          return const Color.fromARGB(171, 255, 164, 89);
-                        }
-                        return Colors.green;
-                      }),
+                      ],
                     ),
-                    child: Text("Entrar", style: TextStyle(fontSize: 13)),
-                  ),
-                ],
+                    PrimaryButton(
+                      text: "Entrar",
+                      onTap: () async {
+                        await loginViewModel.login(context);
+                      },
+                    ),
+                    PrimaryButton(
+                      text: "Debug data",
+                      onTap: () async {
+                        String? token =
+                            await GetIt.instance<TokenService>().getToken();
+                        String? refreshToken =
+                            await GetIt.instance<TokenService>()
+                                .getRefreshToken();
+                        debugPrint(token);
+                        debugPrint(refreshToken);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Positioned(bottom: 16, left: 16, child: HelpWidget(lightMode: true)),
-        ],
+            HelpWidget(lightMode: true),
+          ],
+        ),
       ),
     );
   }

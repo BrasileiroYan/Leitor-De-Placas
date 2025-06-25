@@ -1,0 +1,40 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/app/helpers/auth_interceptor.dart';
+import 'package:frontend/app/services/auth_service.dart';
+import 'package:frontend/app/services/token_service.dart';
+import 'package:get_it/get_it.dart';
+
+class ServiceLocator {
+  final GetIt locator = GetIt.instance;
+
+  void setupLocator() {
+    locator.registerLazySingleton<FlutterSecureStorage>(
+      () => FlutterSecureStorage(
+        aOptions: const AndroidOptions(encryptedSharedPreferences: true),
+      ),
+    );
+
+    locator.registerLazySingleton<TokenService>(
+      () => TokenService(locator<FlutterSecureStorage>()),
+    );
+
+    locator.registerLazySingleton<Dio>(() {
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: 'http://10.0.2.2:8080', // localhost refered from emulator
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 3),
+        ),
+      );
+      dio.interceptors.add(AuthInterceptor(dio));
+      return dio;
+    });
+
+    locator.registerLazySingleton<AuthService>(
+      () => AuthService(locator<Dio>()),
+    );
+  }
+}
