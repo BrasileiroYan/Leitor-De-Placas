@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:frontend/app/models/address.dart';
 import 'package:frontend/app/models/crime.dart';
 
 class Person {
@@ -12,6 +13,7 @@ class Person {
   String birthDate;
   String genero;
   String licenseCategory;
+  Address address;
   List<Crime> crimesList;
 
   Person({
@@ -21,6 +23,7 @@ class Person {
     required this.birthDate,
     required this.genero,
     required this.licenseCategory,
+    required this.address,
     required this.crimesList,
   });
 
@@ -31,6 +34,7 @@ class Person {
     String? birthDate,
     String? genero,
     String? licenseCategory,
+    Address? address,
     List<Crime>? crimesList,
   }) {
     return Person(
@@ -40,6 +44,7 @@ class Person {
       birthDate: birthDate ?? this.birthDate,
       genero: genero ?? this.genero,
       licenseCategory: licenseCategory ?? this.licenseCategory,
+      address: address ?? this.address,
       crimesList: crimesList ?? this.crimesList,
     );
   }
@@ -52,6 +57,7 @@ class Person {
       'birthDate': birthDate,
       'genero': genero,
       'licenseCategory': licenseCategory,
+      'address': address.toMap(),
       'crimesList': crimesList.map((x) => x.toMap()).toList(),
     };
   }
@@ -64,10 +70,12 @@ class Person {
       birthDate: map['birthDate'] as String,
       genero: map['genero'] as String,
       licenseCategory: map['licenseCategory'] as String,
-      crimesList:
-          (map['criminalRecord']['crimesList'] as List)
-              .map((e) => Crime.fromMap(e))
-              .toList(),
+      address: Address.fromMap(map['address'] as Map<String, dynamic>),
+      crimesList: List<Crime>.from(
+        (map['crimesList'] as List<int>).map<Crime>(
+          (x) => Crime.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
@@ -78,7 +86,7 @@ class Person {
 
   @override
   String toString() {
-    return 'Person(fullName: $fullName, rg: $rg, cpf: $cpf, birthDate: $birthDate, genero: $genero, licenseCategory: $licenseCategory, crimesList: $crimesList)';
+    return 'Person(fullName: $fullName, rg: $rg, cpf: $cpf, birthDate: $birthDate, genero: $genero, licenseCategory: $licenseCategory, address: $address, crimesList: $crimesList)';
   }
 
   @override
@@ -91,6 +99,7 @@ class Person {
         other.birthDate == birthDate &&
         other.genero == genero &&
         other.licenseCategory == licenseCategory &&
+        other.address == address &&
         listEquals(other.crimesList, crimesList);
   }
 
@@ -102,6 +111,7 @@ class Person {
         birthDate.hashCode ^
         genero.hashCode ^
         licenseCategory.hashCode ^
+        address.hashCode ^
         crimesList.hashCode;
   }
 
