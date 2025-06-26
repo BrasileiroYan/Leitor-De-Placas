@@ -3,10 +3,9 @@ import 'package:frontend/app/services/token_service.dart';
 import 'package:get_it/get_it.dart';
 
 class AuthInterceptor extends Interceptor {
-  final Dio _dio;
   final _tokenService = GetIt.instance<TokenService>();
 
-  AuthInterceptor(this._dio);
+  AuthInterceptor();
 
   @override
   void onRequest(
@@ -27,9 +26,9 @@ class AuthInterceptor extends Interceptor {
       if (refreshToken == null) return handler.next(err);
 
       try {
-        final response = await _dio.post(
-          '/auth/refresh',
-          data: {'refreshToken': refreshToken},
+        final response = await Dio().post(
+          'http://10.0.2.2:8080/auth/refresh',
+          data: {"refreshToken": refreshToken},
         );
 
         final newToken = response.data['token'];
@@ -40,10 +39,10 @@ class AuthInterceptor extends Interceptor {
           refreshToken: newRefresh,
         );
 
-        final clonedRequest = err.requestOptions;
-        clonedRequest.headers['Authorization'] = 'Bearer $newToken';
+        final clonedRequest =
+            err.requestOptions..headers['Authorization'] = 'Bearer $newToken';
 
-        final retryResponse = await _dio.fetch(clonedRequest);
+        final retryResponse = await Dio().fetch(clonedRequest);
         return handler.resolve(retryResponse);
       } catch (_) {
         await _tokenService.clearAll();

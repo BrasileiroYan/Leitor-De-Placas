@@ -29,7 +29,7 @@ class ServiceLocator {
           receiveTimeout: const Duration(seconds: 3),
         ),
       );
-      dio.interceptors.add(AuthInterceptor(dio));
+      dio.interceptors.add(AuthInterceptor());
       return dio;
     });
 

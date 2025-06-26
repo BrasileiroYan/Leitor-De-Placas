@@ -22,9 +22,9 @@ class LoginViewModel extends ChangeNotifier {
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Please fill all fields')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, preencha todos os campos.')),
+      );
       return;
     }
 
@@ -38,9 +38,9 @@ class LoginViewModel extends ChangeNotifier {
       Navigator.pushReplacementNamed(context, "home");
     } else {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed! Please try again.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Login Falhou! Tente novamente.')));
     }
   }
 }
