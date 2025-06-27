@@ -1,13 +1,14 @@
 package com.example.plateReader.service.pdf;
 
 import com.lowagie.text.*;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPageEventHelper;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -80,6 +81,29 @@ public class PdfPageEvents extends PdfPageEventHelper {
         contentByte.moveTo(document.left(), document.top() + 0);
         contentByte.lineTo(document.right(), document.top() + 0);
         contentByte.stroke();
+
+        // MARCA D'ÁGUA
+        float positionX = (document.left() + document.right()) / 2;
+        float positionY = (document.top() + document.bottom()) / 2;
+
+        Font waterMarkFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 110, Font.BOLD, Color.lightGray);
+
+        PdfGState pdfGState = new PdfGState();
+        pdfGState.setFillOpacity(0.18f); // Nível de opacidade (vai de 0.0 a 1.0)
+        contentByte.saveState();
+        contentByte.setGState(pdfGState);
+
+        Phrase waterMarkPhrase = new Phrase("CONFIDENCIAL", waterMarkFont);
+
+        ColumnText.showTextAligned(
+                contentByte,
+                Element.ALIGN_CENTER,
+                waterMarkPhrase,
+                positionX,
+                positionY,
+                54.73f  // Angulação calculada com base nas dimensões de uma folha A4
+        );
+        contentByte.restoreState();
     }
 
     @Override
