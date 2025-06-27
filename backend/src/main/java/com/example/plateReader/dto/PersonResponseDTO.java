@@ -26,7 +26,7 @@ public class PersonResponseDTO {
         this.cpf = person.getCpf();
         this.birthDate = person.getBirthDate().format(formatter);
         this.gender = person.getGender();
-        this.licenseCategory = person.getLicenseCategory().name();
+        this.licenseCategory = person.getLicenseCategory().getDisplayName();
         this.address = new AddressResponseDTO(person.getAddress());
         this.criminalRecord = new CriminalRecordResponseDTO(person.getCriminalRecord());
     }

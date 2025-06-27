@@ -22,12 +22,12 @@ public class VehicleResponseDTO {
         }
 
         this.plate = vehicle.getPlate();
-        this.vehicleType = vehicle.getVehicleType().name();
+        this.vehicleType = vehicle.getVehicleType().getDisplayName();
         this.brand = vehicle.getBrand();
         this.model = vehicle.getModel();
         this.color = vehicle.getColor();
         this.fabricationYear = vehicle.getFabricationYear();
-        this.ipvaStatus = vehicle.getIpvaStatus().name();
+        this.ipvaStatus = vehicle.getIpvaStatus().getDisplayName();
         this.owner = new PersonResponseDTO(vehicle.getOwner());
     }
 

@@ -14,7 +14,7 @@ public class CrimeResponseDTO {
     private String crimeType;
     private String crimeDateTime;
     private String description;
-    private CrimeStatus crimeStatus;
+    private String crimeStatus;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
 
@@ -22,7 +22,7 @@ public class CrimeResponseDTO {
         this.crimeType = crime.getCrimeType();
         this.crimeDateTime = crime.getCrimeDateTime().format(formatter);
         this.description = crime.getDescription();
-        this.crimeStatus = crime.getCrimeStatus();
+        this.crimeStatus = crime.getCrimeStatus().getDisplayName();
     }
 
     public String getCrimeType() {
@@ -37,7 +37,7 @@ public class CrimeResponseDTO {
         return description;
     }
 
-    public CrimeStatus getCrimeStatus() {
+    public String getCrimeStatus() {
         return crimeStatus;
     }
 }

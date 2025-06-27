@@ -79,15 +79,15 @@ public class VehicleReportPdfService {
             document.add(Chunk.NEWLINE);
 
             //SEÇÃO: Dados do Veículo
-            document.add(new Paragraph("DADOS DO VEÍCULO [" + vehicle.getPlate() + "]:", sectionFont));
+            document.add(new Paragraph("DADOS DO VEÍCULO - PLACA [" + vehicle.getPlate() + "]:", sectionFont));
             document.add(Chunk.NEWLINE);
 
-            document.add(new Paragraph("Tipo: " + vehicle.getVehicleType().name(), contentFont));
+            document.add(new Paragraph("Tipo: " + vehicle.getVehicleType().getDisplayName(), contentFont));
             document.add(new Paragraph("Marca: " + vehicle.getBrand(), contentFont));
             document.add(new Paragraph("Modelo: " + vehicle.getModel(), contentFont));
             document.add(new Paragraph("Cor: " + vehicle.getColor(), contentFont));
             document.add(new Paragraph("Ano de fabricação: " + vehicle.getFabricationYear(), contentFont));
-            document.add(new Paragraph("Status do IPVA: " + vehicle.getIpvaStatus().name(), contentFont));
+            document.add(new Paragraph("Status do IPVA: " + vehicle.getIpvaStatus().getDisplayName(), contentFont));
             document.add(Chunk.NEWLINE);
 
             //SEÇÃO: Dados do Proprietário
@@ -101,11 +101,12 @@ public class VehicleReportPdfService {
                 document.add(new Paragraph("CPF: " + vehicle.getOwner().getCpf(), contentFont));
                 document.add(new Paragraph("Data de nascimento: " + vehicle.getOwner().getBirthDate().format(DateTimeFormatter.ofPattern("dd/MM/YYYY")), contentFont));
                 document.add(new Paragraph("Gênero: " + vehicle.getOwner().getGender(), contentFont));
-                document.add(new Paragraph("Categoria CNH: " + vehicle.getOwner().getLicenseCategory().name(), contentFont));
+                document.add(new Paragraph("Categoria CNH: " + vehicle.getOwner().getLicenseCategory().getDisplayName(), contentFont));
                 document.add(new Paragraph("Endereço: "
                         + vehicle.getOwner().getAddress().getStreet()
                         + ", " + vehicle.getOwner().getAddress().getNumber()
-                        + ". Complemento: " + vehicle.getOwner().getAddress().getComplement(), contentFont));
+                        + ". Complemento: " + vehicle.getOwner().getAddress().getComplement()
+                        + ". Bairro" + vehicle.getOwner().getAddress().getNeighborhood(), contentFont));
                 document.add(Chunk.NEWLINE);
 
                 if (vehicle.getOwner().getCriminalRecord() != null
@@ -151,7 +152,7 @@ public class VehicleReportPdfService {
                         crimeTable.addCell(new Phrase(c.getDescription(), contentFont));
 
                         crimeTable.addCell(new Phrase("Status:", contentFont));
-                        crimeTable.addCell(new Phrase(c.getCrimeStatus().name(), contentFont));
+                        crimeTable.addCell(new Phrase(c.getCrimeStatus().getDisplayName(), contentFont));
 
                         contCrime++;
 

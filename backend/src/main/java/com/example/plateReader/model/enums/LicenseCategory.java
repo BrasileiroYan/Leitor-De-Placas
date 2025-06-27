@@ -1,12 +1,20 @@
 package com.example.plateReader.model.enums;
 
 public enum LicenseCategory {
-    A,
-    B,
-    C,
-    D,
-    E,
-    ACC,
-    AB,
-    NENHUM
+    A("A"),
+    B("B"),
+    C("C"),
+    D("D"),
+    E("E"),
+    ACC("ACC"),
+    AB("AB"),
+    NENHUM("Nenhum");
+
+    private final String displayName;
+
+    LicenseCategory(String displayName) {this.displayName = displayName;}
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }

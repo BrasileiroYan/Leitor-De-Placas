@@ -38,7 +38,7 @@ public class TestConfig implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-        Address a1 = new Address("Rua Ipê", "205", "AP. 506 Torre 2", "Bairro São Gerardo", "Fortaleza", "Ceará", "60455-305");
+        Address a1 = new Address("Rua Ipê", "205", "AP. 506 Torre 2", "São Gerardo", "Fortaleza", "Ceará", "60455-305");
 
         addressRepository.save(a1);
 
