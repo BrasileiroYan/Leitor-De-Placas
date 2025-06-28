@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/app/helpers/auth_interceptor.dart';
 import 'package:frontend/app/services/auth_service.dart';
 import 'package:frontend/app/services/token_service.dart';
+import 'package:frontend/app/services/vehicle_service.dart';
 import 'package:get_it/get_it.dart';
 
 class ServiceLocator {
@@ -22,7 +23,8 @@ class ServiceLocator {
     locator.registerLazySingleton<Dio>(() {
       final dio = Dio(
         BaseOptions(
-          baseUrl: 'http://10.0.2.2:8080', // localhost refered from emulator
+          baseUrl:
+              'http://192.168.1.136:8080', // localhost refered from emulator
           contentType: 'application/json',
           responseType: ResponseType.json,
           connectTimeout: const Duration(seconds: 5),
@@ -35,6 +37,10 @@ class ServiceLocator {
 
     locator.registerLazySingleton<AuthService>(
       () => AuthService(locator<Dio>()),
+    );
+
+    locator.registerLazySingleton<VehicleService>(
+      () => VehicleService(locator<Dio>()),
     );
   }
 }

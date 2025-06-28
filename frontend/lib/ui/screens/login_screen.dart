@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:frontend/app/services/token_service.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
-import 'package:frontend/ui/components/widgets/help_widget.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/login_field.dart';
-// import 'package:get_it/get_it.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +13,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final loginViewModel = LoginViewModel();
+
+  @override
+  void initState() {
+    loginViewModel.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    spacing: 20,
+                    spacing: 16,
                     children: [
                       Image.asset('assets/images/prf_icon.png', width: 128),
                       Text(
@@ -46,16 +51,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontFamily: 'Italiana',
                           fontSize: 80,
+                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        "Entrar",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Column(
+                        children: [
+                          Text(
+                            "Entrar",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.white,
+                            height: 2,
+                            indent: 128,
+                            endIndent: 128,
+                          ),
+                        ],
                       ),
                       Column(
                         spacing: 4,
@@ -115,7 +131,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            HelpWidget(lightMode: true),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 750),
+              child:
+                  loginViewModel.isLoading
+                      ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.black.withAlpha((255 / 2).round()),
+                        child: Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      )
+                      : null,
+            ),
+            // HelpWidget(lightMode: true),
           ],
         ),
       ),

@@ -1,14 +1,7 @@
-import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/app/viewmodels/search_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
-import 'package:frontend/ui/components/widgets/dialogs/denied_camera_permission_dialog.dart';
-import 'package:frontend/ui/components/widgets/help_widget.dart';
-import 'package:frontend/ui/components/widgets/dialogs/request_camera_permission_dialog.dart.dart';
-import 'package:frontend/ui/screens/camera_screen.dart';
 import 'package:frontend/ui/screens/login_screen.dart';
-import 'package:frontend/ui/screens/vehicle_data_screen.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,8 +11,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final searchViewModel = SearchViewModel();
   bool _isSearching = false;
-  String _searchText = '';
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    searchViewModel.addListener(() {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               setState(() {
                 _isSearching = !_isSearching;
-                if (!_isSearching) _searchText = '';
+                if (!_isSearching) {
+                  searchViewModel.searchController.text = '';
+                  _focusNode.unfocus();
+                }
               });
             },
           ),
@@ -41,14 +52,25 @@ class _HomeScreenState extends State<HomeScreen> {
         title:
             _isSearching
                 ? TextField(
+                  controller: searchViewModel.searchController,
+                  textCapitalization: TextCapitalization.characters,
+                  focusNode: _focusNode,
                   autofocus: true,
                   decoration: InputDecoration(hintText: 'Pesquisar placa...'),
                   style: TextStyle(color: Colors.white),
                   onChanged: (value) {
-                    setState(() {
-                      _searchText = value;
-                    });
+                    searchViewModel.searchController.value = searchViewModel
+                        .searchController
+                        .value
+                        .copyWith(
+                          text: value.toUpperCase(),
+                          selection: TextSelection.collapsed(
+                            offset: value.length,
+                          ),
+                        );
                   },
+                  onSubmitted:
+                      (value) => searchViewModel.searchPlateFromText(context),
                 )
                 : null,
       ),

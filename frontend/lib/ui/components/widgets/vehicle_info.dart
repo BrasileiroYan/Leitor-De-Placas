@@ -24,7 +24,7 @@ class VehicleInfoSection extends StatelessWidget {
         InfoText('RG: ${vehicle.owner.rg}'),
         InfoText('CPF: ${vehicle.owner.cpf}'),
         InfoText('Birth Date: ${vehicle.owner.birthDate}'),
-        InfoText('Gender: ${vehicle.owner.genero}'),
+        InfoText('Gender: ${vehicle.owner.gender}'),
         InfoText('License Category: ${vehicle.owner.licenseCategory}'),
       ],
     );

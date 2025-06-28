@@ -11,7 +11,7 @@ class Person {
   String rg;
   String cpf;
   String birthDate;
-  String genero;
+  String gender;
   String licenseCategory;
   Address address;
   List<Crime> crimesList;
@@ -21,7 +21,7 @@ class Person {
     required this.rg,
     required this.cpf,
     required this.birthDate,
-    required this.genero,
+    required this.gender,
     required this.licenseCategory,
     required this.address,
     required this.crimesList,
@@ -42,7 +42,7 @@ class Person {
       rg: rg ?? this.rg,
       cpf: cpf ?? this.cpf,
       birthDate: birthDate ?? this.birthDate,
-      genero: genero ?? this.genero,
+      gender: genero ?? this.gender,
       licenseCategory: licenseCategory ?? this.licenseCategory,
       address: address ?? this.address,
       crimesList: crimesList ?? this.crimesList,
@@ -55,7 +55,7 @@ class Person {
       'rg': rg,
       'cpf': cpf,
       'birthDate': birthDate,
-      'genero': genero,
+      'genero': gender,
       'licenseCategory': licenseCategory,
       'address': address.toMap(),
       'crimesList': crimesList.map((x) => x.toMap()).toList(),
@@ -68,14 +68,13 @@ class Person {
       rg: map['rg'] as String,
       cpf: map['cpf'] as String,
       birthDate: map['birthDate'] as String,
-      genero: map['genero'] as String,
+      gender: map['gender'] as String,
       licenseCategory: map['licenseCategory'] as String,
       address: Address.fromMap(map['address'] as Map<String, dynamic>),
-      crimesList: List<Crime>.from(
-        (map['crimesList'] as List<int>).map<Crime>(
-          (x) => Crime.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      crimesList:
+          (map['criminalRecord']['crimesList'] as List)
+              .map((e) => Crime.fromMap(e))
+              .toList(),
     );
   }
 
@@ -86,7 +85,7 @@ class Person {
 
   @override
   String toString() {
-    return 'Person(fullName: $fullName, rg: $rg, cpf: $cpf, birthDate: $birthDate, genero: $genero, licenseCategory: $licenseCategory, address: $address, crimesList: $crimesList)';
+    return 'Person(fullName: $fullName, rg: $rg, cpf: $cpf, birthDate: $birthDate, genero: $gender, licenseCategory: $licenseCategory, address: $address, crimesList: $crimesList)';
   }
 
   @override
@@ -97,7 +96,7 @@ class Person {
         other.rg == rg &&
         other.cpf == cpf &&
         other.birthDate == birthDate &&
-        other.genero == genero &&
+        other.gender == gender &&
         other.licenseCategory == licenseCategory &&
         other.address == address &&
         listEquals(other.crimesList, crimesList);
@@ -109,7 +108,7 @@ class Person {
         rg.hashCode ^
         cpf.hashCode ^
         birthDate.hashCode ^
-        genero.hashCode ^
+        gender.hashCode ^
         licenseCategory.hashCode ^
         address.hashCode ^
         crimesList.hashCode;

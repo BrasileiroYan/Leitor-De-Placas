@@ -27,7 +27,7 @@ class AuthInterceptor extends Interceptor {
 
       try {
         final response = await Dio().post(
-          'http://10.0.2.2:8080/auth/refresh',
+          'http://192.168.1.136/auth/refresh',
           data: {"refreshToken": refreshToken},
         );
 

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/help_widget.dart';
 import 'package:frontend/ui/screens/vehicle_data_screen.dart';
@@ -84,7 +85,9 @@ class ConfirmationScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return PlateDataScreen("ABC-1234");
+                                  return VehicleDataScreen(
+                                    Vehicle.getExample(),
+                                  );
                                 },
                               ),
                             );

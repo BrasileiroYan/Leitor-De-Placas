@@ -29,6 +29,7 @@ class _LoginFieldState extends State<LoginField> {
       onTapOutside: (event) => _unfocusEvent(),
       cursorColor: Colors.black,
       obscureText: widget.obscureText ? _isObscured : false,
+      enableSuggestions: !widget.obscureText,
       style: TextStyle(decorationColor: Colors.white),
       decoration: InputDecoration(
         filled: true,

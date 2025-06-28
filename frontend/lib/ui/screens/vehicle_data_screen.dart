@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/viewmodels/vehicle_viewmodel.dart';
+import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/crimes_list.dart';
 import 'package:frontend/ui/components/widgets/vehicle_info.dart';
 
-class PlateDataScreen extends StatelessWidget {
-  final String plate;
-  final VehicleViewModel viewModel = VehicleViewModel();
-  PlateDataScreen(this.plate, {super.key});
+class VehicleDataScreen extends StatelessWidget {
+  final Vehicle _vehicle;
+  const VehicleDataScreen(this._vehicle, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +15,7 @@ class PlateDataScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.yellow.shade700,
@@ -35,7 +34,7 @@ class PlateDataScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              plate,
+              _vehicle.plate,
               style: TextStyle(
                 fontFamily: "GL Nummernschild",
                 fontSize: 55,
@@ -43,23 +42,12 @@ class PlateDataScreen extends StatelessWidget {
               ),
             ),
             Divider(thickness: 2, height: 2, color: Colors.black),
-            FutureBuilder(
-              future: viewModel.getVehicleFromText(plate),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    children: [
-                      VehicleInfoSection(vehicle: viewModel.vehicle),
-                      const SizedBox(height: 16),
-                      CrimesListSection(
-                        crimes: viewModel.vehicle.owner.crimesList,
-                      ),
-                    ],
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
+            Column(
+              children: [
+                VehicleInfoSection(vehicle: _vehicle),
+                const SizedBox(height: 16),
+                CrimesListSection(crimes: _vehicle.owner.crimesList),
+              ],
             ),
           ],
         ),
