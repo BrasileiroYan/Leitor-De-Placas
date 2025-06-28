@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/app/services/vehicle_service.dart';
-import 'package:frontend/ui/screens/vehicle_data_screen.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
@@ -50,14 +50,7 @@ class SearchViewModel with ChangeNotifier {
 
     if (vehicle != null) {
       if (!context.mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return VehicleDataScreen(vehicle!);
-          },
-        ),
-      );
+      context.go('/vehicleData', extra: vehicle);
     } else {
       // showPlateNotFoundDialog(plate);
     }

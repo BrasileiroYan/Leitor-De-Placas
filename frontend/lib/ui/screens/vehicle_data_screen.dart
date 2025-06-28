@@ -3,6 +3,7 @@ import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/crimes_list.dart';
 import 'package:frontend/ui/components/widgets/vehicle_info.dart';
+import 'package:go_router/go_router.dart';
 
 class VehicleDataScreen extends StatelessWidget {
   final Vehicle _vehicle;
@@ -15,7 +16,7 @@ class VehicleDataScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
         backgroundColor: Colors.yellow.shade700,

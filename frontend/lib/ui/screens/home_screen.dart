@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/search_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/screens/login_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -137,9 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(Icons.home),
             title: const Text("Tela Inicial"),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
+              context.go('/home');
             },
           ),
           Visibility(
@@ -160,9 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: const Icon(Icons.logout),
             title: const Text("Sair"),
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
+              context.go('/');
             },
           ),
         ],

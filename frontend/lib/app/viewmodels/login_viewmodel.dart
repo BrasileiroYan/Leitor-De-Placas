@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/services/auth_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
@@ -35,7 +36,7 @@ class LoginViewModel extends ChangeNotifier {
 
     if (success) {
       if (!context.mounted) return;
-      Navigator.pushReplacementNamed(context, "home");
+      context.go('/home');
     } else {
       if (!context.mounted) return;
       ScaffoldMessenger.of(
