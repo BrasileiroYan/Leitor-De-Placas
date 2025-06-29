@@ -36,6 +36,7 @@ class MainApp extends StatelessWidget {
         },
       ),
     ],
+    debugLogDiagnostics: true,
   );
 
   MainApp({super.key});

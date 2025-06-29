@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/viewmodels/password_recovery_viewmodel.dart';
+import 'package:frontend/app/viewmodels/password_actions_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
+import 'package:provider/provider.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
-  final PasswordRecoveryViewModel passwordRecoveryViewModel =
-      PasswordRecoveryViewModel();
-  PasswordRecoveryScreen({super.key});
+  const PasswordRecoveryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final passwordRecoveryViewModel = Provider.of<PasswordActionsViewModel>(
+      context,
+    );
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -102,7 +105,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
                 bgColor: Colors.amber,
                 text: "Solicitar recuperação",
                 onTap: () async {
-                  await passwordRecoveryViewModel.sendRecoveryEmail();
+                  await passwordRecoveryViewModel.sendRecoveryEmail(context);
                 },
               ),
             ],

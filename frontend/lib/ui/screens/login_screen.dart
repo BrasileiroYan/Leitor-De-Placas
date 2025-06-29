@@ -102,8 +102,8 @@ class LoginScreen extends StatelessWidget {
                       PrimaryButton(
                         text: "Entrar",
                         onTap: () async {
-                          adminViewModel.getPermissionLevel();
                           await viewModel.login(context);
+                          await adminViewModel.getPermissionLevel();
                         },
                       ),
                     ],

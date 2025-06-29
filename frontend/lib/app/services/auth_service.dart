@@ -45,8 +45,27 @@ class AuthService {
     await _tokenService.clearAll();
   }
 
-  Future<void> activateAccount(String newPassword) async {
-    //TODO: Decidir se o resetToken vai pro SecureStorage ou passa direto pra ca
+  Future<String> activateAccount(String token, String newPassword) async {
+    try {
+      // debugPrint(token);
+      final response = await _dio.post(
+        '/auth/activate-account',
+        data: {'token': token, 'newPassword': newPassword},
+      );
+
+      if (response.statusCode == 200) {
+        final message = response.data['message'];
+        if (message == null) return '';
+        return message;
+      }
+    } on DioException catch (e) {
+      debugPrint('\tAuth error: $e');
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('\tAuth error: $e');
+      rethrow;
+    }
+    return '';
   }
 
   Future<void> forgotPassword(String username) async {
@@ -54,7 +73,7 @@ class AuthService {
   }
 
   Future<void> resetPassword(String newPassword) async {
-    //TODO: Decidir se o activateToken vai pro SecureStorage ou passa direto pra ca
+    //TODO: Decidir se o resetToken vai pro SecureStorage ou passa direto pra ca
   }
 
   Future<void> changePassword(String curPassword, String newPassword) async {

@@ -80,18 +80,24 @@ class AdminScreen extends StatelessWidget {
               ),
               child:
                   !viewModel.isLoading
-                      ? ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        // shrinkWrap: true,
-                        children: List.generate(viewModel.filteredList.length, (
-                          index,
-                        ) {
-                          final user = viewModel.filteredList.elementAt(index);
-                          return ListTile(
-                            leading: CircleAvatar(),
-                            title: Text(user.username),
-                          );
-                        }),
+                      ? RefreshIndicator(
+                        onRefresh: () => viewModel.refreshUsersList(),
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          // shrinkWrap: true,
+                          children: List.generate(
+                            viewModel.filteredList.length,
+                            (index) {
+                              final user = viewModel.filteredList.elementAt(
+                                index,
+                              );
+                              return ListTile(
+                                leading: CircleAvatar(),
+                                title: Text(user.username),
+                              );
+                            },
+                          ),
+                        ),
                       )
                       : Center(child: CircularProgressIndicator()),
 

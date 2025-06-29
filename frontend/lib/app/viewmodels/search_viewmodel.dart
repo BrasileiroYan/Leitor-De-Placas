@@ -8,7 +8,7 @@ abstract class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController(
     text: ' ',
   );
-  List<String> searchScope = <String>[];
+  List<String>? searchScope;
 
   bool _isLoading = false;
   bool _isSearching = false;
@@ -26,7 +26,7 @@ abstract class SearchViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<String>> fetchSearchScope();
+  Future<List<String>?> fetchSearchScope();
 }
 
 class PlateSearchViewModel extends SearchViewModel {
@@ -74,10 +74,10 @@ class PlateSearchViewModel extends SearchViewModel {
   Future<void> searchPlateFromImage(BuildContext context) async {}
 
   @override
-  Future<List<String>> fetchSearchScope() async {
-    // final vehicleService = GetIt.instance<VehicleService>();
+  Future<List<String>?> fetchSearchScope() async {
+    final vehicleService = GetIt.instance<VehicleService>();
 
-    // plateSearchHistory = await vehicleService.getSearchHistory();
+    searchScope = await vehicleService.getSearchHistory();
     return searchScope;
   }
 }

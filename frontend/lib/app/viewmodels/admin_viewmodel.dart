@@ -21,6 +21,7 @@ class AdminViewModel extends SearchViewModel {
   Future<bool> getPermissionLevel() async {
     final adminService = GetIt.instance<AdminService>();
     _isUserAdmin = await adminService.getUserPermissionLevel();
+    notifyListeners();
     return _isUserAdmin;
   }
 
@@ -49,12 +50,12 @@ class AdminViewModel extends SearchViewModel {
     setLoading(true);
 
     try {
+      context.pop();
       final success = await adminService.createAndActivateUser(username);
       // setLoading(false);
-
       if (success) {
+        _filteredList = await refreshUsersList();
         if (!context.mounted) return;
-        context.pop();
       } else {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,13 +63,25 @@ class AdminViewModel extends SearchViewModel {
         );
       }
     } on DioException catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('${e.response!.data['message']}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${e.response != null ? e.response!.data['message'] : e.error}',
+          ),
+        ),
+      );
       context.pop();
     } finally {
       setLoading(false);
     }
+  }
+
+  Future<List<AppUser>> refreshUsersList() async {
+    searchController.text = '';
+    _usersList = await getAllUsers();
+    _filteredList = usersList;
+    setSearching(false);
+    return _filteredList;
   }
 
   List<AppUser> searchUsers(String query) {
@@ -88,7 +101,7 @@ class AdminViewModel extends SearchViewModel {
   }
 
   @override
-  Future<List<String>> fetchSearchScope() async {
+  Future<List<String>?> fetchSearchScope() async {
     final adminService = GetIt.instance<AdminService>();
 
     final usersList = await adminService.getAllUsers();

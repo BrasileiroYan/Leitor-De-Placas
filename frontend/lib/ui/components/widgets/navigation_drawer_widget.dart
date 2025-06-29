@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/services/token_service.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -9,11 +11,16 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final adminViewModel = Provider.of<AdminViewModel>(context);
+
     return Drawer(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [_drawerHeader(context), _drawerMenuItems(context)],
+          children: [
+            _drawerHeader(context),
+            _drawerMenuItems(context, adminViewModel),
+          ],
         ),
       ),
     );
@@ -44,9 +51,7 @@ class NavigationDrawerWidget extends StatelessWidget {
     );
   }
 
-  Widget _drawerMenuItems(BuildContext context) {
-    final adminViewModel = Provider.of<AdminViewModel>(context);
-
+  Widget _drawerMenuItems(BuildContext context, AdminViewModel adminViewModel) {
     return Container(
       padding: const EdgeInsets.all(24),
       child: Wrap(
@@ -66,11 +71,11 @@ class NavigationDrawerWidget extends StatelessWidget {
               title: const Text("Admin"),
               onTap: () async {
                 context.go('/admin');
-                if (adminViewModel.usersList.isEmpty) {
-                  adminViewModel.setLoading(true);
-                  await adminViewModel.getAllUsers();
-                  adminViewModel.setLoading(false);
-                }
+                // if (adminViewModel.usersList.isEmpty) {
+                adminViewModel.setLoading(true);
+                await adminViewModel.getAllUsers();
+                adminViewModel.setLoading(false);
+                // }
               },
             ),
           ),
@@ -83,8 +88,11 @@ class NavigationDrawerWidget extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Sair"),
-            onTap: () {
-              context.go('/');
+            onTap: () async {
+              await GetIt.instance<TokenService>().clearAll();
+              if (context.mounted) {
+                context.pushReplacement('/');
+              }
             },
           ),
         ],

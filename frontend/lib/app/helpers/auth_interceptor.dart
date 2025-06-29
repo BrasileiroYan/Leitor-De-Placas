@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:frontend/app/helpers/consts.dart';
 import 'package:frontend/app/services/token_service.dart';
 import 'package:get_it/get_it.dart';
 
@@ -27,7 +28,7 @@ class AuthInterceptor extends Interceptor {
 
       try {
         final response = await Dio().post(
-          'http://192.168.1.136/auth/refresh',
+          '$baseBackendUrl/auth/refresh',
           data: {"refreshToken": refreshToken},
         );
 

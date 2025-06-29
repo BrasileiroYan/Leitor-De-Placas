@@ -38,11 +38,12 @@ class VehicleService {
     return null;
   }
 
-  Future<List<String>> getSearchHistory() async {
+  Future<List<String>?> getSearchHistory() async {
     try {
-      final response = await _dio.get('/history/scans?page=0&size=20');
+      final response = await _dio.get('/history/scans?page=1&size=20');
       if (response.statusCode == 200) {
         final history = response.data.map((e) => e['scannedPlate']);
+        if (history.isEmpty) return null;
         return history;
       }
     } on DioException catch (e) {
@@ -51,6 +52,6 @@ class VehicleService {
       debugPrint("Unkown Exception");
     }
     debugPrint("Histórico vazio");
-    return [];
+    return null;
   }
 }

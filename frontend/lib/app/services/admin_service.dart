@@ -95,7 +95,11 @@ class AdminService {
   Future<bool> createAndActivateUser(String username) async {
     try {
       final response = await _dio
-          .clone(options: BaseOptions(receiveTimeout: Duration(seconds: 20)))
+          .clone(
+            options: _dio.options.copyWith(
+              receiveTimeout: Duration(seconds: 20),
+            ),
+          )
           .post(
             '/admin/users/create-user-and-activate',
             data: {'username': username},
