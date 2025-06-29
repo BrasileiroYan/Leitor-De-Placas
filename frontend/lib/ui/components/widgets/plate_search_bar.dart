@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:frontend/app/viewmodels/search_viewmodel.dart';
 
 class PlateSearchBar extends StatefulWidget {
-  final SearchViewModel viewModel;
+  final PlateSearchViewModel viewModel;
   const PlateSearchBar(this.viewModel, {super.key});
 
   @override
@@ -28,7 +28,7 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(
-      future: widget.viewModel.fetchSearchPlateHistory(),
+      future: widget.viewModel.fetchSearchScope(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return RawAutocomplete<String>(
@@ -38,10 +38,10 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
               final query = textEditingValue.text.trim().toUpperCase();
 
               if (query.isEmpty) {
-                return widget.viewModel.plateSearchHistory;
+                return widget.viewModel.searchScope;
               }
 
-              return widget.viewModel.plateSearchHistory.where(
+              return widget.viewModel.searchScope.where(
                 (plate) => plate.startsWith(query),
               );
             },

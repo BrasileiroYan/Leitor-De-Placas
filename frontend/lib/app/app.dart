@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/models/vehicle.dart';
+import 'package:frontend/ui/screens/admin_screen.dart';
 import 'package:frontend/ui/screens/first_login_screen.dart';
 import 'package:frontend/ui/screens/home_screen.dart';
 import 'package:frontend/ui/screens/login_screen.dart';
@@ -17,6 +18,9 @@ class MainApp extends StatelessWidget {
         builder: (context, state) => PasswordRecoveryScreen(),
       ),
       GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
+      GoRoute(path: '/admin', builder: (context, state) => AdminScreen()),
+      // GoRoute(path: '/config', builder: (context, state) => ConfigScreen()),
+      // GoRoute(path: '/support', builder: (context, state) => SupportScreen()),
       GoRoute(
         path: '/vehicleData',
         builder: (context, state) {

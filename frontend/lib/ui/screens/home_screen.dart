@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<SearchViewModel>(context);
+    final viewModel = Provider.of<PlateSearchViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -78,9 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
                     color: Colors.black.withAlpha((255 / 2).round()),
-                    child: Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
+                    child: Center(child: CircularProgressIndicator()),
                   ),
                 )
                 : SizedBox.shrink(),

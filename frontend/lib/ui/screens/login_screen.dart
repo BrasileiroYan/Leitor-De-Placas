@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
@@ -11,6 +12,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final adminViewModel = context.read<AdminViewModel>();
     final viewModel = Provider.of<LoginViewModel>(context);
 
     return Scaffold(
@@ -100,6 +102,7 @@ class LoginScreen extends StatelessWidget {
                       PrimaryButton(
                         text: "Entrar",
                         onTap: () async {
+                          adminViewModel.getPermissionLevel();
                           await viewModel.login(context);
                         },
                       ),

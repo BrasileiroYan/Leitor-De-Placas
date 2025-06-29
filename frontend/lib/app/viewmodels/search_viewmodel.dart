@@ -4,18 +4,11 @@ import 'package:frontend/app/services/vehicle_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-class SearchViewModel with ChangeNotifier {
+abstract class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController(
     text: ' ',
   );
-  List<String> plateSearchHistory = <String>[
-    'AAA-1234',
-    'ABC1D34',
-    'ABC-1234',
-    'ABA-1234',
-    'BRA2E19',
-    'ABC-1534',
-  ];
+  List<String> searchScope = <String>[];
 
   bool _isLoading = false;
   bool _isSearching = false;
@@ -33,6 +26,10 @@ class SearchViewModel with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<List<String>> fetchSearchScope();
+}
+
+class PlateSearchViewModel extends SearchViewModel {
   Future<void> searchPlateFromText(BuildContext context) async {
     final vehicleService = GetIt.instance<VehicleService>();
 
@@ -76,10 +73,11 @@ class SearchViewModel with ChangeNotifier {
 
   Future<void> searchPlateFromImage(BuildContext context) async {}
 
-  Future<List<String>> fetchSearchPlateHistory() async {
+  @override
+  Future<List<String>> fetchSearchScope() async {
     // final vehicleService = GetIt.instance<VehicleService>();
 
     // plateSearchHistory = await vehicleService.getSearchHistory();
-    return plateSearchHistory;
+    return searchScope;
   }
 }

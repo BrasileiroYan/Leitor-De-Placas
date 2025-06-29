@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   const NavigationDrawerWidget({super.key});
@@ -43,6 +45,8 @@ class NavigationDrawerWidget extends StatelessWidget {
   }
 
   Widget _drawerMenuItems(BuildContext context) {
+    final adminViewModel = Provider.of<AdminViewModel>(context);
+
     return Container(
       padding: const EdgeInsets.all(24),
       child: Wrap(
@@ -56,11 +60,18 @@ class NavigationDrawerWidget extends StatelessWidget {
             },
           ),
           Visibility(
-            visible: true,
+            visible: adminViewModel.isUserAdmin,
             child: ListTile(
               leading: const Icon(Icons.admin_panel_settings),
               title: const Text("Admin"),
-              onTap: () {},
+              onTap: () async {
+                context.go('/admin');
+                if (adminViewModel.usersList.isEmpty) {
+                  adminViewModel.setLoading(true);
+                  await adminViewModel.getAllUsers();
+                  adminViewModel.setLoading(false);
+                }
+              },
             ),
           ),
           ListTile(

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/app/helpers/auth_interceptor.dart';
+import 'package:frontend/app/services/admin_service.dart';
 import 'package:frontend/app/services/auth_service.dart';
 import 'package:frontend/app/services/token_service.dart';
 import 'package:frontend/app/services/vehicle_service.dart';
@@ -41,6 +42,10 @@ class ServiceLocator {
 
     locator.registerLazySingleton<VehicleService>(
       () => VehicleService(locator<Dio>()),
+    );
+
+    locator.registerLazySingleton<AdminService>(
+      () => AdminService(locator<Dio>()),
     );
   }
 }
