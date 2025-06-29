@@ -37,4 +37,20 @@ class VehicleService {
     debugPrint("Veículo com placa '$plate', não foi encontrado");
     return null;
   }
+
+  Future<List<String>> getSearchHistory() async {
+    try {
+      final response = await _dio.get('/history/scans?page=0&size=20');
+      if (response.statusCode == 200) {
+        final history = response.data.map((e) => e['scannedPlate']);
+        return history;
+      }
+    } on DioException catch (e) {
+      debugPrint(e.message);
+    } on Exception {
+      debugPrint("Unkown Exception");
+    }
+    debugPrint("Histórico vazio");
+    return [];
+  }
 }

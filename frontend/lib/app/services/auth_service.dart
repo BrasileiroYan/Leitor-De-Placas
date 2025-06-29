@@ -26,9 +26,11 @@ class AuthService {
         return true;
       }
     } on DioException catch (e) {
-      debugPrint('Login error: $e');
+      debugPrint('\tLogin error: $e');
+      rethrow;
     } on Exception catch (e) {
-      debugPrint('Login error: $e');
+      debugPrint('\tLogin error: $e');
+      rethrow;
     }
     return false;
   }

@@ -6,13 +6,28 @@ import 'package:go_router/go_router.dart';
 
 class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
+  List<String> plateSearchHistory = <String>[
+    'AAA-1234',
+    'ABC1D34',
+    'ABC-1234',
+    'ABA-1234',
+    'BRA2E19',
+    'ABC-1534',
+  ];
 
   bool _isLoading = false;
+  bool _isSearching = false;
 
   bool get isLoading => _isLoading;
+  bool get isSearching => _isSearching;
 
   void setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  void setSearching(bool value) {
+    _isSearching = value;
     notifyListeners();
   }
 
@@ -50,11 +65,18 @@ class SearchViewModel with ChangeNotifier {
 
     if (vehicle != null) {
       if (!context.mounted) return;
-      context.go('/vehicleData', extra: vehicle);
+      context.push('/vehicleData', extra: vehicle);
     } else {
       // showPlateNotFoundDialog(plate);
     }
   }
 
   Future<void> searchPlateFromImage(BuildContext context) async {}
+
+  Future<List<String>> fetchSearchPlateHistory() async {
+    // final vehicleService = GetIt.instance<VehicleService>();
+
+    // plateSearchHistory = await vehicleService.getSearchHistory();
+    return plateSearchHistory;
+  }
 }

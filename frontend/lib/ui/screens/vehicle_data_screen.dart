@@ -31,26 +31,28 @@ class VehicleDataScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              _vehicle.plate,
-              style: TextStyle(
-                fontFamily: "GL Nummernschild",
-                fontSize: 55,
-                fontWeight: FontWeight.bold,
+        child: Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _vehicle.plate,
+                style: TextStyle(
+                  fontFamily: "GL Nummernschild",
+                  fontSize: 55,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Divider(thickness: 2, height: 2, color: Colors.black),
-            Column(
-              children: [
-                VehicleInfoSection(vehicle: _vehicle),
-                const SizedBox(height: 16),
-                CrimesListSection(crimes: _vehicle.owner.crimesList),
-              ],
-            ),
-          ],
+              Divider(thickness: 2, height: 2, color: Colors.black),
+              Column(
+                children: [
+                  VehicleInfoSection(vehicle: _vehicle),
+                  const SizedBox(height: 16),
+                  CrimesListSection(crimes: _vehicle.owner.crimesList),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

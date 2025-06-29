@@ -16,17 +16,17 @@ class LoginField extends StatefulWidget {
 }
 
 class _LoginFieldState extends State<LoginField> {
+  final FocusNode _focusNode = FocusNode();
   bool _isObscured = true;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      focusNode: _focusNode,
       onEditingComplete: () {
-        _unfocusEvent();
-        setState(() {});
+        _focusNode.unfocus();
       },
-      onTapOutside: (event) => _unfocusEvent(),
       cursorColor: Colors.black,
       obscureText: widget.obscureText ? _isObscured : false,
       enableSuggestions: !widget.obscureText,
@@ -56,9 +56,5 @@ class _LoginFieldState extends State<LoginField> {
     setState(() {
       _isObscured = !_isObscured;
     });
-  }
-
-  _unfocusEvent() {
-    FocusScope.of(context).unfocus();
   }
 }

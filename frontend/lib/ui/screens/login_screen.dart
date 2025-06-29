@@ -3,6 +3,7 @@ import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/login_field.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,16 +17,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    super.initState();
     loginViewModel.addListener(() {
       setState(() {});
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Ink(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -37,13 +37,17 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Stack(
           children: [
             Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 24,
+                  top: MediaQuery.of(context).padding.top,
+                  right: 24,
+                ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(vertical: 24),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    spacing: 16,
+                    spacing: 12,
                     children: [
                       Image.asset('assets/images/prf_icon.png', width: 128),
                       Text(
@@ -78,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           LoginField(
                             controller: loginViewModel.emailController,
-                            hintText: 'Matrícula',
+                            hintText: 'E-mail',
                           ),
                           SizedBox(height: 8),
                           LoginField(
@@ -90,13 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             alignment: Alignment.topRight,
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  "password_recovery",
-                                );
+                                context.push('/passwordRecovery');
                               },
                               child: Text(
-                                "Recuperação de conta  ",
+                                "Esqueci minha senha  ",
                                 style: TextStyle(
                                   color: Colors.blue,
                                   decoration: TextDecoration.underline,
@@ -114,38 +115,27 @@ class _LoginScreenState extends State<LoginScreen> {
                           await loginViewModel.login(context);
                         },
                       ),
-                      // PrimaryButton(
-                      //   text: "Debug data",
-                      //   onTap: () async {
-                      //     String? token =
-                      //         await GetIt.instance<TokenService>().getToken();
-                      //     String? refreshToken =
-                      //         await GetIt.instance<TokenService>()
-                      //             .getRefreshToken();
-                      //     debugPrint(token);
-                      //     debugPrint(refreshToken);
-                      //   },
-                      // ),
                     ],
                   ),
                 ),
               ),
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 750),
-              child:
-                  loginViewModel.isLoading
-                      ? Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.black.withAlpha((255 / 2).round()),
-                        child: Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      )
-                      : null,
-            ),
-            // HelpWidget(lightMode: true),
+            loginViewModel.isLoading
+                ? AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 750),
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    color: Colors.black.withAlpha((255 / 2).round()),
+                    child: Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
+                )
+                : SizedBox.shrink(),
           ],
         ),
       ),

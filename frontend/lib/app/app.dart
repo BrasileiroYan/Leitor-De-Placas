@@ -25,23 +25,10 @@ class MainApp extends StatelessWidget {
         },
       ),
       GoRoute(
-        path: '/firstLogin',
-        builder: (context, state) {
-          final token = state.uri.queryParameters['token'];
-          return FirstLoginScreen(token!);
-        },
-      ),
-      GoRoute(
         path: '/activate-account',
         builder: (context, state) {
           final token = state.uri.queryParameters['token'];
-          Future.microtask(() {
-            if (context.mounted) {
-              context.go('/');
-              context.push('/firstLogin?token=$token');
-            }
-          });
-          return Scaffold(body: Center(child: CircularProgressIndicator()));
+          return FirstLoginScreen(token!);
         },
       ),
     ],
@@ -53,8 +40,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _router,
-      title: "SFA",
-
+      title: "ScannerFA",
       // home: LoginScreen(),
     );
   }

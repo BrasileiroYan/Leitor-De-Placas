@@ -4,6 +4,7 @@ class PrimaryButton extends StatelessWidget {
   final String text;
   final IconData? icon;
   final Function onTap;
+  final Color? bgColor;
 
   const PrimaryButton({
     super.key,
@@ -11,6 +12,7 @@ class PrimaryButton extends StatelessWidget {
     this.icon,
     required,
     required this.onTap,
+    this.bgColor,
   });
 
   @override
@@ -23,7 +25,7 @@ class PrimaryButton extends StatelessWidget {
       child: Ink(
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
         decoration: BoxDecoration(
-          color: Colors.green,
+          color: bgColor ?? Colors.green,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
