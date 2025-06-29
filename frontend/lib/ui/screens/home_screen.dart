@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               viewModel.setSearching(!viewModel.isSearching);
               if (!viewModel.isSearching) {
-                viewModel.searchController.text = '';
+                viewModel.searchController.text = ' ';
               }
             },
           ),

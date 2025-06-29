@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 
 class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController(
-    text: '',
+    text: ' ',
   );
   List<String> plateSearchHistory = <String>[
     'AAA-1234',
@@ -67,6 +67,7 @@ class SearchViewModel with ChangeNotifier {
 
     if (vehicle != null) {
       if (!context.mounted) return;
+
       context.push('/vehicleData', extra: vehicle);
     } else {
       // showPlateNotFoundDialog(plate);

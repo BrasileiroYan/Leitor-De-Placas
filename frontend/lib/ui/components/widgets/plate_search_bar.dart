@@ -14,6 +14,12 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
   final FocusNode _focusNode = FocusNode();
 
   @override
+  void initState() {
+    widget.viewModel.searchController.text = '';
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _focusNode.dispose();
     super.dispose();
@@ -160,7 +166,7 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
     await widget.viewModel.searchPlateFromText(context);
     widget.viewModel.setSearching(!widget.viewModel.isSearching);
     if (!widget.viewModel.isSearching) {
-      widget.viewModel.searchController.text = '';
+      widget.viewModel.searchController.text = ' ';
       _focusNode.unfocus();
     }
   }
