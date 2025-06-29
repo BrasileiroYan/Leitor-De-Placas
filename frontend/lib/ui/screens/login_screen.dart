@@ -4,27 +4,15 @@ import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/login_field.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final loginViewModel = LoginViewModel();
-
-  @override
-  void initState() {
-    super.initState();
-    loginViewModel.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<LoginViewModel>(context);
+
     return Scaffold(
       body: Ink(
         decoration: BoxDecoration(
@@ -81,12 +69,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         spacing: 4,
                         children: [
                           LoginField(
-                            controller: loginViewModel.emailController,
+                            controller: viewModel.emailController,
                             hintText: 'E-mail',
                           ),
                           SizedBox(height: 8),
                           LoginField(
-                            controller: loginViewModel.passwordController,
+                            controller: viewModel.passwordController,
                             obscureText: true,
                             hintText: 'Senha',
                           ),
@@ -112,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       PrimaryButton(
                         text: "Entrar",
                         onTap: () async {
-                          await loginViewModel.login(context);
+                          await viewModel.login(context);
                         },
                       ),
                     ],
@@ -120,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            loginViewModel.isLoading
+            viewModel.isLoading
                 ? AnimatedSwitcher(
                   duration: const Duration(milliseconds: 750),
                   child: Container(

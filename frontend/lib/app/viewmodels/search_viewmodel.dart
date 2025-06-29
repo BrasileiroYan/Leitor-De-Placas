@@ -5,7 +5,9 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class SearchViewModel with ChangeNotifier {
-  final TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController(
+    text: '',
+  );
   List<String> plateSearchHistory = <String>[
     'AAA-1234',
     'ABC1D34',

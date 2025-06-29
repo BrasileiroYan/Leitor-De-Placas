@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/password_recovery_viewmodel.dart';
-
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
-import 'package:go_router/go_router.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
   final PasswordRecoveryViewModel passwordRecoveryViewModel =

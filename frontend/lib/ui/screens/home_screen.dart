@@ -5,6 +5,7 @@ import 'package:frontend/ui/components/widgets/dialogs/request_camera_permission
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 import 'package:frontend/ui/components/widgets/plate_search_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,42 +15,39 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final searchViewModel = SearchViewModel();
+  bool _initialized = false;
 
   @override
-  void initState() {
-    searchViewModel.addListener(() {
-      setState(() {});
-    });
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkCameraPermission(context);
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkCameraPermission(context);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<SearchViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(
-              searchViewModel.isSearching ? Icons.close : Icons.search,
-            ),
+            icon: Icon(viewModel.isSearching ? Icons.close : Icons.search),
             onPressed: () {
-              searchViewModel.setSearching(!searchViewModel.isSearching);
-              if (!searchViewModel.isSearching) {
-                searchViewModel.searchController.text = '';
+              viewModel.setSearching(!viewModel.isSearching);
+              if (!viewModel.isSearching) {
+                viewModel.searchController.text = '';
               }
             },
           ),
           IconButton(onPressed: () {}, icon: Icon(Icons.help_outline_rounded)),
         ],
         backgroundColor: AppColors.amber,
-        title:
-            searchViewModel.isSearching
-                ? PlateSearchBar(searchViewModel)
-                : null,
+        title: viewModel.isSearching ? PlateSearchBar(viewModel) : null,
       ),
       drawer: NavigationDrawerWidget(),
       resizeToAvoidBottomInset: false,
@@ -70,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            searchViewModel.isLoading
+            viewModel.isLoading
                 ? AnimatedSwitcher(
                   duration: const Duration(milliseconds: 750),
                   child: Container(

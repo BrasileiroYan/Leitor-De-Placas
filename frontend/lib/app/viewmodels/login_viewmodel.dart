@@ -50,6 +50,7 @@ class LoginViewModel extends ChangeNotifier {
         SnackBar(content: Text('E-mail ou senha incorretos. Tente novamente.')),
       );
     } finally {
+      passwordController.text = '';
       setLoading(false);
     }
   }

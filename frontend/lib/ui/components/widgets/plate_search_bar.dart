@@ -32,11 +32,11 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
               final query = textEditingValue.text.trim().toUpperCase();
 
               if (query.isEmpty) {
-                return const Iterable<String>.empty();
+                return widget.viewModel.plateSearchHistory;
               }
 
               return widget.viewModel.plateSearchHistory.where(
-                (plate) => plate.contains(query),
+                (plate) => plate.startsWith(query),
               );
             },
             onSelected: (String selection) async {
