@@ -26,3 +26,4 @@ def aplicar_filtros(img):
 
 if __name__ == "__main__":
     aplicar_filtros("placa_recortada.jpg")  # o parâmetro não é usado no seu código, pode passar None
+    

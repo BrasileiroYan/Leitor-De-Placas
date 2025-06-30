@@ -1,97 +1,124 @@
+import os
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import PlainTextResponse
 from paddleocr import PaddleOCR
 from io import BytesIO
 from PIL import Image
 import numpy as np
 import cv2
 import sys
-import os
-
+import re
 import paddleocr
+
 print("PaddleOCR version:", paddleocr.__version__)
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-# importa os módulos do seu projeto
-from src.IA.bbox_cut import recortar_placa  # ajuste para o nome real da função
-from src.IMP.filters import aplicar_filtros  # idem aqui
+from src.IA.bbox_cut import recortar_placa
+from src.IMP.filters import aplicar_filtros
 
 app = FastAPI()
 ocr = PaddleOCR(use_textline_orientation=True, lang='pt')
 
+contador_placas = 0  # Contador global para nomear imagens processadas
 
-import re
-
-def corrigir_placa_mercosul(texto_ocr: str, max_len: int = 7):
-    # Remove espaços e caracteres especiais, deixa só letras maiúsculas e números
-    texto_limpo = re.sub(r'[^A-Za-z0-9]', '', texto_ocr).upper()
-
+def corrigir_placa_nova(texto_ocr: str, max_len: int = 7):
+    texto_limpo = re.sub(r'[^A-Za-z0-9]', '', texto_ocr.upper())
     if len(texto_limpo) != max_len:
-        # Se não tem tamanho esperado, retorna texto limpo
         return texto_limpo
 
     texto_corrigido = list(texto_limpo)
+    letras_suspeitas = {'0': 'O', '1': 'I', '2': 'Z', '5': 'S', '6': 'G', '8': 'B'}
+    numeros_suspeitos = {'O': '0', 'I': '1', 'Z': '2', 'S': '5', 'G': '6', 'B': '8'}
 
-    letras = {'0': 'O', '1': 'I', '2': 'Z', '5': 'S', '6': 'G', '8': 'B'}
-    numeros = {'O': '0', 'I': '1', 'Z': '2', 'S': '5', 'G': '6', 'B': '8'}
+    for i in range(len(texto_corrigido)):
+        if i in [0, 1, 2, 4]:
+            texto_corrigido[i] = letras_suspeitas.get(texto_corrigido[i], texto_corrigido[i])
+        else:
+            texto_corrigido[i] = numeros_suspeitos.get(texto_corrigido[i], texto_corrigido[i])
+    return ''.join(texto_corrigido)
 
-    for i, char in enumerate(texto_corrigido):
-        if i in [0, 1, 2, 4]:  # letras
-            if char in letras:
-                texto_corrigido[i] = letras[char]
-        else:  # números
-            if char in numeros:
-                texto_corrigido[i] = numeros[char]
+def corrigir_placa_antiga(texto_ocr: str, max_len: int = 7):
+    texto_limpo = re.sub(r'[^A-Za-z0-9]', '', texto_ocr.upper())
+    if len(texto_limpo) != max_len:
+        return texto_limpo
 
-    texto_corrigido_str = ''.join(texto_corrigido)
-    print("Texto corrigido:", texto_corrigido_str)
+    texto_corrigido = list(texto_limpo)
+    letras_suspeitas = {'0': 'O', '1': 'I', '2': 'Z', '5': 'S', '6': 'G', '8': 'B'}
+    numeros_suspeitos = {'O': '0', 'I': '1', 'Z': '2', 'S': '5', 'G': '6', 'B': '8'}
 
-    if len(texto_corrigido_str) > max_len:
-        # Divide em duas linhas: primeiro max_len chars e o resto
-        return [texto_corrigido_str[:max_len], texto_corrigido_str[max_len:]]
-    else:
-        return texto_corrigido_str
-
-
+    for i in range(len(texto_corrigido)):
+        if i in [0, 1, 2]:
+            texto_corrigido[i] = letras_suspeitas.get(texto_corrigido[i], texto_corrigido[i])
+        else:
+            texto_corrigido[i] = numeros_suspeitos.get(texto_corrigido[i], texto_corrigido[i])
+    return ''.join(texto_corrigido)
 
 @app.post("/processar/")
 async def processar_imagem(file: UploadFile = File(...)):
+    global contador_placas
+
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Arquivo enviado não é uma imagem válida.")
 
+    nome_arquivo_original = file.filename
+
     try:
-        # 1. Lê e converte a imagem
-        image_bytes = await file.read()
-        image = Image.open(BytesIO(image_bytes)).convert("RGB")
+        # Salvar arquivo recebido temporariamente
+        conteudo = await file.read()
+        with open(nome_arquivo_original, "wb") as f:
+            f.write(conteudo)
+
+        # Abrir imagem salva
+        image = Image.open(nome_arquivo_original).convert("RGB")
         img_np = np.array(image)
 
-        # 2. Corta a placa (bbox_cut)
+        # Processar a placa
         placa = recortar_placa(img_np)
-    
-
-        # 3. Aplica filtros (filters)
         placa_processada = aplicar_filtros(placa)
         placa_rgb = cv2.cvtColor(placa_processada, cv2.COLOR_GRAY2RGB)
-        # 4. OCR
+
         resultado = ocr.predict(placa_rgb)
-        linhas = resultado[0]
-        print("Linhas detectadas:", linhas)
-        print("Resultado OCR:", resultado)
-
         if not resultado or not resultado[0]:
-            return {"placa": None, "mensagem": "Nada detectado"}
+            # Apaga arquivo original mesmo se nada detectado
+            if os.path.exists(nome_arquivo_original):
+                os.remove(nome_arquivo_original)
+            return PlainTextResponse("")
 
-        texto_detectado = resultado[0]["rec_texts"][0]
+        texto_detectado_raw = resultado[0]["rec_texts"][0]
+        texto_detectado = re.sub(r'[^A-Za-z0-9]', '', texto_detectado_raw.upper())
 
-        texto_corrigido = corrigir_placa_mercosul(texto_detectado)
+        nome = nome_arquivo_original.lower()
+        if nome == "nova.jpg":
+            texto_corrigido = corrigir_placa_nova(texto_detectado)
+        elif nome == "antiga.jpg":
+            texto_corrigido = corrigir_placa_antiga(texto_detectado)
+        else:
+            texto_corrigido = texto_detectado
 
-        return {
-            "placa_original": texto_detectado,
-            "placa_corrigida": texto_corrigido
-        }
-        
+        print(texto_corrigido)  # Imprime no terminal
+
+        # Excluir arquivo original enviado
+        if os.path.exists(nome_arquivo_original):
+            os.remove(nome_arquivo_original)
+
+    
+        nome_placa_salvar = f"placa{contador_placas}.jpg"
+        pasta_salvar = os.path.join("..", "..", "images")
+        os.makedirs(pasta_salvar, exist_ok=True)
+        caminho_salvar = os.path.join(pasta_salvar, nome_placa_salvar)
+
+        cv2.imwrite(caminho_salvar, placa_processada)
+
+        contador_placas += 1
+
+
+        return PlainTextResponse(texto_corrigido)
+
     except Exception as e:
         import traceback
         print("Erro:", traceback.format_exc())
-        return JSONResponse(status_code=500, content={"erro": str(e)})
+        # Tenta apagar arquivo original caso erro
+        if os.path.exists(nome_arquivo_original):
+            os.remove(nome_arquivo_original)
+        return PlainTextResponse("", status_code=500)
