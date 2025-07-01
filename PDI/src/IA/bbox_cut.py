@@ -23,8 +23,10 @@ def recortar_placa(img_bgr, modelo_path=None):
     detections = results[0]
 
     if len(detections.boxes) == 0:
+        cv2.imwrite("images/placastate.jpg", img_bgr)
         print("Nenhuma placa detectada.")
         return None
+    
 
     boxes_sorted = sorted(detections.boxes, key=lambda b: b.conf.item(), reverse=True)
     box = boxes_sorted[0]
