@@ -25,7 +25,7 @@ Future<dynamic> showImagePreviewDialog(
         actions: [
           IconButton.outlined(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
           ),
           Visibility(
             visible: needConfirmation,
@@ -33,12 +33,12 @@ Future<dynamic> showImagePreviewDialog(
               icon: Icon(Icons.check, color: Colors.green[600]),
               onPressed: () {
                 Navigator.pop(context, true);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConfirmationScreen(imageBytes),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => ConfirmationScreen(imageBytes),
+                //   ),
+                // );
               },
             ),
           ),

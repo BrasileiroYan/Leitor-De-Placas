@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
       body: Ink(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, AppColors.bgColor],
+            colors: [AppColors.bgColor, Color(0xFF000614)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -39,7 +39,10 @@ class LoginScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     spacing: 12,
                     children: [
-                      Image.asset('assets/images/prf_icon.png', width: 128),
+                      Image.asset(
+                        'assets/images/prf_icon_antigo.png',
+                        width: 128,
+                      ),
                       Text(
                         'SFA',
                         style: TextStyle(

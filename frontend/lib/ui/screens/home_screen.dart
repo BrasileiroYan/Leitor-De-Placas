@@ -1,9 +1,13 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/search_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:frontend/ui/components/widgets/dialogs/denied_camera_permission_dialog.dart';
 import 'package:frontend/ui/components/widgets/dialogs/request_camera_permission_dialog.dart.dart';
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 import 'package:frontend/ui/components/widgets/plate_search_bar.dart';
+import 'package:frontend/ui/screens/camera_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -67,6 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
+              child: ElevatedButton(
+                onPressed: () => _handleCameraClicked(context),
+                child: Icon(Icons.camera),
+              ),
             ),
             viewModel.isLoading
                 ? AnimatedSwitcher(
@@ -98,44 +106,44 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Future<void> _handleCameraClicked(BuildContext context) async {
-  //   List<CameraDescription> listCameras = await availableCameras();
+  Future<void> _handleCameraClicked(BuildContext context) async {
+    List<CameraDescription> listCameras = await availableCameras();
 
-  //   PermissionStatus cameraPermissionStatus = await Permission.camera.status;
+    PermissionStatus cameraPermissionStatus = await Permission.camera.status;
 
-  //   if (cameraPermissionStatus == PermissionStatus.denied) {
-  //     if (!context.mounted) return;
-  //     PermissionStatus? newStatus = await showRequestCameraPermissionDialog(
-  //       context,
-  //     );
+    if (cameraPermissionStatus == PermissionStatus.denied) {
+      if (!context.mounted) return;
+      PermissionStatus? newStatus = await showRequestCameraPermissionDialog(
+        context,
+      );
 
-  //     if (newStatus != null) {
-  //       cameraPermissionStatus = newStatus;
-  //     }
-  //   }
+      if (newStatus != null) {
+        cameraPermissionStatus = newStatus;
+      }
+    }
 
-  //   if (cameraPermissionStatus != PermissionStatus.denied &&
-  //       cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
-  //     if (!context.mounted) return;
+    if (cameraPermissionStatus != PermissionStatus.denied &&
+        cameraPermissionStatus != PermissionStatus.permanentlyDenied) {
+      if (!context.mounted) return;
 
-  //     int indexCameraDescription = listCameras.indexWhere(
-  //       (e) => e.lensDirection == CameraLensDirection.back,
-  //     );
+      int indexCameraDescription = listCameras.indexWhere(
+        (e) => e.lensDirection == CameraLensDirection.back,
+      );
 
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder:
-  //             (context) => CameraScreen(
-  //               cameraDescription: listCameras[indexCameraDescription],
-  //             ),
-  //       ),
-  //     );
-  //   } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
-  //     if (!context.mounted) return;
-  //     await showDeniedCameraPermissionDialog(context);
-  //   }
-  // }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => CameraScreen(
+                cameraDescription: listCameras[indexCameraDescription],
+              ),
+        ),
+      );
+    } else if (cameraPermissionStatus == PermissionStatus.permanentlyDenied) {
+      if (!context.mounted) return;
+      await showDeniedCameraPermissionDialog(context);
+    }
+  }
 
   // void _handleTextPlateSent(BuildContext context, String plate) {
   //   final regex1 = RegExp(r'^[A-Z]{3}-\d{4}$'); // Format: ABC-1234

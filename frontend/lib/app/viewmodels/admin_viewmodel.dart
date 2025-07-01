@@ -47,12 +47,8 @@ class AdminViewModel extends SearchViewModel {
       return;
     }
 
-    setLoading(true);
-
     try {
-      context.pop();
       final success = await adminService.createAndActivateUser(username);
-      // setLoading(false);
       if (success) {
         _filteredList = await refreshUsersList();
         if (!context.mounted) return;
@@ -70,17 +66,17 @@ class AdminViewModel extends SearchViewModel {
           ),
         ),
       );
-      context.pop();
-    } finally {
-      setLoading(false);
+      context.pop(false);
     }
   }
 
   Future<List<AppUser>> refreshUsersList() async {
     searchController.text = '';
+    setLoading(true);
     _usersList = await getAllUsers();
     _filteredList = usersList;
     setSearching(false);
+    setLoading(false);
     return _filteredList;
   }
 

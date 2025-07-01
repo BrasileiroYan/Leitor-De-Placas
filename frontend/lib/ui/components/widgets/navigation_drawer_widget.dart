@@ -41,8 +41,8 @@ class NavigationDrawerWidget extends StatelessWidget {
           Text(
             'ScannerFA',
             style: TextStyle(
-              fontFamily: 'Italiana',
-              fontSize: 24,
+              // fontFamily: 'Italiana',
+              fontSize: 26,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -78,6 +78,11 @@ class NavigationDrawerWidget extends StatelessWidget {
                 // }
               },
             ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.support_agent_rounded),
+            title: const Text("Suporte"),
+            onTap: () {},
           ),
           ListTile(
             leading: const Icon(Icons.settings_rounded),

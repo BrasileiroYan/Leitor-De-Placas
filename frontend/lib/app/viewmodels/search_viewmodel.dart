@@ -75,9 +75,10 @@ class PlateSearchViewModel extends SearchViewModel {
 
   @override
   Future<List<String>?> fetchSearchScope() async {
-    final vehicleService = GetIt.instance<VehicleService>();
+    // final vehicleService = GetIt.instance<VehicleService>();
 
-    searchScope = await vehicleService.getSearchHistory();
+    // searchScope = await vehicleService.getSearchHistory();
+    searchScope = ['BRA2E19', 'ABC-1234', 'ABC1D34', 'AAA-4568', 'BES-2344'];
     return searchScope;
   }
 }

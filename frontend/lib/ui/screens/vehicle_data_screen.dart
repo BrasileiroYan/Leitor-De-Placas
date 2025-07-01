@@ -36,7 +36,11 @@ class VehicleDataScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _vehicle.plate,
+                !List<String>.generate(10, (idx) {
+                      return '$idx';
+                    }).contains(_vehicle.plate.split('').elementAt(4))
+                    ? _vehicle.plate.split('').join(' ')
+                    : '${_vehicle.plate.substring(0, 3).split('').join(' ')} • ${_vehicle.plate.substring(3, 7).split('').join(' ')}',
                 style: TextStyle(
                   fontFamily: "GL Nummernschild",
                   fontSize: 55,
