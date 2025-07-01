@@ -1,13 +1,17 @@
+from torch import mode
 from ultralytics import YOLO
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from datetime import datetime
 
-def recortar_placa(img_bgr, modelo_path=None):
+def recortar_placa(img_bgr, rotacoes_padrao=0, modelo_path=None):
     raiz_projeto = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-
+    if rotacoes_padrao > 3: 
+        raise ValueError("Número máximo de rotações atingido. Nenhuma placa detectada.")
+    
     if modelo_path is None:
         modelo_path = os.path.join(raiz_projeto, 'src', 'IA', 'best2.pt')
     else:
@@ -23,9 +27,10 @@ def recortar_placa(img_bgr, modelo_path=None):
     detections = results[0]
 
     if len(detections.boxes) == 0:
-        cv2.imwrite("images/placastate.jpg", img_bgr)
+        img_bgr = cv2.rotate(img_bgr, cv2.ROTATE_90_CLOCKWISE)
         print("Nenhuma placa detectada.")
-        return None
+        print(f"[{datetime.now()}] Aplicando rotação 90 graus no sentido horário. Número de rotações: {rotacoes_padrao + 1}")
+        return recortar_placa(img_bgr, rotacoes_padrao + 1, modelo_path)
     
 
     boxes_sorted = sorted(detections.boxes, key=lambda b: b.conf.item(), reverse=True)
@@ -67,11 +72,12 @@ def recortar_placa(img_bgr, modelo_path=None):
         
 
         print("A placa é quadrada.")
-        label = "moto"
+        tipo_de_placa = "moto"
     else:
-        print("A placa e retangular.")
+        tipo_de_placa = "carro"
+        print("A placa é retangular.")
 
-    return recorte,  label
+    return recorte,  tipo_de_placa, label
 
 if __name__ == "__main__":
     img = cv2.imread("images/placa10.jpg")

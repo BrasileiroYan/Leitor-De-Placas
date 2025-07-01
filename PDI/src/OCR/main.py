@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import PlainTextResponse
+from matplotlib.pyplot import tick_params
 from paddleocr import PaddleOCR
 from io import BytesIO
 from PIL import Image
@@ -19,6 +20,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from src.IA.bbox_cut import recortar_placa
 from src.IMP.filters import aplicar_filtros
 
+rotacoes_padrao =  0
 app = FastAPI()
 ocr = PaddleOCR(use_textline_orientation=True, lang='pt')
 
@@ -94,7 +96,10 @@ def corrigir_placa_moto(texto_ocr: str, max_len: int = 7):
             texto_corrigido[3] = letras_para_digitos.get(char, char)
         
         char = texto_corrigido[4]
-        if len(texto_corrigido) > 4 and texto_corrigido[4].isalpha() and (texto_corrigido[0:3].isalpha() and texto_corrigido[3].isdigit()):
+
+        primeiras_tres_letras = ''.join(texto_corrigido[0:3])
+        
+        if len(texto_corrigido) > 4 and primeiras_tres_letras.isalpha() and texto_corrigido[3].isdigit():
             if char.isdigit():
                 texto_corrigido[4] = digitos_para_letras.get(char, char)
         else:
@@ -131,7 +136,7 @@ async def processar_imagem(file: UploadFile = File(...)):
         img_np = np.array(image)
         img_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
 
-        placa, label = recortar_placa(img_bgr)
+        placa, tipo_de_placa, label = recortar_placa(img_bgr, rotacoes_padrao)
 
         if placa is None:
             if os.path.exists(temp_file_path):
@@ -168,7 +173,7 @@ async def processar_imagem(file: UploadFile = File(...)):
                     continue
                 filtered_detections.append(det)
 
-            if label.lower() == "moto":
+            if tipo_de_placa.lower() == "moto":
                 print(f"[{datetime.now()}] Lógica de Concatenação: PLACA DE MOTO (Semântica por linhas)")
                 alpha_line_candidates = []
                 num_alpha_line_candidates = []
@@ -244,15 +249,24 @@ async def processar_imagem(file: UploadFile = File(...)):
         texto_detectado = re.sub(r'[^A-Za-z0-9]', '', texto_placa_completa_raw.upper())
 
         texto_corrigido = ""
-        if label.lower() == "moto":
-            print(f"[{datetime.now()}] Aplicando correção para: PLACA DE MOTO")
-            texto_corrigido = corrigir_placa_moto(texto_detectado)
-        elif label.lower() == "new":
-            print(f"[{datetime.now()}] Aplicando correção para: PLACA NOVA")
-            texto_corrigido = corrigir_placa_nova(texto_detectado)
+        if label.lower() == "new":
+            if tipo_de_placa.lower() == "moto":
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA DE MOTO")
+                texto_corrigido_moto = corrigir_placa_moto(texto_detectado)
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA NOVA")
+                texto_corrigido = corrigir_placa_nova(texto_corrigido_moto)
+            elif tipo_de_placa.lower() == "carro":
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA DE NOVA")
+                texto_corrigido = corrigir_placa_nova(texto_detectado)
         elif label.lower() == "old":
-            print(f"[{datetime.now()}] Aplicando correção para: PLACA ANTIGA")
-            texto_corrigido = corrigir_placa_antiga(texto_detectado)
+            if tipo_de_placa.lower() == "moto":
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA DE MOTO")
+                texto_corrigido_moto = corrigir_placa_moto(texto_detectado)
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA ANTIGA")
+                texto_corrigido = corrigir_placa_antiga(texto_corrigido_moto)
+            elif tipo_de_placa.lower() == "carro":
+                print(f"[{datetime.now()}] Aplicando correção para: PLACA DE ANTIGA")
+                texto_corrigido = corrigir_placa_antiga(texto_detectado)
         else:
             print(f"[{datetime.now()}] Aplicando correção para: Tipo de Placa Desconhecido (Padrão para Nova)")
             texto_corrigido = corrigir_placa_nova(texto_detectado)
