@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/ui/screens/confirmation_screen.dart';
+// import 'package:frontend/ui/screens/confirmation_screen.dart';
 
 Future<dynamic> showImagePreviewDialog(
   BuildContext context,
@@ -14,18 +14,11 @@ Future<dynamic> showImagePreviewDialog(
     builder: (context) {
       return AlertDialog(
         title: const Text("Parece bom?"),
-        content: ClipRect(
-          child: Align(
-            alignment: Alignment(-1.0, -0.21),
-            widthFactor: 0.5,
-            heightFactor: 0.15,
-            child: Image.memory(imageBytes),
-          ),
-        ),
+        content: ClipRect(child: Image.memory(imageBytes, height: 256)),
         actions: [
           IconButton.outlined(
             icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
           ),
           Visibility(
             visible: needConfirmation,
@@ -33,12 +26,12 @@ Future<dynamic> showImagePreviewDialog(
               icon: Icon(Icons.check, color: Colors.green[600]),
               onPressed: () {
                 Navigator.pop(context, true);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConfirmationScreen(imageBytes),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => ConfirmationScreen(imageBytes),
+                //   ),
+                // );
               },
             ),
           ),

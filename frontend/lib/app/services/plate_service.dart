@@ -1,31 +1,31 @@
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/app/helpers/consts.dart';
 
 class PlateService {
   final Dio _dio;
   PlateService(this._dio);
 
-  Future<String?> getPlateFromImage(
-    XFile imageFile, {
-    bool isAntiga = false,
-  }) async {
+  Future<String> getPlateFromImage(XFile imageFile) async {
     final multipartFile = await MultipartFile.fromFile(
       imageFile.path,
       filename: 'placa.jpg',
       contentType: DioMediaType('image', 'jpeg'),
     );
     final formData = FormData.fromMap({'file': multipartFile});
+    debugPrint("\tNÃO CHEGOU DENTRO TO TRY CATCH");
 
     try {
-      final response = await _dio.post(
-        '/ocr/read',
+      final response = await Dio().post(
+        '$pdiRequestUrl/processar/',
         data: formData,
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        // options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
 
       if (response.statusCode == 200) {
-        final plate = response.data['plate'];
+        final plate = response.data;
+        debugPrint("\t$plate");
         return plate;
       }
     } on DioException catch (e) {
@@ -33,6 +33,6 @@ class PlateService {
     } on Exception {
       debugPrint("Unkown Exception");
     }
-    return null;
+    return 'N/A';
   }
 }

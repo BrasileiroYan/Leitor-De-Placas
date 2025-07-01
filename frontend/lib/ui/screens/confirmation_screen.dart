@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
@@ -7,8 +8,10 @@ import 'package:frontend/ui/components/widgets/help_widget.dart';
 import 'package:frontend/ui/screens/vehicle_data_screen.dart';
 
 class ConfirmationScreen extends StatelessWidget {
-  final Uint8List imageBytes;
-  const ConfirmationScreen(this.imageBytes, {super.key});
+  // final Uint8List imageBytes;
+  final String plate;
+  final XFile file;
+  const ConfirmationScreen(this.file, this.plate, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class ConfirmationScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 32, width: double.infinity),
+                  SizedBox(height: 1, width: double.infinity),
                   Column(
                     spacing: 8,
                     children: [
@@ -46,11 +49,15 @@ class ConfirmationScreen extends StatelessWidget {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: Align(
-                          alignment: Alignment(0, -0.21),
-                          widthFactor: 0.9,
-                          heightFactor: 0.15,
-                          child: Image.memory(imageBytes),
+                        child: FutureBuilder<Uint8List>(
+                          future: file.readAsBytes(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Image.memory(snapshot.data!, height: 256);
+                            } else {
+                              return CircularProgressIndicator();
+                            }
+                          },
                         ),
                       ), //Meant to receive the picture taken in CameraScreen
                     ],
@@ -59,7 +66,7 @@ class ConfirmationScreen extends StatelessWidget {
                   Column(
                     children: [
                       Text(
-                        "ABC-1234", //Meant to receive the plate number as string from backend
+                        plate, //Meant to receive the plate number as string from backend
                         style: TextStyle(
                           fontFamily: "GL Nummernschild",
                           fontSize: 40,

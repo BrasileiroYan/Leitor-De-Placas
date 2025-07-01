@@ -2,8 +2,11 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/app/services/plate_service.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/dialogs/image_preview_dialog.dart';
+import 'package:frontend/ui/screens/confirmation_screen.dart';
+import 'package:get_it/get_it.dart';
 
 class CameraScreen extends StatefulWidget {
   final CameraDescription cameraDescription;
@@ -124,13 +127,24 @@ class _CameraScreenState extends State<CameraScreen> {
       XFile snapshotFile = await cameraController!.takePicture();
       Uint8List snapshotBytes = await snapshotFile.readAsBytes();
       if (!mounted) return;
-      await showImagePreviewDialog(
+      final success = await showImagePreviewDialog(
         context,
         snapshotBytes,
         needConfirmation: true,
       );
-      if (!mounted) return;
-      // Navigator.pushNamed(context, "confirmation");
+
+      if (success) {
+        final plate = await GetIt.instance<PlateService>().getPlateFromImage(
+          snapshotFile,
+        );
+        if (!mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmationScreen(snapshotFile, plate),
+          ),
+        );
+      }
     }
   }
 }
