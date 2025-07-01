@@ -52,14 +52,19 @@ public class TestConfig implements CommandLineRunner {
         // =================================================================
         // 2. Pessoas
         // =================================================================
-        Person p1 = new Person("João Victor Pequeno Damasceno", "Masculino", "2001123456789", "111.222.333-44", LocalDate.parse("1988-05-10"), LicenseCategory.AB, ad2);
+        Person p1 = new Person("João Alves Barbosa Machado", "Masculino", "2001123456789", "111.222.333-44", LocalDate.parse("1988-05-10"), LicenseCategory.AB, ad2);
         Person p2 = new Person("Ana Cecília Medeiros Lima", "Feminino", "2005987654321", "555.666.777-88", LocalDate.parse("2001-02-25"), LicenseCategory.B, ad1);
         Person p3 = new Person("Bruno Aguiar de Melo", "Masculino", "2010112233445", "999.888.777-66", LocalDate.parse("1975-11-30"), LicenseCategory.A, ad3);
-        Person p4 = new Person("Letícia Martins Souza", "Feminino", "2008556677889", "123.456.789-00", LocalDate.parse("1995-07-18"), LicenseCategory.A, ad1);
+        Person p4 = new Person("Letícia Martins Suzuki", "Feminino", "2008556677889", "123.456.789-00", LocalDate.parse("1995-07-18"), LicenseCategory.A, ad1);
         Person p5 = new Person("Fernando de Carvalho Costa Filho", "Masculino", "2012345678901", "444.333.222-11", LocalDate.parse("2004-09-01"), LicenseCategory.C, ad4);
         Person p6 = new Person("Juliana Fernandes Aragão", "Feminino", "2015987654321", "777.666.555-44", LocalDate.parse("1999-04-12"), LicenseCategory.AB, ad2);
 
-
+        p1.setPhotoFileName("JoaoAlvesBarbosaMachado-Foto3x4.jpeg");
+        p2.setPhotoFileName("AnaCeciliaMedeirosLima-Foto3x4.jpeg");
+        p3.setPhotoFileName("BrunoAguiardeMelo-Foto3x4.jpeg");
+        p4.setPhotoFileName("LeticiaMartinsSuzuki-Foto3x4.jpeg");
+        p5.setPhotoFileName(null);
+        p6.setPhotoFileName("JulianaFernandesAragao-Foto3x4.jpeg");
         personRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5, p6));
 
         // =================================================================

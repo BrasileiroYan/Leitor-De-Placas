@@ -8,14 +8,19 @@ import br.com.prf.leitordeplacas.service.exception.ReportGenerationException;
 import br.com.prf.leitordeplacas.service.exception.VehicleNotFoundException;
 import br.com.prf.leitordeplacas.service.pdf.PdfPageEvents;
 import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTable;
 import com.lowagie.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -27,6 +32,8 @@ public class VehicleReportPdfService {
     private static final Logger logger = LoggerFactory.getLogger(VehicleReportPdfService.class);
 
     private final VehicleRepository vehicleRepository;
+
+    private static final String DEFAULT_PLACEHOLDER = "placeHolder-Foto3x4.jpeg";
 
     public VehicleReportPdfService(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
@@ -50,7 +57,7 @@ public class VehicleReportPdfService {
             // Carregar logo do sistema
             Image logo = null;
             try {
-                URL logoUrl = getClass().getClassLoader().getResource("prf_logo.png");
+                URL logoUrl = getClass().getClassLoader().getResource("images/prf_logo.png");
                 if (logoUrl != null) {
                     logo = Image.getInstance(logoUrl);
                 } else {
@@ -71,12 +78,64 @@ public class VehicleReportPdfService {
             Font sectionFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 16, Font.BOLD);
             Font subSectionFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14);
             Font contentFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12);
+            Font titlePhotoFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 10, Font.BOLD, Color.WHITE);
 
             //Título do Relatório
             Paragraph title = new Paragraph("Relatório de Consulta de Placa", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
             document.add(Chunk.NEWLINE);
+
+            // Baixa foto do Proprietário
+            try {
+                String photoFileName = vehicle.getOwner().getPhotoFileName();
+                URL photoUrl = null;
+
+                if (photoFileName != null && !photoFileName.isEmpty()) {
+                    photoUrl = getClass().getClassLoader().getResource("images/" + photoFileName);
+                    if (photoUrl == null) {
+                        logger.warn("Foto específica '{}' não encontrada. Usando placeholder padrão.", photoFileName);
+                    }
+                }
+
+                if (photoUrl == null) {
+                    photoUrl = getClass().getClassLoader().getResource("images/" + DEFAULT_PLACEHOLDER);
+                }
+
+                if (photoUrl != null) {
+                    Image ownerPhoto = Image.getInstance(photoUrl);
+                    ownerPhoto.scaleToFit(127.5f, 170f);
+
+                    PdfPTable photoTable = new PdfPTable(1);
+                    photoTable.setTotalWidth(132.5f);
+                    photoTable.setLockedWidth(true);
+
+                    PdfPCell titlePhotoCell = new PdfPCell(new Phrase("Foto do Proprietário", titlePhotoFont));
+                    titlePhotoCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    titlePhotoCell.setBackgroundColor(new Color(0x40, 0x40, 0x40));
+                    titlePhotoCell.setPadding(4f);
+                    photoTable.addCell(titlePhotoCell);
+
+                    PdfPCell imageCell = new PdfPCell(ownerPhoto, false);
+                    imageCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    imageCell.setPadding(2f);
+                    photoTable.addCell(imageCell);
+
+                    float xPosition = document.getPageSize().getWidth() - document.rightMargin() - ownerPhoto.getScaledWidth();
+                    float yPosition = writer.getVerticalPosition(true);
+
+                    photoTable.writeSelectedRows(0,
+                            -1,
+                            xPosition,
+                            yPosition,
+                            writer.getDirectContent());
+
+                } else {
+                    logger.error("Não foi possível encontrar nem a foto do proprietário nem o placeholder padrão.");
+                }
+            } catch (Exception e) {
+                logger.error("Falha ao carregar a imagem do proprietário. O relatório será gerado sem a foto.", e);
+            }
 
             //SEÇÃO: Dados do Veículo
             document.add(new Paragraph("DADOS DO VEÍCULO - PLACA [" + vehicle.getPlate() + "]:", sectionFont));

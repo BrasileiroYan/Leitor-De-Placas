@@ -37,6 +37,9 @@ public class Person implements Serializable {
     @OneToOne(mappedBy = "person", cascade = CascadeType.ALL)
     @Setter private CriminalRecord criminalRecord;
 
+    // Fotos das pessoas
+    @Setter private String photoFileName;
+
     public Person() {
     }
 
@@ -96,5 +99,9 @@ public class Person implements Serializable {
 
     public void removeVehicle(Vehicle vehicle) {
         vehicles.remove(vehicle);
+    }
+
+    public String getPhotoFileName() {
+        return photoFileName;
     }
 }

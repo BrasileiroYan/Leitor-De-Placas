@@ -83,27 +83,30 @@ public class PdfPageEvents extends PdfPageEventHelper {
         contentByte.stroke();
 
         // MARCA D'ÁGUA
+
+        PdfContentByte waterMarkCanvas = writer.getDirectContentUnder();
+
         float positionX = (document.left() + document.right()) / 2;
         float positionY = (document.top() + document.bottom()) / 2;
 
         Font waterMarkFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 110, Font.BOLD, Color.lightGray);
 
         PdfGState pdfGState = new PdfGState();
-        pdfGState.setFillOpacity(0.18f); // Nível de opacidade (vai de 0.0 a 1.0)
-        contentByte.saveState();
-        contentByte.setGState(pdfGState);
+        pdfGState.setFillOpacity(0.23f); // Nível de opacidade (vai de 0.0 a 1.0)
+        waterMarkCanvas.saveState();
+        waterMarkCanvas.setGState(pdfGState);
 
         Phrase waterMarkPhrase = new Phrase("CONFIDENCIAL", waterMarkFont);
 
         ColumnText.showTextAligned(
-                contentByte,
+                waterMarkCanvas,
                 Element.ALIGN_CENTER,
                 waterMarkPhrase,
                 positionX,
                 positionY,
                 54.73f  // Angulação calculada com base nas dimensões de uma folha A4
         );
-        contentByte.restoreState();
+        waterMarkCanvas.restoreState();
     }
 
     @Override
