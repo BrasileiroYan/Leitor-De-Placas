@@ -4,6 +4,7 @@ import 'package:frontend/app/helpers/auth_interceptor.dart';
 import 'package:frontend/app/helpers/consts.dart';
 import 'package:frontend/app/services/admin_service.dart';
 import 'package:frontend/app/services/auth_service.dart';
+import 'package:frontend/app/services/plate_service.dart';
 import 'package:frontend/app/services/token_service.dart';
 import 'package:frontend/app/services/vehicle_service.dart';
 import 'package:get_it/get_it.dart';
@@ -46,6 +47,10 @@ class ServiceLocator {
 
     locator.registerLazySingleton<AdminService>(
       () => AdminService(locator<Dio>()),
+    );
+
+    locator.registerLazySingleton<PlateService>(
+      () => PlateService(locator<Dio>()),
     );
   }
 }

@@ -12,9 +12,10 @@ class PlateService {
   }) async {
     final multipartFile = await MultipartFile.fromFile(
       imageFile.path,
-      filename: '${isAntiga ? 'antiga' : 'nova'}.jpg',
+      filename: 'placa.jpg',
+      contentType: DioMediaType('image', 'jpeg'),
     );
-    final formData = FormData.fromMap({'image': multipartFile});
+    final formData = FormData.fromMap({'file': multipartFile});
 
     try {
       final response = await _dio.post(
