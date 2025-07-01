@@ -15,7 +15,7 @@ def aplicar_filtros(img):
         dilated, 255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
         cv2.THRESH_BINARY_INV,
-        81, 40)
+        113, 40) #81, 40
 
     cv2.imwrite("images/placa_pos_processada.jpg", binarized)
     plt.imshow(binarized, cmap='gray')

@@ -73,8 +73,8 @@ def corrigir_placa_antiga(texto_ocr: str, max_len: int = 7):
     return ''.join(texto_corrigido)
 
 def corrigir_placa_moto(texto_ocr: str, max_len: int = 7):
-    texto_limpo = re.sub(r'[^A-Za-z0-9]', '', texto_ocr.upper())
-    
+    texto_limpo = re.sub(r'[^A-Za-z0-9]', '',  texto_ocr.upper())
+
     if len(texto_limpo) != max_len:
         print(f"[{datetime.now()}] Aviso: Tamanho da placa de MOTO ({len(texto_limpo)}) diferente do esperado ({max_len}). Tentando correção parcial.")
     
@@ -131,8 +131,8 @@ async def processar_imagem(file: UploadFile = File(...)):
         img_np = np.array(image)
         img_bgr = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
 
-        placa = recortar_placa(img_bgr)
-        
+        placa, label = recortar_placa(img_bgr)
+
         if placa is None:
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
@@ -168,7 +168,7 @@ async def processar_imagem(file: UploadFile = File(...)):
                     continue
                 filtered_detections.append(det)
 
-            if nome_arquivo_base == "moto":
+            if label.lower() == "moto":
                 print(f"[{datetime.now()}] Lógica de Concatenação: PLACA DE MOTO (Semântica por linhas)")
                 alpha_line_candidates = []
                 num_alpha_line_candidates = []
@@ -201,15 +201,15 @@ async def processar_imagem(file: UploadFile = File(...)):
                         main_plate_texts = [concatenated_text[:7]]
                     else:
                         main_plate_texts = [concatenated_text]
-                        
-            elif nome_arquivo_base == "antiga":
+
+            elif label.lower() == "old":
                 print(f"[{datetime.now()}] Lógica de Concatenação: PLACA ANTIGA (Priorizando o texto mais longo)")
                 if filtered_detections:
                     main_plate_texts = [max(filtered_detections, key=lambda x: len(re.sub(r'[^A-Za-z0-9]', '', x['text'])))['text']]
                 else:
                     main_plate_texts = []
-                    
-            elif nome_arquivo_base == "nova":
+
+            elif label.lower() == "new":
                 print(f"[{datetime.now()}] Lógica de Concatenação: PLACA NOVA (Priorizando o texto mais longo)")
                 best_candidate = ""
                 max_len_found = 0
@@ -244,13 +244,13 @@ async def processar_imagem(file: UploadFile = File(...)):
         texto_detectado = re.sub(r'[^A-Za-z0-9]', '', texto_placa_completa_raw.upper())
 
         texto_corrigido = ""
-        if nome_arquivo_base == "moto":
+        if label.lower() == "moto":
             print(f"[{datetime.now()}] Aplicando correção para: PLACA DE MOTO")
             texto_corrigido = corrigir_placa_moto(texto_detectado)
-        elif nome_arquivo_base == "nova":
+        elif label.lower() == "new":
             print(f"[{datetime.now()}] Aplicando correção para: PLACA NOVA")
             texto_corrigido = corrigir_placa_nova(texto_detectado)
-        elif nome_arquivo_base == "antiga":
+        elif label.lower() == "old":
             print(f"[{datetime.now()}] Aplicando correção para: PLACA ANTIGA")
             texto_corrigido = corrigir_placa_antiga(texto_detectado)
         else:
