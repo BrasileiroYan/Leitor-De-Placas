@@ -62,6 +62,7 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
                 autofocus: true,
                 decoration: const InputDecoration(
                   hintText: 'Pesquisar placa...',
+                  hintStyle: TextStyle(fontFamily: '', fontSize: 14),
                 ),
                 style: const TextStyle(
                   color: Colors.white,
