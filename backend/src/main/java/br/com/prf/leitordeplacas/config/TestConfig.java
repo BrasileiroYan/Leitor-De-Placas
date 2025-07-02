@@ -1,17 +1,16 @@
 package br.com.prf.leitordeplacas.config;
 
 import br.com.prf.leitordeplacas.model.*;
+import br.com.prf.leitordeplacas.model.enums.*;
 import br.com.prf.leitordeplacas.repository.*;
-import br.com.prf.leitordeplacas.model.enums.CrimeStatus;
-import br.com.prf.leitordeplacas.model.enums.IpvaStatus;
-import br.com.prf.leitordeplacas.model.enums.LicenseCategory;
-import br.com.prf.leitordeplacas.model.enums.VehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -35,9 +34,42 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    private AppUserRepository appUserRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ScanHistoryRepository scanHistoryRepository;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+
+        AppUser admin = new AppUser();
+        admin.setUsername("admin@prf.gov.br");
+        admin.setPassword(passwordEncoder.encode("@Admin_PRF123"));
+        admin.setRole(Role.ADMIN);
+        admin.setEnabled(true);
+        admin.setEnabled(true);
+        admin.setFailedLoginAttempts(0);
+        admin.setAccountLocked(false);
+        admin.setLockTime(null);
+        admin.setConsecutiveLockouts(0);
+
+        AppUser standard = new AppUser();
+        standard.setUsername("user@prf.gov.br");
+        standard.setPassword(passwordEncoder.encode("@Usuario123"));
+        standard.setRole(Role.STANDARD);
+        standard.setEnabled(true);
+        standard.setEnabled(true);
+        standard.setFailedLoginAttempts(0);
+        standard.setAccountLocked(false);
+        standard.setLockTime(null);
+        standard.setConsecutiveLockouts(0);
+
+        appUserRepository.saveAll(Arrays.asList(admin, standard));
 
         // =================================================================
         // 1. Endereços
@@ -132,5 +164,25 @@ public class TestConfig implements CommandLineRunner {
         Vehicle v6 = new Vehicle("NEG0I50", "TOYOTA", "COROLLA", "Preto", 2023, IpvaStatus.PAGO, VehicleType.CARRO, p2);
 
         vehicleRepository.saveAll(Arrays.asList(v1, v2, v3, v4, v5, v6));
+
+        ScanHistory h1 = new ScanHistory();
+        h1.setScannedPlate("QRM7E33");
+        h1.setScanTimestamp(Instant.now().minusSeconds(3600));
+        h1.setUser(standard);
+        h1.setVehicle(v2);
+
+        ScanHistory h2 = new ScanHistory();
+        h2.setScannedPlate("DHM6197");
+        h2.setScanTimestamp(Instant.now().minusSeconds(1800));
+        h2.setUser(standard);
+        h2.setVehicle(v4);
+
+        ScanHistory h3 = new ScanHistory();
+        h3.setScannedPlate("BRA2E19");
+        h3.setScanTimestamp(Instant.now());
+        h3.setUser(admin);
+        h3.setVehicle(v3);
+
+        scanHistoryRepository.saveAll(Arrays.asList(h1, h2, h3));
     }
 }

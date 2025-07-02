@@ -19,8 +19,6 @@ public class ScanHistory {
     @Column(nullable = false)
     private Instant scanTimestamp;
 
-    private String location; // Ex: "BR-116, Km 50, Fortaleza-CE"
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_user_id", nullable = false)
     private AppUser user;
