@@ -71,9 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: IconButton(
-                onPressed: () => _handleCameraClicked(context),
-                icon: Icon(Icons.camera_alt),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  IconButton(
+                    onPressed: () => _handleCameraClicked(context),
+                    icon: Icon(Icons.camera_alt),
+                  ),
+                ],
               ),
             ),
             viewModel.isLoading

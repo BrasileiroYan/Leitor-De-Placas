@@ -156,33 +156,7 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
             },
           );
         } else {
-          return TextField(
-            controller: widget.viewModel.searchController,
-            textCapitalization: TextCapitalization.characters,
-            focusNode: _focusNode,
-            autofocus: true,
-            decoration: const InputDecoration(hintText: 'Pesquisar placa...'),
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: "GL Nummernschild",
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-            onChanged: (value) {
-              // Force uppercase and preserve cursor position
-              widget.viewModel.searchController.value = widget
-                  .viewModel
-                  .searchController
-                  .value
-                  .copyWith(
-                    text: value.toUpperCase(),
-                    selection: TextSelection.collapsed(offset: value.length),
-                  );
-            },
-            onSubmitted: (value) async {
-              await _onPlateSubmitted();
-            },
-          );
+          return SizedBox.shrink();
         }
       },
     );
