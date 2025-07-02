@@ -92,7 +92,7 @@ public class PdfPageEvents extends PdfPageEventHelper {
         Font waterMarkFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 110, Font.BOLD, Color.lightGray);
 
         PdfGState pdfGState = new PdfGState();
-        pdfGState.setFillOpacity(0.23f); // Nível de opacidade (vai de 0.0 a 1.0)
+        pdfGState.setFillOpacity(0.50f); // Nível de opacidade (vai de 0.0 a 1.0)
         waterMarkCanvas.saveState();
         waterMarkCanvas.setGState(pdfGState);
 

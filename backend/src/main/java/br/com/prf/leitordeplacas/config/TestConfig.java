@@ -52,7 +52,7 @@ public class TestConfig implements CommandLineRunner {
         // =================================================================
         // 2. Pessoas
         // =================================================================
-        Person p1 = new Person("João Alves Barbosa Machado", "Masculino", "2001123456789", "111.222.333-44", LocalDate.parse("1988-05-10"), LicenseCategory.AB, ad2);
+        Person p1 = new Person("João Alves Barbosa Machado", "Masculino", "2001123456789", "111.222.333-44", LocalDate.parse("1995-05-10"), LicenseCategory.AB, ad2);
         Person p2 = new Person("Ana Cecília Medeiros Lima", "Feminino", "2005987654321", "555.666.777-88", LocalDate.parse("2001-02-25"), LicenseCategory.B, ad1);
         Person p3 = new Person("Bruno Aguiar de Melo", "Masculino", "2010112233445", "999.888.777-66", LocalDate.parse("1975-11-30"), LicenseCategory.A, ad3);
         Person p4 = new Person("Letícia Martins Suzuki", "Feminino", "2008556677889", "123.456.789-00", LocalDate.parse("1995-07-18"), LicenseCategory.A, ad1);
