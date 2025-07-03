@@ -177,15 +177,4 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     return null;
   }
-
-  // void _handleTextPlateSent(BuildContext context, String plate) {
-  //   final regex1 = RegExp(r'^[A-Z]{3}-\d{4}$'); // Format: ABC-1234
-  //   final regex2 = RegExp(r'^[A-Z]{3}\d[A-Z]\d{2}$'); // Format: ABC1C23
-  //   if (regex1.hasMatch(plate) || regex2.hasMatch(plate)) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => PlateDataScreen(plate)),
-  //     );
-  //   } else {}
-  // }
 }

@@ -3,7 +3,6 @@ import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
-import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/login_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

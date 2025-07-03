@@ -121,11 +121,6 @@ class _FlashCycleButtonState extends State<FlashCycleButton> {
         child: Icon(_iconForMode(_currentMode), color: Colors.white, size: 20),
       ),
     );
-
-    // return IconButton(
-    //   icon: Icon(_iconForMode(_currentMode), color: Colors.white),
-    //   onPressed: _cycleFlash,
-    // );
   }
 }
 

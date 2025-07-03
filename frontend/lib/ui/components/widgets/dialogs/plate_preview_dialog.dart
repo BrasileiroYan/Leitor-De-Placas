@@ -1,8 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/app/helpers/plate_formater.dart';
-// import 'package:frontend/ui/screens/confirmation_screen.dart';
 
 Future<dynamic> showPlatePreviewDialog(
   BuildContext context,

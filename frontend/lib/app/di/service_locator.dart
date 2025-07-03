@@ -49,8 +49,6 @@ class ServiceLocator {
       () => AdminService(locator<Dio>()),
     );
 
-    locator.registerLazySingleton<PlateService>(
-      () => PlateService(locator<Dio>()),
-    );
+    locator.registerLazySingleton<PlateService>(() => PlateService());
   }
 }

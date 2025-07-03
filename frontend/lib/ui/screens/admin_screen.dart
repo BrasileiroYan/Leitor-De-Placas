@@ -100,26 +100,6 @@ class AdminScreen extends StatelessWidget {
                         ),
                       )
                       : Center(child: CircularProgressIndicator()),
-
-              // !viewModel.isLoading
-              //     ? AnimatedSwitcher(
-              //       duration: const Duration(milliseconds: 750),
-              //       child: ListView(
-              //         padding: EdgeInsets.symmetric(horizontal: 8),
-              //         shrinkWrap: true,
-              //         children: List.generate(viewModel.filteredList.length, (
-              //           index,
-              //         ) {
-              //           final user = viewModel.filteredList.elementAt(index);
-              //           debugPrint(user.username);
-              //           return ListTile(
-              //             leading: CircleAvatar(),
-              //             title: Text(user.username),
-              //           );
-              //         }),
-              //       ),
-              //     )
-              //     : Center(child: CircularProgressIndicator()),
             ),
           ],
         ),

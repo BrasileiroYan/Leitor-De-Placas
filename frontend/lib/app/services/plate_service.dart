@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/helpers/consts.dart';
 
 class PlateService {
-  final Dio _dio;
-  PlateService(this._dio);
-
   Future<String> getPlateFromImage(XFile imageFile) async {
     final multipartFile = await MultipartFile.fromFile(
       imageFile.path,
@@ -20,7 +17,6 @@ class PlateService {
       final response = await Dio().post(
         '$pdiRequestUrl/processar/',
         data: formData,
-        // options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
 
       if (response.statusCode == 200) {

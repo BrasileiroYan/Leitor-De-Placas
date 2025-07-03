@@ -34,7 +34,6 @@ class LoginViewModel extends ChangeNotifier {
 
     try {
       final success = await authService.login(email, password);
-      // setLoading(false);
 
       if (success) {
         if (!context.mounted) return;
