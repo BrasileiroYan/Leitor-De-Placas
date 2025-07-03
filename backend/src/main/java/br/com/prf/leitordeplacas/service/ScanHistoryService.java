@@ -16,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 
 @Service
-public class ScanService {
+public class ScanHistoryService {
 
     private final ScanHistoryRepository scanHistoryRepository;
     private final AppUserRepository appUserRepository;
 
-    public ScanService(ScanHistoryRepository scanHistoryRepository, AppUserRepository appUserRepository) {
+    public ScanHistoryService(ScanHistoryRepository scanHistoryRepository, AppUserRepository appUserRepository) {
         this.scanHistoryRepository = scanHistoryRepository;
         this.appUserRepository = appUserRepository;
     }
