@@ -71,18 +71,25 @@ class NavigationDrawerWidget extends StatelessWidget {
               title: const Text("Admin"),
               onTap: () async {
                 context.go('/admin');
-                // if (adminViewModel.usersList.isEmpty) {
                 adminViewModel.setLoading(true);
                 await adminViewModel.getAllUsers();
                 adminViewModel.setLoading(false);
-                // }
               },
             ),
           ),
           ListTile(
+            leading: const Icon(Icons.support_agent_rounded),
+            title: const Text("Suporte"),
+            onTap: () {
+              context.go('/support', extra: true);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.settings_rounded),
             title: const Text("Configurações"),
-            onTap: () {},
+            onTap: () {
+              context.go('/config');
+            },
           ),
           Divider(color: Colors.black),
           ListTile(

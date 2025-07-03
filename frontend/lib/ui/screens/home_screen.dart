@@ -5,6 +5,7 @@ import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/widgets/dialogs/denied_camera_permission_dialog.dart';
+import 'package:frontend/ui/components/widgets/dialogs/help_dialog.dart';
 import 'package:frontend/ui/components/widgets/dialogs/request_camera_permission_dialog.dart.dart';
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 import 'package:frontend/ui/components/widgets/plate_search_bar.dart';
@@ -37,7 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.help_outline_rounded)),
+          IconButton(
+            onPressed: () {
+              showHelpDialog(context);
+            },
+            icon: Icon(Icons.help_outline_rounded),
+          ),
         ],
         backgroundColor: AppColors.amber,
         title: viewModel.isSearching ? PlateSearchBar(viewModel) : null,
@@ -70,7 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       } else {
                         return FutureBuilder(
-                          future: Future.delayed(Duration(seconds: 2)),
+                          future: Future.delayed(Duration(seconds: 2), () {
+                            return true;
+                          }),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Padding(
@@ -83,11 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
                                     Text(
-                                      "Para capturar a placa, permita que o aplicativo acesse a câmera do aparelho",
+                                      "Para capturar a placa, por favor permita que o aplicativo acesse a câmera do aparelho",
+                                      style: TextStyle(color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                     SizedBox(height: 24),

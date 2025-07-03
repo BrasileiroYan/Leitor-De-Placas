@@ -4,9 +4,8 @@ import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/dialogs/help_dialog.dart';
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 
-class SupportScreen extends StatelessWidget {
-  final bool loggedIn;
-  const SupportScreen({super.key, required this.loggedIn});
+class ConfigScreen extends StatelessWidget {
+  const ConfigScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +20,10 @@ class SupportScreen extends StatelessWidget {
           ),
         ],
         backgroundColor: AppColors.amber,
-        title: Text("Suporte"),
+        title: Text("Configurações"),
         centerTitle: true,
       ),
-      drawer: loggedIn ? NavigationDrawerWidget() : null,
+      drawer: NavigationDrawerWidget(),
       body: AppBackgroundGradient(
         padding: EdgeInsets.all(16),
         child: Ink(

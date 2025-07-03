@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
+import 'package:frontend/ui/components/widgets/dialogs/help_dialog.dart';
 import 'package:frontend/ui/components/widgets/modals/add_user_modal.dart';
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +26,12 @@ class AdminScreen extends StatelessWidget {
               }
             },
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.help_outline_rounded)),
+          IconButton(
+            onPressed: () {
+              showHelpDialog(context);
+            },
+            icon: Icon(Icons.help_outline_rounded),
+          ),
         ],
         backgroundColor: AppColors.amber,
         title:

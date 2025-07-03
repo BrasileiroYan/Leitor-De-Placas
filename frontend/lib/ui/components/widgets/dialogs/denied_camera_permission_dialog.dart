@@ -30,7 +30,7 @@ class _DeniedCameraPermissionDialog extends StatelessWidget {
             style: TextStyle(fontSize: 24),
           ),
           const Text(
-            "Para continuar com a operação, o Scanneador Federal Automobilístico precisa de acesso a câmera. Para liberar, acesse as configurações do seu dispositivo.",
+            "Para continuar com a operação, o ScannerFA precisa de acesso a câmera. Para liberar, acesse as configurações do seu dispositivo.",
             textAlign: TextAlign.justify,
           ),
           const SizedBox(height: 0),

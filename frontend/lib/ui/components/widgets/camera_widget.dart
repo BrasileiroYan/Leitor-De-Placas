@@ -2,16 +2,10 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/app/services/plate_service.dart';
 import 'package:frontend/app/viewmodels/camera_viewmodel.dart';
 import 'package:frontend/app/viewmodels/search_viewmodel.dart';
-import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/widgets/dialogs/image_preview_dialog.dart';
-import 'package:frontend/ui/components/widgets/dialogs/plate_preview_dialog.dart';
-import 'package:frontend/ui/screens/confirmation_screen.dart';
-import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class CameraWidget extends StatefulWidget {
@@ -51,7 +45,7 @@ class _CameraWidgetState extends State<CameraWidget> {
                     // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Row(
                           spacing: 8,
                           mainAxisAlignment: MainAxisAlignment.end,

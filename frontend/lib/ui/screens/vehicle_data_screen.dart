@@ -24,16 +24,17 @@ class VehicleDataScreen extends StatelessWidget {
         backgroundColor: AppColors.amber,
       ),
       body: AppBackgroundGradient(
+        padding: const EdgeInsets.all(16),
         child: Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(20),
           ),
-          child: Expanded(
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   PlateFormater.formatPlate(

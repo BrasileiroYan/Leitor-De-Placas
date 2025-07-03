@@ -3,6 +3,8 @@ import 'package:frontend/app/viewmodels/password_actions_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
+import 'package:frontend/ui/components/widgets/dialogs/help_dialog.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class PasswordRecoveryScreen extends StatelessWidget {
@@ -19,7 +21,12 @@ class PasswordRecoveryScreen extends StatelessWidget {
       appBar: AppBar(
         foregroundColor: Colors.grey.shade300,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.support_agent_rounded)),
+          IconButton(
+            onPressed: () {
+              context.push('/support', extra: false);
+            },
+            icon: Icon(Icons.support_agent_rounded),
+          ),
         ],
         backgroundColor: Colors.transparent,
       ),
@@ -75,7 +82,9 @@ class PasswordRecoveryScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        showHelpDialog(context);
+                      },
                       child: Text(
                         "Primeiro acesso?  ",
                         style: TextStyle(
@@ -90,7 +99,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
                 ],
               ),
               PrimaryButton(
-                bgColor: Colors.amber,
+                bgColor: AppColors.amber,
                 text: "Solicitar recuperação",
                 onTap: () async {
                   await passwordRecoveryViewModel.sendRecoveryEmail(context);

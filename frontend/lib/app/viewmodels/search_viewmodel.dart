@@ -112,7 +112,7 @@ class PlateSearchViewModel extends SearchViewModel {
 
     // searchScope = await vehicleService.getSearchHistory();
 
-    searchScope = ['BRA2E19', 'ABC1234', 'ABC1D34', 'AAA4568', 'BES2344'];
+    searchScope = ['BRA2E19', 'XYZ9876', 'JKL4567', 'MNO7890', 'PQR2345'];
     if (searchScope != null) {
       searchScope =
           searchScope!.map((e) {
