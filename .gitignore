@@ -1,37 +1,48 @@
-HELP.md
+# Arquivos de log e de dependências de pacotes
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
 
-# Java / Maven
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-# IDEs
-
-## Spring Tool Suite
-.apt_generated
+# Arquivos de configuração de IDEs
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
 .classpath
-.factorypath
 .project
 .settings
+.factorypath
 .springBeans
 .sts4-cache
 
-## IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
 
-## NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Backend (Maven/Java)
+# Ignora a pasta 'target' gerada pelo Maven, que contém os arquivos compilados.
+/backend/target/
 
-## VS Code
-.vscode/
+# Frontend (Node.js)
+# Ignora a pasta de dependências, que pode ter milhares de arquivos.
+/frontend/node_modules/
+# Ignora as pastas de build geradas pelo React/Vue/Angular etc.
+/frontend/build/
+/frontend/dist/
+# Ignora arquivos de ambiente local que não devem ser versionados
+/frontend/.env.local
+/frontend/.env.*.local
+
+# PDI (Python)
+# Ignora cache de compilação e arquivos compilados do Python.
+/PDI/__pycache__/
+/PDI/*.pyc
+# Ignora pastas de ambiente virtual
+/PDI/.venv/
+/PDI/venv/
+/PDI/ENV/
+/PDI/env/
