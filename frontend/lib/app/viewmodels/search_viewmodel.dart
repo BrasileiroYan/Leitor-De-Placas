@@ -1,7 +1,10 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/helpers/plate_formater.dart';
 import 'package:frontend/app/models/vehicle.dart';
+import 'package:frontend/app/services/plate_service.dart';
 import 'package:frontend/app/services/vehicle_service.dart';
+import 'package:frontend/ui/components/widgets/dialogs/plate_preview_dialog.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
@@ -74,7 +77,7 @@ class PlateSearchViewModel extends SearchViewModel {
     if (vehicle != null) {
       if (!context.mounted) return;
 
-      context.push('/vehicleData', extra: vehicle);
+      context.pushReplacement('/vehicleData', extra: vehicle);
     } else {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -83,7 +86,25 @@ class PlateSearchViewModel extends SearchViewModel {
     }
   }
 
-  Future<void> searchPlateFromImage(BuildContext context) async {}
+  Future<void> searchPlateFromImage(
+    BuildContext context,
+    XFile snapshotFile,
+  ) async {
+    final plate = await GetIt.instance<PlateService>().getPlateFromImage(
+      snapshotFile,
+    );
+    if (!context.mounted) return;
+    final success = await showPlatePreviewDialog(
+      context,
+      plate,
+      needConfirmation: true,
+    );
+    if (success) {
+      if (!context.mounted) return;
+      searchController.text = plate;
+      await searchPlateFromText(context);
+    }
+  }
 
   @override
   Future<List<String>?> fetchSearchScope() async {

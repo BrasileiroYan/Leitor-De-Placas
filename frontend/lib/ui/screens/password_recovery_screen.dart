@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/password_actions_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
@@ -23,21 +24,8 @@ class PasswordRecoveryScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       backgroundColor: Colors.transparent,
-      body: Ink(
+      body: AppBackgroundGradient(
         padding: EdgeInsets.symmetric(horizontal: 24),
-        // padding: EdgeInsets.only(
-        //   top: kToolbarHeight + MediaQuery.of(context).padding.top,
-        //   left: 24,
-        //   right: 24,
-        //   bottom: 24,
-        // ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, AppColors.bgColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: Center(
           child: Column(
             spacing: 8,

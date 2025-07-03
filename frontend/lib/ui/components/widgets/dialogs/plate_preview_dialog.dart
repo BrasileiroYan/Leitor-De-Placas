@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/app/helpers/plate_formater.dart';
 // import 'package:frontend/ui/screens/confirmation_screen.dart';
 
-Future<dynamic> showImagePreviewDialog(
+Future<dynamic> showPlatePreviewDialog(
   BuildContext context,
-  Uint8List imageBytes, {
+  String plate, {
   bool needConfirmation = false,
 }) {
   return showDialog(
@@ -13,8 +14,16 @@ Future<dynamic> showImagePreviewDialog(
     barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        title: const Text("Parece bom?"),
-        content: ClipRect(child: Image.memory(imageBytes, height: 256)),
+        title: const Text("Confirme a placa:"),
+        content: Text(
+          PlateFormater.formatPlate(plate),
+          style: TextStyle(
+            fontFamily: "GL Nummernschild",
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
         actions: [
           IconButton.outlined(
             icon: const Icon(Icons.close),
@@ -23,7 +32,7 @@ Future<dynamic> showImagePreviewDialog(
           Visibility(
             visible: needConfirmation,
             child: IconButton.outlined(
-              icon: Icon(Icons.check, color: Colors.green[600]),
+              icon: Icon(Icons.check, color: Colors.green),
               onPressed: () {
                 Navigator.pop(context, true);
               },

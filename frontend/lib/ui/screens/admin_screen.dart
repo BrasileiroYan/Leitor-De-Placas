@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
+import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/modals/add_user_modal.dart';
 import 'package:frontend/ui/components/widgets/navigation_drawer_widget.dart';
 import 'package:provider/provider.dart';
@@ -62,14 +63,7 @@ class AdminScreen extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomInset: false,
-      body: Ink(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, AppColors.bgColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: AppBackgroundGradient(
         child: Stack(
           children: [
             Container(

@@ -44,4 +44,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-/lib/app/helpers/consts.dart
+/lib/app/helpers/url_fallback.dart

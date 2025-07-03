@@ -28,7 +28,6 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/images/guides/
 
   
   fonts:

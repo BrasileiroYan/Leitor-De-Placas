@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
+import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/widgets/login_field.dart';
@@ -16,14 +17,7 @@ class LoginScreen extends StatelessWidget {
     final viewModel = Provider.of<LoginViewModel>(context);
 
     return Scaffold(
-      body: Ink(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, AppColors.bgColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: AppBackgroundGradient(
         child: Stack(
           children: [
             Center(

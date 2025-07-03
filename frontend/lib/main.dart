@@ -4,6 +4,7 @@ import 'package:frontend/app/app.dart';
 import 'package:frontend/app/di/service_locator.dart';
 import 'package:frontend/app/services/token_service.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
+import 'package:frontend/app/viewmodels/camera_viewmodel.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/app/viewmodels/password_actions_viewmodel.dart';
 import 'package:frontend/app/viewmodels/search_viewmodel.dart';
@@ -22,6 +23,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => AdminViewModel()),
         ChangeNotifierProvider(create: (context) => PasswordActionsViewModel()),
         ChangeNotifierProvider(create: (context) => PlateSearchViewModel()),
+        ChangeNotifierProvider(create: (context) => CameraViewModel()),
       ],
       child: MainApp(),
     ),
