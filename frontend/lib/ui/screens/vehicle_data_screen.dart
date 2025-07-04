@@ -3,11 +3,14 @@ import 'package:frontend/app/helpers/plate_formater.dart';
 import 'package:frontend/app/models/crime.dart';
 import 'package:frontend/app/models/person.dart';
 import 'package:frontend/app/models/vehicle.dart';
+import 'package:frontend/app/services/vehicle_service.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
 import 'package:frontend/ui/components/widgets/buttons.dart';
 import 'package:frontend/ui/components/widgets/crimes_list.dart';
+import 'package:frontend/ui/components/widgets/dialogs/help_dialog.dart';
 import 'package:frontend/ui/components/widgets/vehicle_info.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class VehicleDataScreen extends StatelessWidget {
@@ -24,8 +27,17 @@ class VehicleDataScreen extends StatelessWidget {
             context.go('/home');
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showHelpDialog(context);
+            },
+            icon: Icon(Icons.help_outline_rounded),
+          ),
+        ],
         backgroundColor: AppColors.amber,
       ),
+      resizeToAvoidBottomInset: false,
       body: AppBackgroundGradient(
         padding: const EdgeInsets.all(16),
         child: Ink(
@@ -37,7 +49,6 @@ class VehicleDataScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 PlateFormater.formatPlate(
@@ -70,10 +81,14 @@ class VehicleDataScreen extends StatelessWidget {
               Divider(height: 2, color: Colors.black),
               const SizedBox(height: 16),
               PrimaryButton(
-                icon: Icons.download_rounded,
-                text: "Baixar PDF",
+                icon: Icons.picture_as_pdf,
+                text: "Abrir PDF",
                 bgColor: AppColors.lightAmber,
-                onTap: () {},
+                onTap: () {
+                  GetIt.instance<VehicleService>().downloadVehiclePDF(
+                    _vehicle.plate,
+                  );
+                },
               ),
             ],
           ),
@@ -220,19 +235,12 @@ class VehicleDataScreen extends StatelessWidget {
               ),
               _buildInfoItem('Status: ', crime.crimeStatus),
               _buildInfoItem('Data: ', crime.crimeDateTime),
-              _buildInfoItem('Descrição:', ''),
-              _buildInfoItem('', crime.description, maxLines: 5),
+              _buildInfoItem('Resumo:', ''),
+              _buildInfoItem('', crime.description, maxLines: 2),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget CrimeInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Text('$label: $value', style: const TextStyle(fontSize: 15)),
     );
   }
 

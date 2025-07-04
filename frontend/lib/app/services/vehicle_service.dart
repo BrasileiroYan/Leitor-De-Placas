@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/models/vehicle.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class VehicleService {
   final Dio _dio;
@@ -56,5 +58,31 @@ class VehicleService {
     }
     debugPrint("Histórico vazio");
     return null;
+  }
+
+  Future<bool> downloadVehiclePDF(String plate) async {
+    final dir = await getApplicationDocumentsDirectory();
+    final filePath = '${dir.path}/${plate}_SFA.pdf';
+    debugPrint('TO SENDO CHAMADO');
+    try {
+      final response = await _dio.download(
+        '/vehicles/$plate/download-pdf',
+        filePath,
+        // options: Options(responseType: ResponseType.bytes),
+      );
+      if (response.statusCode == 200) {
+        // debugPrint(response.toString());
+        await OpenFile.open(filePath, type: 'application/pdf');
+        debugPrint(filePath);
+        return true;
+      }
+    } on DioException catch (e) {
+      debugPrint(e.message);
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+      debugPrint("Unkown Exception");
+    }
+    debugPrint("Veículo com placa '$plate', não foi encontrado");
+    return false;
   }
 }
