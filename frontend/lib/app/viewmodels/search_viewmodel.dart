@@ -12,7 +12,7 @@ abstract class SearchViewModel with ChangeNotifier {
   final TextEditingController searchController = TextEditingController(
     text: ' ',
   );
-  List<String>? searchScope;
+  Set<String>? searchScope;
 
   bool _isLoading = false;
   bool _isSearching = false;
@@ -30,7 +30,7 @@ abstract class SearchViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<String>?> fetchSearchScope();
+  Future<Set<String>?> fetchSearchScope();
 }
 
 class PlateSearchViewModel extends SearchViewModel {
@@ -58,12 +58,6 @@ class PlateSearchViewModel extends SearchViewModel {
 
     Vehicle? vehicle;
 
-    if (!isValidPlate) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Formato inválido, tente novamente!')),
-      );
-    }
     setLoading(true);
 
     if (regex1.hasMatch(plate)) {
@@ -78,7 +72,15 @@ class PlateSearchViewModel extends SearchViewModel {
       if (!context.mounted) return;
 
       context.pushReplacement('/vehicleData', extra: vehicle);
+      return;
     } else {
+      if (!isValidPlate) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Formato inválido, tente novamente!')),
+        );
+        return;
+      }
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Placa não encontrada, tente novamente!')),
@@ -107,19 +109,19 @@ class PlateSearchViewModel extends SearchViewModel {
   }
 
   @override
-  Future<List<String>?> fetchSearchScope() async {
-    // final vehicleService = GetIt.instance<VehicleService>();
+  Future<Set<String>?> fetchSearchScope() async {
+    final vehicleService = GetIt.instance<VehicleService>();
 
-    // searchScope = await vehicleService.getSearchHistory();
+    List<String>? searchList = await vehicleService.getSearchHistory();
 
-    searchScope = ['BRA2E19', 'XYZ9876', 'JKL4567', 'MNO7890', 'PQR2345'];
-    if (searchScope != null) {
+    // final searchList = ['BRA2E19', 'XYZ9876', 'JKL4567', 'MNO7890', 'PQR2345'];
+    if (searchList != null) {
       searchScope =
-          searchScope!.map((e) {
+          searchList.map((e) {
             return PlateFormater.formatPlate(e);
-          }).toList();
+          }).toSet();
     }
 
-    return searchScope;
+    return searchScope ?? {};
   }
 }

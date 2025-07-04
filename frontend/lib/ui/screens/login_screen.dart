@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/app/helpers/consts.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/app/viewmodels/login_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
@@ -12,6 +13,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(baseBackendUrl);
     final adminViewModel = context.read<AdminViewModel>();
     final viewModel = Provider.of<LoginViewModel>(context);
 

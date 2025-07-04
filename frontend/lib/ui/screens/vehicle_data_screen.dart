@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/helpers/plate_formater.dart';
+import 'package:frontend/app/models/crime.dart';
+import 'package:frontend/app/models/person.dart';
 import 'package:frontend/app/models/vehicle.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:frontend/ui/components/_core/app_background_gradient.dart';
@@ -50,18 +52,21 @@ class VehicleDataScreen extends StatelessWidget {
                 ),
               ),
               Divider(thickness: 2, height: 2, color: Colors.black),
+              const SizedBox(height: 8),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      VehicleInfoSection(vehicle: _vehicle),
+                      _buildCarInfo(),
                       const SizedBox(height: 16),
-                      CrimesListSection(crimes: _vehicle.owner.crimesList),
+                      _buildOwnerInfo(),
                     ],
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
               Divider(height: 2, color: Colors.black),
               const SizedBox(height: 16),
               PrimaryButton(
@@ -74,6 +79,184 @@ class VehicleDataScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCarInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "  VEÍCULO: ",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade400,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoItem('Tipo: ', _vehicle.vehicleType),
+              Row(
+                spacing: 16,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildInfoItem('Cor: ', _vehicle.color),
+                  _buildInfoItem(
+                    'IPVA: ',
+                    _vehicle.ipvaStatus,
+                    infoStyle:
+                        _vehicle.ipvaStatus == 'Atrasado' ||
+                                _vehicle.ipvaStatus == 'Não Pago'
+                            ? TextStyle(color: Colors.red)
+                            : null,
+                  ),
+                ],
+              ),
+              _buildInfoItem(
+                'Modelo: ',
+                "${_vehicle.brand} ${_vehicle.model} - ${_vehicle.fabricationYear}",
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOwnerInfo() {
+    Person owner = _vehicle.owner;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "  PROPRIETÁRIO: ",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade400,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoItem('Nome: ', owner.fullName),
+              _buildInfoItem('Data de Nasc.: ', owner.birthDate),
+              Row(
+                spacing: 16,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildInfoItem('RG: ', owner.rg),
+                  _buildInfoItem('Cat. CNH: ', owner.licenseCategory),
+                ],
+              ),
+              _buildInfoItem("CPF: ", owner.cpf),
+              _buildInfoItem(
+                'Endereço: ',
+                '${owner.address.street}, ${owner.address.number} - ${owner.address.neighborhood}',
+              ),
+              SizedBox(height: 16),
+              Text(
+                "FICHA CRIMINAL: ",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      owner.crimesList.isNotEmpty
+                          ? List.generate(owner.crimesList.length, (index) {
+                            return _buildCrimeCard(owner.crimesList[index]);
+                          })
+                          : [
+                            Padding(
+                              padding: EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Ficha criminal limpa...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ),
+                          ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCrimeCard(Crime crime) {
+    return Card(
+      color:
+          crime.crimeStatus.contains('ena') || crime.crimeStatus == 'Condenado'
+              ? Colors.red.shade100
+              : Colors.yellow.shade200,
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
+          width: 220,
+          height: 128,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                crime.crimeType,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              _buildInfoItem('Status: ', crime.crimeStatus),
+              _buildInfoItem('Data: ', crime.crimeDateTime),
+              _buildInfoItem('Descrição:', ''),
+              _buildInfoItem('', crime.description, maxLines: 5),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget CrimeInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Text('$label: $value', style: const TextStyle(fontSize: 15)),
+    );
+  }
+
+  Widget _buildInfoItem(
+    String title,
+    String info, {
+    int maxLines = 1,
+    TextStyle? infoStyle,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        Flexible(
+          child: Text(
+            info,
+            style: infoStyle,
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+          ),
+        ),
+      ],
     );
   }
 }

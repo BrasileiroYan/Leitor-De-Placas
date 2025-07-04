@@ -42,8 +42,12 @@ class CrimesListSection extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CrimeInfoRow('Type', crime.crimeType),
-                        CrimeInfoRow('Date', crime.crimeDateTime.toString()),
+                        Text(
+                          crime.crimeType,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        // CrimeInfoRow('Type', crime.crimeType),
+                        CrimeInfoRow('Date', crime.crimeDateTime),
                         CrimeInfoRow('Description', crime.description),
                         CrimeInfoRow('Status', crime.crimeStatus),
                       ],

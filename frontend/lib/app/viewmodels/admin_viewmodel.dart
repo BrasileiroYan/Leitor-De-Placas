@@ -101,11 +101,11 @@ class AdminViewModel extends SearchViewModel {
   }
 
   @override
-  Future<List<String>?> fetchSearchScope() async {
+  Future<Set<String>?> fetchSearchScope() async {
     final adminService = GetIt.instance<AdminService>();
 
     final usersList = await adminService.getAllUsers();
-    searchScope = usersList.map((e) => e.username).toList();
+    searchScope = usersList.map((e) => e.username).toSet();
 
     return searchScope;
   }

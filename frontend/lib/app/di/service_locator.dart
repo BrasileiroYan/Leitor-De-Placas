@@ -29,8 +29,8 @@ class ServiceLocator {
           baseUrl: baseBackendUrl, // localhost refered from emulator
           contentType: 'application/json',
           responseType: ResponseType.json,
-          connectTimeout: const Duration(seconds: 5),
-          receiveTimeout: const Duration(seconds: 3),
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 18),
         ),
       );
       dio.interceptors.add(AuthInterceptor());

@@ -27,7 +27,7 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>?>(
+    return FutureBuilder<Set<String>?>(
       future: widget.viewModel.fetchSearchScope(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -38,12 +38,12 @@ class _PlateSearchBarState extends State<PlateSearchBar> {
               final query = textEditingValue.text.trim().toUpperCase();
 
               if (query.isEmpty) {
-                return widget.viewModel.searchScope!;
+                return (widget.viewModel.searchScope ?? {}).toList();
               }
 
-              return widget.viewModel.searchScope!.where(
-                (plate) => plate.startsWith(query),
-              );
+              return (widget.viewModel.searchScope ?? {})
+                  .where((plate) => plate.startsWith(query))
+                  .toList();
             },
             onSelected: (String selection) async {
               widget.viewModel.searchController.text = selection;

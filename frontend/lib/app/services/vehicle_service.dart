@@ -27,6 +27,7 @@ class VehicleService {
       final response = await _dio.get('/vehicles/$plate');
       if (response.statusCode == 200) {
         final vehicle = Vehicle.fromMap(response.data);
+        await _dio.post('/scans/register', data: {'plate': plate});
         return vehicle;
       }
     } on DioException catch (e) {
@@ -40,11 +41,13 @@ class VehicleService {
 
   Future<List<String>?> getSearchHistory() async {
     try {
-      final response = await _dio.get('/history/scans?page=0&size=20');
+      final response = await _dio.get('/scans/history?page=0&size=20');
       if (response.statusCode == 200) {
-        final history = response.data.map((e) => e['scannedPlate']);
-        if (history.isEmpty) return null;
-        return history;
+        final history = response.data['content'] as List;
+        final platesList =
+            history.map((e) => e['scannedPlate'].toString()).toList();
+        if (platesList.isEmpty) return null;
+        return platesList;
       }
     } on DioException catch (e) {
       debugPrint(e.message);
