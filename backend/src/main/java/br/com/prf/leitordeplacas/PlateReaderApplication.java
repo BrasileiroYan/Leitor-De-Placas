@@ -9,5 +9,4 @@ public class PlateReaderApplication {
 		SpringApplication.run(PlateReaderApplication.class, args);
 
 	}
-
 }
