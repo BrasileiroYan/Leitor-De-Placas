@@ -167,6 +167,79 @@ LEITOR PLACAS/
 ├── .gitignore
 └── README.md
 ```
+
+## 5. Como Rodar o Projeto
+
+### 5.1. Pré-requisitos
+
+* **Java Backend:**
+    * JDK 21
+    * Maven
+    * MySQL (para desenvolvimento/produção)
+* **Módulo PDI (Python):**
+    * Python 3.8+
+    * `pip`
+
+### 5.2. Configuração e Execução do Módulo PDI (Python)
+
+1.  **Navegue** até o diretório `PDI`.
+2.  **Crie e ative o ambiente virtual:**
+    ```bash
+    python3 -m venv venv
+    # No Linux/macOS:
+    source venv/bin/activate
+    # No Windows (Prompt de Comando):
+    # venv\Scripts\activate
+    # No Windows (PowerShell):
+    # .\venv\Scripts\Activate.ps1
+    ```
+3.  **Instale as dependências:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+4.  **Modelo YOLO:** O arquivo `PDI/src/IA/best2.pt` é o modelo de detecção de objetos. Garanta que ele esteja presente neste caminho.
+5.  **Inicie o serviço FastAPI:**
+    ```bash
+    uvicorn PDI.src.OCR.main:app --host 0.0.0.0 --port 8000
+    ```
+    *Isso iniciará o serviço PDI na porta 8000 (ou outra porta configurada).*
+
+### 5.3. Configuração e Execução do Backend (Java)
+
+1.  **Navegue** até o diretório `backend`.
+2.  **Configurações do Banco de Dados:**
+    * Configure as propriedades de conexão com o MySQL (ou H2 para testes) no arquivo `application.properties` ou `application.yml` (localizado geralmente em `backend/src/main/resources`).
+    * Exemplo para MySQL:
+        ```properties
+        spring.datasource.url=jdbc:mysql://localhost:3306/leitor_placas_db
+        spring.datasource.username=root
+        spring.datasource.password=sua_senha
+        spring.jpa.hibernate.ddl-auto=update
+        spring.jpa.show-sql=true
+        ```
+3.  **Configuração da Conexão com o Módulo PDI:**
+    * O backend Java precisará saber o endereço do serviço Python (FastAPI). Isso deve ser configurado no `application.properties` ou `application.yml`, por exemplo:
+        ```properties
+        app.pdi.service.url=http://localhost:8000/processar/
+        ```
+4.  **Build do Projeto:**
+    ```bash
+    mvn clean install
+    ```
+5.  **Execute a Aplicação Spring Boot:**
+    ```bash
+    mvn spring-boot:run
+    ```
+    *A API estará disponível, geralmente na porta 8080 (ou outra porta configurada).*
+
+## 6. Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para reportar bugs ou sugerir melhorias, e enviar pull requests para adicionar novas funcionalidades ou corrigir problemas.
+
+## 7. Licença
+
+Este projeto está sob a licença [MIT License](https://opensource.org/licenses/MIT).
+
 <p align="center">
   <img src="https://github.com/user-attachments/assets/dd43982b-4ca0-4b6a-876e-d43e4f17330a" width="250">
 </p>
