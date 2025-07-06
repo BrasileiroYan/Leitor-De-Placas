@@ -14,19 +14,21 @@ Este repositório contém a arquitetura de um sistema para leitura e processamen
     * 3.1. Visão Geral e Stack de Tecnologia
     * 3.2. Estrutura em Módulos
     * 3.3. Fluxo de Processamento de Imagem
-4.  [Estrutura do Repositório](#4-estrutura-do-repositório)
-5.  [Como Rodar o Projeto](#5-como-rodar-o-projeto)
-    * 5.1. Pré-requisitos
-    * 5.2. Configuração e Execução do Módulo PDI (Python)
-    * 5.3. Configuração e Execução do Backend (Java)
-6.  [Contribuição](#6-contribuição)
-7.  [Licença](#7-licença)
+4.  [Arquitetura do Frontend](#4-arquitetura-do-frontend)
+5.  [Estrutura do Repositório](#5-estrutura-do-repositório)
+6.  [Como Rodar o Projeto](#6-como-rodar-o-projeto)
+    * 6.1. Pré-requisitos
+    * 6.2. Configuração e Execução do Módulo PDI (Python)
+    * 6.3. Configuração e Execução do Backend (Java)
+    * 6.4. Configuração e Execução do Frontend
+7.  [Contribuição](#7-contribuição)
+8.  [Licença](#8-licença)
 
 ---
 
 ## 1. Visão Geral do Projeto
 
-O Sistema Leitor de Placas é uma aplicação robusta desenvolvida para detectar, reconhecer e gerenciar informações de placas de veículos. Ele é dividido em dois componentes principais de backend: uma API RESTful em Java (Spring Boot) para lógica de negócio, persistência de dados e segurança, e um módulo especializado em Python (FastAPI) para todo o pipeline de Visão Computacional (detecção, pré-processamento e OCR de placas). O sistema é projetado para ser "stateless" (sem estado) e utiliza autenticação baseada em tokens JWT.
+O Sistema Leitor de Placas é uma aplicação robusta desenvolvida para detectar, reconhecer e gerenciar informações de placas de veículos. Ele é dividido em três componentes principais: um **Frontend** para interação com o usuário, uma **API RESTful em Java (Spring Boot)** para lógica de negócio, persistência de dados e segurança, e um **módulo especializado em Python (FastAPI)** para todo o pipeline de Visão Computacional (detecção, pré-processamento e OCR de placas). O sistema é projetado para ser "stateless" (sem estado) e utiliza autenticação baseada em tokens JWT.
 
 ## 2. Arquitetura do Backend Principal (Java/Spring Boot)
 
@@ -67,11 +69,11 @@ A segurança é robusta, stateless e baseada em tokens:
 
 * **Onboarding de Usuário:** Novos usuários criados exclusivamente por Administrador. Gera token de ativação de uso único enviado por e-mail para o usuário definir senha e ativar conta.
 * **Registro de Placa Escaneada (Scan):**
-    * Front-end captura a imagem da placa.
+    * Frontend captura a imagem da placa.
     * A imagem é enviada ao **Módulo PDI (Python)**, que retorna a string da placa reconhecida.
     * Essa string é enviada ao endpoint Java (POST `/scans/register`).
     * O backend cria registro de auditoria (`ScanHistory`), associando placa e policial autenticado, e verifica o status do veículo. Resposta rápida (202 Accepted).
-* **Consulta de Detalhes do Veículo:** Usuário seleciona placa (do histórico ou recém-escaneada). Front-end envia string da placa para endpoint (GET `/vehicles/{plate}`). Backend busca detalhes no banco de dados e retorna.
+* **Consulta de Detalhes do Veículo:** Usuário seleciona placa (do histórico ou recém-escaneada). Frontend envia string da placa para endpoint (GET `/vehicles/{plate}`). Backend busca detalhes no banco de dados e retorna.
 * **Consulta de Histórico:** Endpoint paginado (GET `/history/scans`) permite que cada usuário consulte seu próprio histórico de leituras.
 
 ## 3. Arquitetura do Módulo de Processamento Digital de Imagens (PDI - Python)
@@ -135,7 +137,19 @@ O fluxo de uma imagem no Módulo PDI é:
 5.  **Correção:** `OCR` corrige e formata o texto.
 6.  **Retorno:** Placa corrigida é enviada como resposta.
 
-## 4. Estrutura do Repositório
+## 4. Arquitetura do Frontend
+
+O frontend é a interface do usuário para o Sistema Leitor de Placas, responsável por prover a interação, captura de imagens e exibição de dados.
+
+* **Propósito:** Proporcionar uma experiência de usuário fluida para captura de imagens de placas, visualização do histórico de leituras e consulta de detalhes de veículos.
+* **Funcionalidades:**
+    * Câmera/Upload de Imagem: Permite ao usuário capturar ou selecionar uma imagem de placa.
+    * Exibição de Resultados: Apresenta a placa reconhecida e corrigida.
+    * Histórico de Leituras: Lista as placas lidas pelo usuário.
+    * Consulta de Detalhes: Exibe informações detalhadas sobre um veículo específico.
+* **Comunicação:** Interage com o Módulo PDI (para envio de imagens para OCR) e com o Backend Principal Java (para gerenciamento de usuários, histórico e detalhes de veículos).
+
+## 5. Estrutura do Repositório
 ```
 LEITOR PLACAS/
 ├── .idea/
@@ -168,9 +182,9 @@ LEITOR PLACAS/
 └── README.md
 ```
 
-## 5. Como Rodar o Projeto
+## 6. Como Rodar o Projeto
 
-### 5.1. Pré-requisitos
+### 6.1. Pré-requisitos
 
 * **Java Backend:**
     * JDK 21
@@ -179,8 +193,10 @@ LEITOR PLACAS/
 * **Módulo PDI (Python):**
     * Python 3.8+
     * `pip`
+* **Frontend:**
+    * (Especificar pré-requisitos do framework/tecnologia usada, ex: Node.js, npm/yarn)
 
-### 5.2. Configuração e Execução do Módulo PDI (Python)
+### 6.2. Configuração e Execução do Módulo PDI (Python)
 
 1.  **Navegue** até o diretório `PDI`.
 2.  **Crie e ative o ambiente virtual:**
@@ -204,7 +220,7 @@ LEITOR PLACAS/
     ```
     *Isso iniciará o serviço PDI na porta 8000 (ou outra porta configurada).*
 
-### 5.3. Configuração e Execução do Backend (Java)
+### 6.3. Configuração e Execução do Backend (Java)
 
 1.  **Navegue** até o diretório `backend`.
 2.  **Configurações do Banco de Dados:**
@@ -232,11 +248,26 @@ LEITOR PLACAS/
     ```
     *A API estará disponível, geralmente na porta 8080 (ou outra porta configurada).*
 
-## 6. Contribuição
+### 6.4. Configuração e Execução do Frontend
+
+1.  **Navegue** até o diretório `frontend`.
+2.  **(Adicionar instruções específicas para a tecnologia do frontend aqui, ex: `npm install`, `npm start` ou `yarn install`, `yarn start`)**
+    * Exemplo (para um frontend React/Vue/Angular):
+        ```bash
+        # Instale as dependências
+        npm install # ou yarn install
+        # Inicie a aplicação
+        npm start   # ou yarn start
+        ```
+3.  **Configuração da Conexão com Backends:**
+    * O frontend precisará ser configurado para se comunicar com o backend Java e o módulo PDI Python.
+    * Certifique-se de que as URLs das APIs (ex: `http://localhost:8080` para o Java e `http://localhost:8000` para o PDI) estejam corretamente definidas nas variáveis de ambiente ou arquivos de configuração do frontend.
+
+## 7. Contribuição
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para reportar bugs ou sugerir melhorias, e enviar pull requests para adicionar novas funcionalidades ou corrigir problemas.
 
-## 7. Licença
+## 8. Licença
 
 Este projeto está sob a licença [MIT License](https://opensource.org/licenses/MIT).
 
