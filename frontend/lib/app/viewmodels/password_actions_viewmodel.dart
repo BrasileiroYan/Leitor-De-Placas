@@ -48,18 +48,34 @@ class PasswordActionsViewModel with ChangeNotifier {
     setLoading(true);
 
     try {
-      final success = await authService.forgotPassword(username);
+      final message = await authService.forgotPassword(username);
       // setLoading(false);
-
-      if (success) {
-        if (!context.mounted) return;
-        // context.pop();
-      } else {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Adição falhou, tente novamente.')),
-        );
-      }
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder:
+            (context) => Dialog(
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 8,
+                  children: [
+                    const Text(
+                      "Email Enviado",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    Text(message, textAlign: TextAlign.justify),
+                    const SizedBox(height: 0),
+                    PrimaryButton(text: "OK", onTap: () => context.go('/')),
+                  ],
+                ),
+              ),
+            ),
+      );
+      emailController.text = '';
     } on DioException catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -77,9 +93,9 @@ class PasswordActionsViewModel with ChangeNotifier {
     final confirm = confirmNewPasswordController.text.trim();
 
     if (password.isEmpty || confirm.isEmpty) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Por favor, insira e-mail do novo usuário.')),
-      // );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, insira sua nova senha.')),
+      );
       return;
     }
 
@@ -157,7 +173,6 @@ class PasswordActionsViewModel with ChangeNotifier {
     setLoading(true);
 
     try {
-      debugPrint("\t  TOKEN: $token");
       final message = await authService.resetPassword(token, password);
       // setLoading(false);
 

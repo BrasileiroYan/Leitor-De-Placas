@@ -44,10 +44,18 @@ class LoginViewModel extends ChangeNotifier {
           SnackBar(content: Text('Login Falhou! Tente novamente.')),
         );
       }
-    } on DioException {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('E-mail ou senha incorretos. Tente novamente.')),
-      );
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 403) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.response!.data['message'])));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('E-mail ou senha incorretos. Tente novamente.'),
+          ),
+        );
+      }
     } finally {
       passwordController.text = '';
       setLoading(false);

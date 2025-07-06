@@ -27,6 +27,7 @@ class AuthService {
       }
     } on DioException catch (e) {
       debugPrint('\tLogin error: $e');
+      debugPrint('\tLogin error: ${e.response!.data['message']}');
       rethrow;
     } on Exception catch (e) {
       debugPrint('\tLogin error: $e');
@@ -68,7 +69,7 @@ class AuthService {
     return '';
   }
 
-  Future<bool> forgotPassword(String username) async {
+  Future<String> forgotPassword(String username) async {
     try {
       final response = await _dio.post(
         '/auth/forgot-password',
@@ -78,17 +79,16 @@ class AuthService {
       if (response.statusCode == 200) {
         final message = response.data['message'];
 
-        debugPrint("\t$message");
-        return true;
+        return message;
       }
     } on DioException catch (e) {
-      debugPrint('\tLogin error: $e');
+      debugPrint('\tAuth error: $e');
       rethrow;
     } on Exception catch (e) {
-      debugPrint('\tLogin error: $e');
+      debugPrint('\tAuth error: $e');
       rethrow;
     }
-    return false;
+    return '';
   }
 
   Future<String> resetPassword(String token, String newPassword) async {
