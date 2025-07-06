@@ -68,12 +68,50 @@ class AuthService {
     return '';
   }
 
-  Future<void> forgotPassword(String username) async {
-    // TODO
+  Future<bool> forgotPassword(String username) async {
+    try {
+      final response = await _dio.post(
+        '/auth/forgot-password',
+        data: {'username': username},
+      );
+
+      if (response.statusCode == 200) {
+        final message = response.data['message'];
+
+        debugPrint("\t$message");
+        return true;
+      }
+    } on DioException catch (e) {
+      debugPrint('\tLogin error: $e');
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('\tLogin error: $e');
+      rethrow;
+    }
+    return false;
   }
 
-  Future<void> resetPassword(String newPassword) async {
-    //TODO: Decidir se o resetToken vai pro SecureStorage ou passa direto pra ca
+  Future<String> resetPassword(String token, String newPassword) async {
+    try {
+      debugPrint("\t  TOKEN: $token");
+      final response = await _dio.post(
+        '/auth/reset-password',
+        data: {'resetToken': token, 'newPassword': newPassword},
+      );
+
+      if (response.statusCode == 200) {
+        final message = response.data['message'];
+        if (message == null) return '';
+        return message;
+      }
+    } on DioException catch (e) {
+      debugPrint('\tAuth error: $e');
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('\tAuth error: $e');
+      rethrow;
+    }
+    return '';
   }
 
   Future<void> changePassword(String curPassword, String newPassword) async {

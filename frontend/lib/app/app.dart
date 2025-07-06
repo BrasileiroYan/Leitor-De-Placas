@@ -6,6 +6,7 @@ import 'package:frontend/ui/screens/first_login_screen.dart';
 import 'package:frontend/ui/screens/home_screen.dart';
 import 'package:frontend/ui/screens/login_screen.dart';
 import 'package:frontend/ui/screens/password_recovery_screen.dart';
+import 'package:frontend/ui/screens/reset_password_screen.dart';
 import 'package:frontend/ui/screens/support_screen.dart';
 import 'package:frontend/ui/screens/vehicle_data_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -43,6 +44,13 @@ class MainApp extends StatelessWidget {
           return FirstLoginScreen(token!);
         },
       ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) {
+          final token = state.uri.queryParameters['token'];
+          return ResetPasswordScreen(token!);
+        },
+      ),
     ],
     debugLogDiagnostics: true,
   );
@@ -51,10 +59,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-      title: "ScannerFA",
-      // home: LoginScreen(),
-    );
+    return MaterialApp.router(routerConfig: _router, title: "ScannerFA");
   }
 }

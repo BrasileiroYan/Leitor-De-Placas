@@ -39,35 +39,35 @@ class PasswordActionsViewModel with ChangeNotifier {
     final username = emailController.text.trim();
 
     if (username.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, insira e-mail do novo usuário.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Por favor, insira seu e-mail.')));
       return;
     }
 
     setLoading(true);
 
-    // try {
-    //   final success = await authService.forgotPassword(username);
-    //   // setLoading(false);
+    try {
+      final success = await authService.forgotPassword(username);
+      // setLoading(false);
 
-    //   if (success) {
-    //     if (!context.mounted) return;
-    //     context.pop();
-    //   } else {
-    //     if (!context.mounted) return;
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('Adição falhou, tente novamente.')),
-    //     );
-    //   }
-    // } on DioException catch (e) {
-    //   ScaffoldMessenger.of(
-    //     context,
-    //   ).showSnackBar(SnackBar(content: Text('${e.response!.data['message']}')));
-    //   context.pop();
-    // } finally {
-    //   setLoading(false);
-    // }
+      if (success) {
+        if (!context.mounted) return;
+        // context.pop();
+      } else {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Adição falhou, tente novamente.')),
+        );
+      }
+    } on DioException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${e.response!.data['message']}')));
+      context.pop();
+    } finally {
+      setLoading(false);
+    }
   }
 
   Future<void> activateAccount(BuildContext context, String token) async {
@@ -122,21 +122,77 @@ class PasswordActionsViewModel with ChangeNotifier {
               ),
             ),
       );
-
-      // if (success) {
-      //   if (!context.mounted) return;
-      //   context.pop();
-      // } else {
-      //   if (!context.mounted) return;
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text('Adição falhou, tente novamente.')),
-      //   );
-      // }
     } on DioException catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('${e.response!.data['message']}')));
     } finally {
+      newPasswordController.text = '';
+      confirmNewPasswordController.text = '';
+      setLoading(false);
+    }
+  }
+
+  Future<void> resetPassword(BuildContext context, String token) async {
+    final authService = GetIt.instance<AuthService>();
+
+    final password = newPasswordController.text.trim();
+    final confirm = confirmNewPasswordController.text.trim();
+
+    if (password.isEmpty || confirm.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, insira sua nova senha.')),
+      );
+      return;
+    }
+
+    // Check and state update for password format
+    setPasswordMatchFormat(validateNewPassword(password));
+    if (!_passwordMatchFormat) return;
+
+    // Check and state update for password and confirm match
+    setPasswordUnmatch(!(password == confirm));
+    if (_passwordsDontMatch) return;
+
+    setLoading(true);
+
+    try {
+      debugPrint("\t  TOKEN: $token");
+      final message = await authService.resetPassword(token, password);
+      // setLoading(false);
+
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        builder:
+            (context) => Dialog(
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 8,
+                  children: [
+                    const Text(
+                      "Senha Redefinida!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24),
+                    ),
+                    Text(message, textAlign: TextAlign.justify),
+                    const SizedBox(height: 0),
+                    PrimaryButton(text: "OK", onTap: () => context.go('/')),
+                  ],
+                ),
+              ),
+            ),
+      );
+    } on DioException catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('${e.response!.data['message']}')));
+    } finally {
+      newPasswordController.text = '';
+      confirmNewPasswordController.text = '';
       setLoading(false);
     }
   }

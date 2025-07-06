@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/app/services/token_service.dart';
+import 'package:frontend/app/services/auth_service.dart';
 import 'package:frontend/app/viewmodels/admin_viewmodel.dart';
 import 'package:frontend/ui/components/_core/app_colors.dart';
 import 'package:get_it/get_it.dart';
@@ -96,7 +96,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text("Sair"),
             onTap: () async {
-              await GetIt.instance<TokenService>().clearAll();
+              await GetIt.instance<AuthService>().logout();
               if (context.mounted) {
                 context.pushReplacement('/');
               }
