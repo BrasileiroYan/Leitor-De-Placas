@@ -267,7 +267,19 @@ LEITOR PLACAS/
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues para reportar bugs ou sugerir melhorias, e enviar pull requests para adicionar novas funcionalidades ou corrigir problemas.
 
-## 8. Licença
+## 8. Contribuidores
+
+Este projeto é o resultado da colaboração e do esforço de uma equipe incrível. Agradecemos a todos os contribuidores!
+
+| Foto | Nome | GitHub |
+| :---------------------------------------------------------------------- | :----------------------- | :---------------------------------------------------------------------- |
+| <img src="https://github.com/BrasileiroYan.png?size=100" width="100"> | Yan Pedro | [BrasileiroYan](https://github.com/BrasileiroYan) |
+| <img src="https://github.com/otoserafim.png?size=100" width="100"> | Oto Serafim | [otoserafim](https://github.com/otoserafim) |
+| <img src="https://github.com/JoaoVictorDamasceno.png?size=100" width="100"> | João Victor Damasceno | [JoaoVictorDamasceno](https://github.com/JoaoVictorDamasceno) |
+| <img src="https://github.com/DerickBessa.png?size=100" width="100"> | Derick Bessa | [DerickBessa](https://github.com/DerickBessa) |
+
+
+## 9. Licença
 
 Este projeto está sob a licença [MIT License](https://opensource.org/licenses/MIT).
 
