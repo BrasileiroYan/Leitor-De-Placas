@@ -1,4 +1,141 @@
-# Leitor-De-Placas
+# Sistema Leitor de Placas
+
+Este repositório contém a arquitetura de um sistema para leitura e processamento de placas de veículos, composto por um backend principal em Java com Spring Boot e um módulo dedicado de Processamento Digital de Imagens (PDI) em Python.
+
+## Sumário
+
+1.  [Visão Geral do Projeto](#1-visão-geral-do-projeto)
+2.  [Arquitetura do Backend Principal (Java/Spring Boot)](#2-arquitetura-do-backend-principal-javaspring-boot)
+    * 2.1. Visão Geral e Stack de Tecnologia
+    * 2.2. Estrutura em Camadas
+    * 2.3. Módulo de Segurança
+    * 2.4. Principais Fluxos e Funcionalidades
+3.  [Arquitetura do Módulo de Processamento Digital de Imagens (PDI - Python)](#3-arquitetura-do-módulo-de-processamento-digital-de-imagens-pdi---python)
+    * 3.1. Visão Geral e Stack de Tecnologia
+    * 3.2. Estrutura em Módulos
+    * 3.3. Fluxo de Processamento de Imagem
+4.  [Estrutura do Repositório](#4-estrutura-do-repositório)
+5.  [Como Rodar o Projeto](#5-como-rodar-o-projeto)
+    * 5.1. Pré-requisitos
+    * 5.2. Configuração e Execução do Módulo PDI (Python)
+    * 5.3. Configuração e Execução do Backend (Java)
+6.  [Contribuição](#6-contribuição)
+7.  [Licença](#7-licença)
+
+---
+
+## 1. Visão Geral do Projeto
+
+O Sistema Leitor de Placas é uma aplicação robusta desenvolvida para detectar, reconhecer e gerenciar informações de placas de veículos. Ele é dividido em dois componentes principais de backend: uma API RESTful em Java (Spring Boot) para lógica de negócio, persistência de dados e segurança, e um módulo especializado em Python (FastAPI) para todo o pipeline de Visão Computacional (detecção, pré-processamento e OCR de placas). O sistema é projetado para ser "stateless" (sem estado) e utiliza autenticação baseada em tokens JWT.
+
+## 2. Arquitetura do Backend Principal (Java/Spring Boot)
+
+### 2.1. Visão Geral e Stack de Tecnologia
+
+O backend principal é a API RESTful desenvolvida em Java 21 com o framework Spring Boot 3. Ele segue uma arquitetura em camadas e é o responsável pela orquestração das operações, gestão de usuários, veículos e históricos de leitura.
+
+* **Linguagem:** Java 21
+* **Framework Principal:** Spring Boot
+* **Módulos Spring:** Web, Data JPA, Security, Mail, Validation
+* **Persistência de Dados:** Spring Data JPA com Hibernate
+* **Banco de Dados:** MySQL (para produção/desenvolvimento) e H2 (para testes)
+* **Build e Dependências:** Maven
+* **Documentação da API:** Swagger / OpenAPI 3 com `springdoc-openapi`
+
+### 2.2. Estrutura em Camadas
+
+O projeto é organizado em uma arquitetura de camadas clássica para garantir a separação de responsabilidades e a manutenibilidade:
+
+* **Controller (Camada Web):** Ponto de entrada da API. Recebe requisições HTTP, realiza validação superficial de DTOs e delega a lógica de negócio para a camada de Serviço. Responsável por construir e retornar `ResponseEntity` com status HTTP e corpo da resposta.
+* **Service (Camada de Serviço):** Contém a lógica de negócio principal, orquestração de processos e regras de validação. É transacional (`@Transactional`) e se comunica com a camada de Repositório para acesso a dados. **Esta camada também orquestra a comunicação com o Módulo PDI (Python)** para o processamento de imagens e obtenção da placa reconhecida.
+* **Repository (Camada de Dados):** Interfaces que estendem `JpaRepository`. Abstraem o acesso ao banco de dados, permitindo operações de CRUD e consultas customizadas.
+* **Model (Camada de Domínio):** Classes de entidade (`@Entity`) que mapeiam as tabelas do banco de dados, representando os objetos de negócio centrais (Ex: `AppUser`, `Vehicle`, `ScanHistory`).
+* **DTO (Data Transfer Object):** Objetos simples (geralmente `record`) que definem o "contrato" de dados da API, usados para transportar dados entre o cliente e o controller, evitando a exposição das entidades do banco de dados.
+
+### 2.3. Módulo de Segurança
+
+A segurança é robusta, stateless e baseada em tokens:
+
+* **Autenticação:** Utiliza fluxo de Access Token + Refresh Token.
+    * **Access Token (JWT):** Token de vida curta (ex: 1 hora), assinado com HS256, enviado em cada requisição para acessar endpoints protegidos.
+    * **Refresh Token:** Token de vida longa (ex: 7 dias), armazenado em banco de dados, usado exclusivamente para obter novo `accessToken` via `/auth/refresh`.
+* **Autorização:** Baseada em papéis (Roles), como `ROLE_ADMIN` e `ROLE_STANDARD`. Regras de permissão aplicadas nos endpoints via `SecurityFilterChain` (`.authorizeHttpRequests()`) e anotações (`@PreAuthorize`).
+* **Logout:** Invalidação de tokens via mecanismo de blacklist, onde o token JWT é armazenado até sua expiração para prevenir reuso.
+* **Tratamento de Erros de Segurança:** `GlobalExceptionHandler` (`@RestControllerAdvice`), `AuthenticationEntryPoint` e `AccessDeniedHandler` customizados garantem respostas JSON padronizadas (`StandardError`) com códigos 401 Unauthorized ou 403 Forbidden.
+
+### 2.4. Principais Fluxos e Funcionalidades
+
+* **Onboarding de Usuário:** Novos usuários criados exclusivamente por Administrador. Gera token de ativação de uso único enviado por e-mail para o usuário definir senha e ativar conta.
+* **Registro de Placa Escaneada (Scan):**
+    * Front-end captura a imagem da placa.
+    * A imagem é enviada ao **Módulo PDI (Python)**, que retorna a string da placa reconhecida.
+    * Essa string é enviada ao endpoint Java (POST `/scans/register`).
+    * O backend cria registro de auditoria (`ScanHistory`), associando placa e policial autenticado, e verifica o status do veículo. Resposta rápida (202 Accepted).
+* **Consulta de Detalhes do Veículo:** Usuário seleciona placa (do histórico ou recém-escaneada). Front-end envia string da placa para endpoint (GET `/vehicles/{plate}`). Backend busca detalhes no banco de dados e retorna.
+* **Consulta de Histórico:** Endpoint paginado (GET `/history/scans`) permite que cada usuário consulte seu próprio histórico de leituras.
+
+## 3. Arquitetura do Módulo de Processamento Digital de Imagens (PDI - Python)
+
+O Módulo PDI é um serviço dedicado, implementado como uma API RESTful em Python utilizando FastAPI. Ele é responsável por todo o pipeline de visão computacional, desde a detecção da placa na imagem até o reconhecimento e correção do texto.
+
+### 3.1. Visão Geral e Stack de Tecnologia
+
+* **Linguagem:** Python
+* **Framework de API:** FastAPI
+* **Bibliotecas de Visão Computacional/Machine Learning:**
+    * `ultralytics`: Para detecção de objetos (YOLOv8 para placas).
+    * `PaddleOCR`: Para reconhecimento de texto (OCR).
+    * `OpenCV` (`cv2`): Para manipulação e pré-processamento de imagens.
+    * `Pillow` (`PIL`): Para carregamento e conversão de imagens.
+    * `NumPy`: Para operações numéricas em arrays de imagens.
+* **Recursos Adicionais:** Utiliza expressões regulares (`re`) para limpeza e correção de texto.
+
+### 3.2. Estrutura em Módulos
+
+O módulo PDI é organizado em sub-módulos lógicos, refletindo as etapas do pipeline de processamento:
+
+* **`main.py` (Módulo OCR / Endpoint API):**
+    * **Função Principal:** Orquestrador do pipeline de processamento e ponto de entrada da API PDI via endpoint `/processar/` (POST).
+    * **Fluxo:**
+        1.  Recebe imagem (`UploadFile`).
+        2.  Chama `IA.bbox_cut` para detecção e recorte da placa.
+        3.  Chama `IMP.filters` para pré-processamento da imagem recortada.
+        4.  Executa OCR (`PaddleOCR`) na imagem processada.
+        5.  Filtra e consolida resultados do OCR.
+        6.  Chama `OCR.corretors` para correção e pós-processamento do texto.
+        7.  Padroniza o tamanho da placa e retorna o texto final.
+    * **Mecanismos:** Gerencia arquivos temporários, tratamento de exceções e logging.
+
+* **`IA` (Inteligência Artificial / Detecção):**
+    * **Arquivo:** `bbox_cut.py`
+    * **Responsabilidade:** Detectar a localização da placa na imagem e recortá-la.
+    * **Tecnologia:** Modelo `YOLOv8` (`best2.pt`).
+    * **Funcionalidades:** `recortar_placa(img_bgr, ...)`: Encontra a placa, recorta a região, e tenta rotações automáticas se a placa não for inicialmente detectada. Classifica a placa como "moto" ou "carro" com base nas proporções. Gera imagens de debug.
+
+* **`IMP` (Image Processing / Pré-processamento):**
+    * **Arquivo:** `filters.py`
+    * **Responsabilidade:** Melhorar a qualidade da imagem da placa para otimizar o reconhecimento OCR.
+    * **Tecnologia:** `OpenCV`.
+    * **Funcionalidades:** `aplicar_filtros(img)`: Converte para escala de cinza, aplica Gaussian Blur, operações morfológicas (erosão, dilatação) e binarização adaptativa para realçar caracteres e remover ruídos.
+
+* **`OCR` (Optical Character Recognition / Pós-processamento e Correção):**
+    * **Arquivo:** `corretors.py`
+    * **Responsabilidade:** Corrigir erros comuns de reconhecimento de caracteres do OCR bruto.
+    * **Tecnologia:** Python `re`.
+    * **Funcionalidades:** Funções como `corrigir_placa_nova()`, `corrigir_placa_antiga()`, `corrigir_placa_moto()`: Aplicam regras específicas de correção baseadas em padrões de placas (Mercosul, antigas, motos) e trocas comuns entre letras e números. Remove caracteres não alfanuméricos e ajusta o formato.
+
+### 3.3. Fluxo de Processamento de Imagem
+
+O fluxo de uma imagem no Módulo PDI é:
+
+1.  **Recebimento:** Imagem enviada ao `/processar/`.
+2.  **Detecção:** `IA` localiza e recorta a placa.
+3.  **Pré-processamento:** `IMP` aplica filtros na placa recortada.
+4.  **Reconhecimento:** `PaddleOCR` extrai o texto bruto.
+5.  **Correção:** `OCR` corrige e formata o texto.
+6.  **Retorno:** Placa corrigida é enviada como resposta.
+
+## 4. Estrutura do Repositório
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/dd43982b-4ca0-4b6a-876e-d43e4f17330a" width="250">
