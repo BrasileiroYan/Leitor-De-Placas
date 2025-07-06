@@ -136,7 +136,37 @@ O fluxo de uma imagem no Módulo PDI é:
 6.  **Retorno:** Placa corrigida é enviada como resposta.
 
 ## 4. Estrutura do Repositório
-
+```
+LEITOR PLACAS/
+├── .idea/
+├── .vscode/
+├── backend/                  # Backend principal em Java/Spring Boot
+│   └── (Estrutura de pastas Spring Boot: src, pom.xml, etc.)
+├── frontend/                 # Aplicação frontend
+│   └── (Estrutura de pastas do frontend)
+├── PDI/                      # Módulo de Processamento Digital de Imagens (Python)
+│   ├── pycache/
+│   ├── images/               # Saídas de debug, imagens de teste
+│   ├── venv/                 # Ambiente virtual Python
+│   ├── requirements.txt      # Dependências Python do módulo PDI
+│   └── src/
+│       ├── IA/               # Inteligência Artificial / Detecção
+│       │   ├── pycache/
+│       │   ├── init.py
+│       │   ├── bbox_cut.py   # Detecção e recorte de placa (YOLO)
+│       │   └── best2.pt      # Modelo YOLO pré-treinado
+│       ├── IMP/              # Image Processing / Pré-processamento
+│       │   ├── pycache/
+│       │   ├── init.py
+│       │   └── filters.py    # Aplicação de filtros na imagem da placa
+│       └── OCR/              # Optical Character Recognition / Pós-processamento
+│           ├── pycache/
+│           ├── init.py
+│           ├── corretors.py  # Correção de erros de OCR
+│           └── main.py       # API FastAPI, orquestrador do pipeline PDI
+├── .gitignore
+└── README.md
+```
 <p align="center">
   <img src="https://github.com/user-attachments/assets/dd43982b-4ca0-4b6a-876e-d43e4f17330a" width="250">
 </p>
