@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/app/helpers/plate_formater.dart';
 import 'package:frontend/app/models/vehicle.dart';
@@ -92,19 +93,41 @@ class PlateSearchViewModel extends SearchViewModel {
     BuildContext context,
     XFile snapshotFile,
   ) async {
-    final plate = await GetIt.instance<PlateService>().getPlateFromImage(
-      snapshotFile,
-    );
-    if (!context.mounted) return;
-    final success = await showPlatePreviewDialog(
-      context,
-      plate,
-      needConfirmation: true,
-    );
-    if (success) {
+    try {
+      final plate = await GetIt.instance<PlateService>().getPlateFromImage(
+        snapshotFile,
+      );
       if (!context.mounted) return;
-      searchController.text = plate;
-      await searchPlateFromText(context);
+      final success = await showPlatePreviewDialog(
+        context,
+        plate,
+        needConfirmation: true,
+      );
+      if (success) {
+        if (!context.mounted) return;
+        searchController.text = plate;
+        await searchPlateFromText(context);
+      }
+    } on DioException catch (e) {
+      if (e.response!.statusCode == 500) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Nenhuma placa detectada')));
+        return;
+      }
+      if (e.response!.statusCode == 204) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message!)));
+        return;
+      }
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro na comunicação com o servidor')),
+      );
     }
   }
 

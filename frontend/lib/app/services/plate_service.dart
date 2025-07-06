@@ -23,9 +23,16 @@ class PlateService {
         final plate = response.data;
         debugPrint("\t$plate");
         return plate;
+      } else if (response.statusCode == 204) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          message: "Texto não encontrado na placa",
+        );
       }
     } on DioException catch (e) {
       debugPrint(e.message);
+      rethrow;
     } on Exception {
       debugPrint("Unkown Exception");
     }
