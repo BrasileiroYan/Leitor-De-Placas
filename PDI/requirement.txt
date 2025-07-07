@@ -1,0 +1,8 @@
+fastapi==0.111.0
+uvicorn==0.30.1
+ultralytics==8.2.37
+paddlepaddle==2.6.0
+paddleocr==2.7.0.3
+opencv-python==4.10.0.84
+Pillow==10.3.0
+numpy==1.26.4
